@@ -15,7 +15,6 @@ router.get('/beers', async (req, res) => {
 });
 
 router.post('/beers', async (req, res) => {
-    console.log(req.body);
     const {name, style, pic, desc} = req.body;
     if (!name || !style)
         return res.status(422).send({error: 'You must provide a name and style'});

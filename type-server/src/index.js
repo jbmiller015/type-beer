@@ -21,6 +21,7 @@ mongoose.connect(db_string, {
     useCreateIndex: true,
     useUnifiedTopology: true
 });
+
 mongoose.connection.on('connected', () => {
     console.log('Connected to mongo instance')
 });
