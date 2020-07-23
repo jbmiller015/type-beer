@@ -9,9 +9,9 @@ const beer = new mongoose.Schema({
         type: String,
         required: true
     },
-    picture: {
+    pic: {
         data:Buffer,
         contentType: String
     },
-    description:String
+    desc:String
 })

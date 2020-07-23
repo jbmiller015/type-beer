@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('./models/User');
+require('./models/Beer');
 const express = require('express');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
@@ -32,7 +33,7 @@ mongoose.connection.on('error', (err) => {
 // });
 
 app.get('/', (req, res)=>{
-    res.send('base');
+    res.send('Type-Beer base');
 });
 
 app.listen(3000, ()=>{
