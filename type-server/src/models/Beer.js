@@ -1,17 +1,23 @@
 const mongoose = require('mongoose');
 
-const beer = new mongoose.Schema({
+const beerSchema = new mongoose.Schema({
+    breweryId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     name: {
         type: String,
         required: true
     },
-    style:{
+    style: {
         type: String,
         required: true
     },
     pic: {
-        data:Buffer,
+        data: Buffer,
         contentType: String
     },
-    desc:String
-})
+    desc: String
+});
+
+mongoose.model('Beer', beerSchema);
