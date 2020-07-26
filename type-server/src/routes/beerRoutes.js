@@ -27,4 +27,20 @@ router.post('/beers', async (req, res) => {
     }
 });
 
+router.put('/beers/:bid', async (req, res) => {
+    const bid = req.params._id;
+    const {name, style, pic, desc} = req.body;
+    try {
+        var que = {bid}
+        Beer.update({_id: bid}, {
+            name,
+            style,
+            pic,
+            desc
+        })
+    } catch (e) {
+        res.status(422).send({error: e.message});
+    }
+});
+
 module.exports = router;
