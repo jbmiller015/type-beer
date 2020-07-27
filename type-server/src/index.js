@@ -20,7 +20,8 @@ app.use(beerRoutes);
 mongoose.connect(db_string, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 });
 
 mongoose.connection.on('connected', () => {

@@ -37,7 +37,17 @@ router.put('/beers/:_id', async (req, res) => {
             pic,
             desc
         }, {upsert: true});
-        res.send('Updated');
+        res.send(req.body);
+    } catch (e) {
+        res.status(422).send({error: e.message});
+    }
+});
+
+router.delete('/beers/:_id', async (req, res) => {
+    const bid = req.params._id;
+    try {
+        await Beer.findOneAndDelete({_id: bid});
+        res.send({deleted: bid});
     } catch (e) {
         res.status(422).send({error: e.message});
     }
