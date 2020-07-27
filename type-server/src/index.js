@@ -6,6 +6,7 @@ const express = require('express');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
 const beerRoutes = require('./routes/beerRoutes');
+const breweryRoutes = require('./routes/breweryRoutes');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -16,6 +17,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(authRoutes);
 app.use(beerRoutes);
+app.use(breweryRoutes);
 
 mongoose.connect(db_string, {
     useNewUrlParser: true,

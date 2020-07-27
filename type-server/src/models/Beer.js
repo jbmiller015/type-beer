@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const beerSchema = new mongoose.Schema({
-    breweryId: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },

@@ -10,7 +10,7 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.get('/beers', async (req, res) => {
-    const beers = await Beer.find({breweryId: req.user._id});
+    const beers = await Beer.find({userId: req.user._id});
     res.send(beers);
 });
 
@@ -19,7 +19,7 @@ router.post('/beers', async (req, res) => {
     if (!name || !style)
         return res.status(422).send({error: 'You must provide a name and style'});
     try {
-        const beer = new Beer({name, style, pic, desc, breweryId: req.user._id});
+        const beer = new Beer({name, style, pic, desc, userId: req.user._id});
         await beer.save();
         res.send(beer);
     } catch (e) {
@@ -36,7 +36,7 @@ router.put('/beers/:_id', async (req, res) => {
             style,
             pic,
             desc,
-            breweryId: req.user._id
+            userId: req.user._id
         }, {upsert: true});
         res.send(req.body);
     } catch (e) {

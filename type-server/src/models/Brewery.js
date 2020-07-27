@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const brewerySchema = new mongoose.Schema({
-    breweryId: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
@@ -12,45 +12,38 @@ const brewerySchema = new mongoose.Schema({
     address: {
         type: Object,
         required: true,
-        properties:{
-            "address1": {
-                "title": "Address 1",
-                "pattern": "^\\d+\\s[A-z0-9]+\\s[A-z]+\\s*[A-z]*$",
-                "type": "string"
+        properties: {
+            address1: {
+                title: "Address 1",
+                type: String
             },
-            "address2": {
-                "title": "Address 2",
-                "pattern": "^[A-z]+\\s[A-z0-9\\-]+[\\s[0-9]+]*$",
-                "type": "string"
+            address2: {
+                title: "Address 2",
+                type: String
             },
-            "address3": {
-                "title": "Address 3",
-                "pattern": "^$", // empty string
-                "type": "string"
+            address3: {
+                title: "Address 3",
+                type: String
             },
-            "region": {
-                "title": "State",
-                "pattern": "^[A-z]+$",
-                "type": "string"
+            region: {
+                title: "State",
+                type: String
             },
-            "locale": {
-                "title": "City",
-                "pattern": "^[A-z]+$",
-                "type": "string"
+            locale: {
+                title: "City",
+                type: String
             },
-            "postalCode": {
-                "title": "Zip Code",
-                "pattern": "^\\d{5}$",
-                "type": "string"
+            postalCode: {
+                title: "Zip Code",
+                type: String
             },
-            "required": [
+            required: [
                 "address1",
                 "region",
                 "locale",
                 "postalCode"
             ]
         }
-
     },
     logo_pic: {
         data: Buffer,
