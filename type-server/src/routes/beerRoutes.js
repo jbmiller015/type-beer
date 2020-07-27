@@ -31,7 +31,7 @@ router.put('/beers/:_id', async (req, res) => {
     const bid = req.params._id;
     const {name, style, pic, desc} = req.body;
     try {
-        await Beer.updateOne({_id: bid}, {
+        await Beer.findOneAndUpdate({_id: bid}, {
             name,
             style,
             pic,
