@@ -35,7 +35,8 @@ router.put('/beers/:_id', async (req, res) => {
             name,
             style,
             pic,
-            desc
+            desc,
+            breweryId: req.user._id
         }, {upsert: true});
         res.send(req.body);
     } catch (e) {
