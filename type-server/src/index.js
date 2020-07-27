@@ -1,6 +1,7 @@
 require('dotenv').config();
 require('./models/User');
 require('./models/Beer');
+require('./models/Brewery');
 const express = require('express');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
