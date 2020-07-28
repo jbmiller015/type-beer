@@ -5,6 +5,10 @@ const beerSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    breweryId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Brewery'
+    },
     name: {
         type: String,
         required: true

@@ -16,8 +16,8 @@ const requireAuth = require('./middlewares/requireAuth');
 const app = express();
 app.use(bodyParser.json());
 app.use(authRoutes);
-app.use(beerRoutes);
 app.use(breweryRoutes);
+app.use(beerRoutes);
 
 mongoose.connect(db_string, {
     useNewUrlParser: true,

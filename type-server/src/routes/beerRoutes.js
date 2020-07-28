@@ -28,10 +28,10 @@ router.post('/beers', async (req, res) => {
 });
 
 router.put('/beers/:_id', async (req, res) => {
-    const bid = req.params._id;
+    const beerId = req.params._id;
     const {name, style, pic, desc} = req.body;
     try {
-        await Beer.findOneAndUpdate({_id: bid}, {
+        await Beer.findOneAndUpdate({_id: beerId}, {
             name,
             style,
             pic,
@@ -45,10 +45,10 @@ router.put('/beers/:_id', async (req, res) => {
 });
 
 router.delete('/beers/:_id', async (req, res) => {
-    const bid = req.params._id;
+    const beerId = req.params._id;
     try {
-        await Beer.findOneAndDelete({_id: bid});
-        res.send({deleted: bid});
+        await Beer.findOneAndDelete({_id: beerId});
+        res.send({deleted: beerId});
     } catch (e) {
         res.status(422).send({error: e.message});
     }
