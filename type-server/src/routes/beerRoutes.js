@@ -9,30 +9,17 @@ const router = express.Router();
 //Use once authorization is needed
 router.use(requireAuth);
 
-router.get('/:breweryId/beers', async (req, res) => {
-    const beers = await Beer.find({userId: req.user._id, breweryId: req.params.breweryId}, (err) => {
-        if (err)
-            res.status(422).send({error: err.message});
-    });
+router.get('/beers', async (req, res) => {
+    const beers = await Beer.find({userId: req.user._id});
     res.send(beers);
 });
 
-router.post('/:breweryId/beers', async (req, res) => {
+router.post('/beers', async (req, res) => {
     const {name, style, pic, desc} = req.body;
     if (!name || !style)
         return res.status(422).send({error: 'You must provide a name and style'});
     try {
-        const beer = new Beer({
-            name,
-            style,
-            pic,
-            desc,
-            breweryId: req.params.breweryId,
-            userId: req.user._id
-        }, (err) => {
-            if (err)
-                res.status(422).send({error: err.message});
-        });
+        const beer = new Beer({name, style, pic, desc, userId: req.user._id});
         await beer.save();
         res.send(beer);
     } catch (e) {
@@ -40,7 +27,7 @@ router.post('/:breweryId/beers', async (req, res) => {
     }
 });
 
-router.put('/:breweryId/beers/:_id', async (req, res) => {
+router.put('/beers/:_id', async (req, res) => {
     const beerId = req.params._id;
     const {name, style, pic, desc} = req.body;
     try {
@@ -49,7 +36,6 @@ router.put('/:breweryId/beers/:_id', async (req, res) => {
             style,
             pic,
             desc,
-            breweryId: req.params.breweryId,
             userId: req.user._id
         }, {upsert: true});
         res.send(req.body);
@@ -58,7 +44,7 @@ router.put('/:breweryId/beers/:_id', async (req, res) => {
     }
 });
 
-router.delete('/:breweryId/beers/:_id', async (req, res) => {
+router.delete('/beers/:_id', async (req, res) => {
     const beerId = req.params._id;
     try {
         await Beer.findOneAndDelete({_id: beerId});
