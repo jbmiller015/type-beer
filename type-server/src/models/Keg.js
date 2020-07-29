@@ -27,10 +27,7 @@ const kegSchema = new mongoose.Schema({
         Date,
         required:true
     },
-    customer: {
-        Customer,
-        required: true
-    },
+    customer: Customer,
     pickupDate: Date,
     returnDate: Date,
     returnType: String,
