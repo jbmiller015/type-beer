@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const Beer = mongoose.model('Beer');
 const Customer = mongoose.model('Customer');
+const Schema = mongoose.Schema;
 
 const kegSchema = new mongoose.Schema({
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User'
     },
     size: {
@@ -12,22 +13,26 @@ const kegSchema = new mongoose.Schema({
         required: true
     },
     beer: {
-        Beer,
+        type: Schema.Types.ObjectId,
+        ref: 'Beer',
         required: true
     },
     fillDate: {
         Date,
-        required:true
+        required: true
     },
-    clean:{
-        type:Boolean,
-        required:true
+    clean: {
+        type: Boolean,
+        required: true
     },
     cleanDate: {
         Date,
-        required:true
+        required: true
     },
-    customer: Customer,
+    customer: {
+        type: Schema.Types.ObjectId,
+        ref: 'Customer'
+    },
     pickupDate: Date,
     returnDate: Date,
     returnType: String,
