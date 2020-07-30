@@ -1,13 +1,10 @@
 const mongoose = require('mongoose');
-const MaltGrain = mongoose.model('MaltGrain');
-const Hop = mongoose.model('Hop');
-const Addition = mongoose.model('Addition');
-const Yeast = mongoose.model('Yeast');
+const Schema = mongoose.Schema;
 
 
 const recipeSchema = new mongoose.Schema({
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User'
     },
     BatchSize: {
@@ -18,15 +15,27 @@ const recipeSchema = new mongoose.Schema({
         required: true,
         type: String
     },
+    maltGrain: [{
+        type: Schema.Types.ObjectId,
+        ref: 'MaltGrain'
+    }],
+    hop: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Hop'
+    }],
+    addition: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Addition'
+    }],
+    yeast: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Yeast'
+    }],
     og: Number,
     fg: Number,
     ibu: Number,
     srm: Number,
     abv: Number,
-    maltGrain: [MaltGrain],
-    hop: [Hop],
-    addition: [Addition],
-    yeast: [Yeast],
     brewStyle: String,
     boilSize: Number,
     boilTime: Number,
