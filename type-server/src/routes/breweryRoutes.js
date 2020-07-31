@@ -8,12 +8,10 @@ const router = express.Router();
 
 router.use(requireAuth);
 
-router.get('/brewery', async (req, res) => {
+router.route('/brewery').get(async (req, res) => {
     const brewery = await Brewery.find({userId: req.user._id});
     res.send(brewery);
-});
-
-router.post('/brewery', async (req, res) => {
+}).post(async (req, res) => {
     const {name, address, logo_pic} = req.body;
     if (!name || !address)
         return res.status(422).send({error: 'You must provide a name and address'});
@@ -26,7 +24,7 @@ router.post('/brewery', async (req, res) => {
     }
 });
 
-router.put('/brewery/:_id', async (req, res) => {
+router.route('/brewery/:_id').put(async (req, res) => {
     const breweryId = req.params._id;
     const {name,} = req.body;
 
@@ -41,9 +39,7 @@ router.put('/brewery/:_id', async (req, res) => {
     } catch (e) {
         res.status(422).send({error: e.message});
     }
-});
-
-router.delete('/brewery/:_id', async (req, res) => {
+}).delete(async (req, res) => {
     const breweryId = req.params._id;
     try {
         await Brewery.findOneAndDelete({_id: breweryId});

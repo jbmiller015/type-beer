@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const additionSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     additionType: {
         required: true,
         type: String
@@ -15,4 +19,4 @@ const additionSchema = new mongoose.Schema({
     expirationDate: Date,
 });
 
-mongoose.model('Addition', additionSchema);
+mongoose.model('addition', additionSchema);

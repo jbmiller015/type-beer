@@ -45,4 +45,4 @@ const recipeSchema = new mongoose.Schema({
     efficiency: Number
 });
 
-mongoose.model('Recipe', recipeSchema);
+mongoose.model('recipe', recipeSchema);

@@ -6,7 +6,7 @@ const Beer = mongoose.model('Beer');
 
 const router = express.Router();
 
-//Use once authorization is needed
+//Active: Requires authorization.
 router.use(requireAuth);
 
 router.get('/beers', async (req, res) => {

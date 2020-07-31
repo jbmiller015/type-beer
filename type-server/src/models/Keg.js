@@ -38,4 +38,4 @@ const kegSchema = new mongoose.Schema({
     returnType: String,
 });
 
-mongoose.model('Keg', kegSchema);
+mongoose.model('keg', kegSchema);

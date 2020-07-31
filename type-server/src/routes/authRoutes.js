@@ -2,12 +2,12 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const User = mongoose.model('User');
+const User = mongoose.model('user');
 const jwtString = process.env.JWT_AUTH;
 
 const router = express.Router();
 
-router.post('/signup', async (req, res) => {
+router.route('/signup').post(async (req, res) => {
     const {email, password} = req.body;
     try {
         const user = new User({email, password});
@@ -18,9 +18,7 @@ router.post('/signup', async (req, res) => {
     } catch (e) {
         res.status(422).send(e.message);
     }
-});
-
-router.post('/signin', async (req, res) => {
+}).post(async (req, res) => {
     const {email, password} = req.body;
 
     if (!email || !password)
@@ -33,13 +31,11 @@ router.post('/signin', async (req, res) => {
 
     try {
         await user.comparePassword(password);
-        const token = jwt.sign({userId: user._id},jwtString)
+        const token = jwt.sign({userId: user._id}, jwtString)
         res.send({token});
     } catch (e) {
         return res.status(422).send({error: 'Invalid Password or email'});
     }
-
-
 });
 
 module.exports = router;

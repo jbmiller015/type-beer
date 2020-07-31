@@ -1,7 +1,7 @@
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
-const User = mongoose.model('User');
+const User = mongoose.model('user');
 const jwtString = process.env.JWT_AUTH;
 
 

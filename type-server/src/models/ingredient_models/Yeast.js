@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const yeastSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     yeastType: String,
     name: {
         required: true,
@@ -19,4 +23,4 @@ const yeastSchema = new mongoose.Schema({
     flocculation: String
 });
 
-mongoose.model('Yeast',yeastSchema);
+mongoose.model('yeast',yeastSchema);

@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const maltGrainSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     maltGrainType: {
         required: true,
         type: String
@@ -22,4 +26,4 @@ const maltGrainSchema = new mongoose.Schema({
 
 });
 
-mongoose.model('MaltGrain', maltGrainSchema);
+mongoose.model('maltGrain', maltGrainSchema);

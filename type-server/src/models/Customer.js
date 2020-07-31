@@ -47,4 +47,4 @@ const CustomerSchema = new mongoose.Schema({
     }
 });
 
-mongoose.model('Customer', CustomerSchema);
+mongoose.model('customer', CustomerSchema);

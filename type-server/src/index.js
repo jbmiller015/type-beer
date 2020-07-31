@@ -5,8 +5,7 @@ require('./models/Brewery');
 const express = require('express');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
-const beerRoutes = require('./routes/beerRoutes');
-const breweryRoutes = require('./routes/breweryRoutes');
+const routeHandler = require('./routes/routeHandler');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -16,8 +15,7 @@ const requireAuth = require('./middlewares/requireAuth');
 const app = express();
 app.use(bodyParser.json());
 app.use(authRoutes);
-app.use(beerRoutes);
-app.use(breweryRoutes);
+app.use(routeHandler);
 
 mongoose.connect(db_string, {
     useNewUrlParser: true,

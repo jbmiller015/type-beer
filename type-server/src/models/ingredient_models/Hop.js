@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const hopSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    },
     hopType: {
         required: true,
         type: String
@@ -17,4 +21,4 @@ const hopSchema = new mongoose.Schema({
     note: String
 });
 
-mongoose.model('Hop', hopSchema);
+mongoose.model('hop', hopSchema);

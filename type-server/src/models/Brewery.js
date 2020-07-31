@@ -51,4 +51,4 @@ const brewerySchema = new mongoose.Schema({
     }
 });
 
-mongoose.model('Brewery', brewerySchema);
+mongoose.model('brewery', brewerySchema);
