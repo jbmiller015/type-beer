@@ -7,6 +7,7 @@ import SignInScreen from "./src/screens/SignInScreen";
 import SignUpScreen from "./src/screens/SignUpScreen";
 import AccountScreen from "./src/screens/AccountScreen";
 import {setNavigator} from "./src/navigationRef";
+import {Provider as AuthProvider} from './src/context/AuthContext';
 
 const switchNavigator = createSwitchNavigator({
     ResolveAuth: ResolveAuthScreen,
@@ -24,8 +25,10 @@ const App = createAppContainer(switchNavigator);
 
 export default () => {
     return (
-        <App ref={(navigator) => {
-            setNavigator(navigator)
-        }}/>
+        <AuthProvider>
+            <App ref={(navigator) => {
+                setNavigator(navigator)
+            }}/>
+        </AuthProvider>
     )
 }

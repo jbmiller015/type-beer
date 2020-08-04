@@ -3,7 +3,7 @@ import {AsyncStorage} from "react-native";
 
 const instance = axios.create({
     //paste ngrok url here to connect
-    baseURL: '<Ngrok url>'
+    baseURL: 'http://edd879321c0b.ngrok.io/'
 });
 
 //automatically add authorization to requests once logged in

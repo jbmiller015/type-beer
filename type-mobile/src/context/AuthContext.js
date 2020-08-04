@@ -1,5 +1,5 @@
 import createDataContext from "./createDataContext";
-import trackerApi from '../api/authorize';
+import typeApi from '../api/authorize';
 import {AsyncStorage} from "react-native";
 import {navigate} from "../navigationRef";
 
@@ -18,40 +18,39 @@ const authReducer = (state, action) => {
     }
 };
 
-const tryLocalSignin = (dispatch)=> async () =>{
+const tryLocalSignin = (dispatch) => async () => {
     const token = await AsyncStorage.getItem('token');
-    if(token) {
+    if (token) {
         dispatch({type: 'signin', payload: token});
-        navigate('TrackList');
-    }
-    else{
+        navigate('mainFlow');
+    } else {
         navigate('loginFlow')
     }
 }
 
-const clearErrorMessage = (dispatch)=> () =>{
-    dispatch({type:'clear_error_message'});
+const clearErrorMessage = (dispatch) => () => {
+    dispatch({type: 'clear_error_message'});
 }
 
 //Scaffolding for functions
 const signup = (dispatch) => async ({email, password}) => {
     try {
-        const response = await trackerApi.post('/signup', {email, password});
+        const response = await typeApi.post('/signup', {email, password});
         await AsyncStorage.setItem('token', response.data.token);
         dispatch({type: 'signin', payload: response.data.token});
-        navigate('TrackList');
+        navigate('mainFlow');
     } catch (e) {
         dispatch({type: 'add_error', payload: 'Something went wrong w/ signup'});
     }
 };
 
 
-const signin = (dispatch) => async ({ email, password }) => {
+const signin = (dispatch) => async ({email, password}) => {
     try {
-        const response = await trackerApi.post('/signin', { email, password });
+        const response = await typeApi.post('/signin', {email, password});
         await AsyncStorage.setItem('token', response.data.token);
-        dispatch({ type: 'signin', payload: response.data.token });
-        navigate('TrackList');
+        dispatch({type: 'signin', payload: response.data.token});
+        navigate('mainFlow');
     } catch (e) {
         dispatch({type: 'add_error', payload: 'Something went wrong with sign in'});
     }
@@ -66,6 +65,6 @@ const signout = (dispatch) => async () => {
 
 export const {Provider, Context} = createDataContext(
     authReducer,
-    {signin, signout, signup,clearErrorMessage,tryLocalSignin},
+    {signin, signout, signup, clearErrorMessage, tryLocalSignin},
     {token: null, errorMessage: ''}
 );

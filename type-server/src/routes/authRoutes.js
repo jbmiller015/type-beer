@@ -18,7 +18,9 @@ router.route('/signup').post(async (req, res) => {
     } catch (e) {
         res.status(422).send(e.message);
     }
-}).post(async (req, res) => {
+});
+
+router.post('/signin', async (req, res) => {
     const {email, password} = req.body;
 
     if (!email || !password)
@@ -36,6 +38,8 @@ router.route('/signup').post(async (req, res) => {
     } catch (e) {
         return res.status(422).send({error: 'Invalid Password or email'});
     }
+
+
 });
 
 module.exports = router;
