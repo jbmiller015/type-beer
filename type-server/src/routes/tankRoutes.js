@@ -56,11 +56,11 @@ router.put('/tanks/:_id', async (req, res) => {
     }
 });
 
-router.delete('/beers/:_id', async (req, res) => {
-    const beerId = req.params._id;
+router.delete('/tanks/:_id', async (req, res) => {
+    const tankId = req.params._id;
     try {
-        await Beer.findOneAndDelete({_id: beerId});
-        res.send({deleted: beerId});
+        await Tank.findOneAndDelete({_id: tankId});
+        res.send({deleted: tankId});
     } catch (e) {
         res.status(422).send({error: e.message});
     }
