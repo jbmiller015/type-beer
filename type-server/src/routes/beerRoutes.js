@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 
-const Beer = mongoose.model('Beer');
+const Beer = mongoose.model('beer');
 
 const router = express.Router();
 

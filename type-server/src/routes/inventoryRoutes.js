@@ -2,10 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 
-const Hop = mongoose.model('Hop');
-const Addition = mongoose.model('Addition');
-const MaltGrain = mongoose.model('MaltGrain');
-const Yeast = mongoose.model('Yeast');
+const Hop = mongoose.model('hop');
+const Addition = mongoose.model('addition');
+const MaltGrain = mongoose.model('maltGrain');
+const Yeast = mongoose.model('yeast');
 
 const router = express.Router();
 

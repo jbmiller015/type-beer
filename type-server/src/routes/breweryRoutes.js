@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 
-const Brewery = mongoose.model('Brewery');
+const Brewery = mongoose.model('brewery');
 
 const router = express.Router();
 
