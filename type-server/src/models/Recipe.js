@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+//TODO: use clibpboard-text-outline from vector-icons as recipe icon.
 
 const recipeSchema = new mongoose.Schema({
     userId: {

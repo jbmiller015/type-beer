@@ -32,14 +32,15 @@ mongoose.connection.on('error', (err) => {
     console.log('Connection error' + err);
 });
 
-//Once Auth is required.
+//Once Auth is required
 app.get('/', requireAuth, (req, res) => {
     res.send('base');
 });
 
-// app.get('/', (req, res)=>{
-//     res.send('Type-Beer base');
-// });
+/**
+ app.get('/', (req, res) => {
+        res.send('base');
+});*/
 
 app.listen(3000, () => {
     console.log('Listening on Port 3000');

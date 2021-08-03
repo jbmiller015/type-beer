@@ -18,4 +18,23 @@ router.route('inventory/hops').get(async (req, res) => {
 
 });
 
+router.route('inventory/maltsgrains').get(async (req, res) => {
+
+}).post(async (req, res) => {
+
+});
+
+router.route('inventory/yeasts').get(async (req, res) => {
+
+}).post(async (req, res) => {
+
+});
+
+router.route('inventory/additions').get(async (req, res) => {
+
+}).post(async (req, res) => {
+
+});
+
+
 module.exports = router;
