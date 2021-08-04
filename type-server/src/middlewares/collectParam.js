@@ -18,6 +18,19 @@ module.exports = {
                     userId: req.user._id
                 };
             }
+            case 'Tank': {
+                return {
+                    name: req.body.name,
+                    size: req.body.size,
+                    beer: req.body.beer,
+                    fill: req.body.fill,
+                    fillDate: req.body.fillDate,
+                    action: req.body.action,
+                    actionDate: req.body.actionDate,
+                    clean: req.body.clean,
+                    cleanDate: req.body.cleanDate
+                };
+            }
             case 'Inventory':
                 return 'Inventory'
 

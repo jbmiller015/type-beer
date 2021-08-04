@@ -20,7 +20,8 @@ router.post('/tanks', async (req, res) => {
     if (!name || !size)
         return res.status(422).send({error: 'You must provide a name and size'});
     try {
-        const tank = new Tank({name,
+        const tank = new Tank({
+            name,
             size,
             beer,
             fill,
@@ -29,7 +30,8 @@ router.post('/tanks', async (req, res) => {
             actionDate,
             clean,
             cleanDate,
-            userId: req.user._id});
+            userId: req.user._id
+        });
         await tank.save();
         res.send(tank);
     } catch (e) {

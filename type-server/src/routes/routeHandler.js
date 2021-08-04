@@ -10,12 +10,12 @@ const router = express.Router();
 router.use(requireAuth);
 
 router.route('/:base').get(async (req, res) => {
-    const base = req.params.base;
+    const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
     const getRes = await Object.find({userId: req.user._id});
     res.send(getRes);
 }).post(async (req, res) => {
-    const base = req.params.base;
+    const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
     try {
         const object = new Object(createModel(base, req));
@@ -83,3 +83,8 @@ router.route('/:base/:sub/:ref').put(async (req, res) => {
 });
 
 module.exports = router;
+
+
+const toUpper = (base)=>{
+    return base.charAt(0).toUpperCase() + base.slice(1);
+}

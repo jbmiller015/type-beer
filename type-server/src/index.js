@@ -6,9 +6,9 @@ require('./models/Tank');
 const express = require('express');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
-//const routeHandler = require('./routes/routeHandler');
-const tankRoutes = require('./routes/tankRoutes');
-const beerRoutes = require('./routes/beerRoutes');
+const routeHandler = require('./routes/routeHandler');
+//const tankRoutes = require('./routes/tankRoutes');
+//const beerRoutes = require('./routes/beerRoutes');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -18,9 +18,9 @@ const requireAuth = require('./middlewares/requireAuth');
 const app = express();
 app.use(bodyParser.json());
 app.use(authRoutes);
-app.use(tankRoutes);
-app.use(beerRoutes);
-//app.use(routeHandler);
+//app.use(tankRoutes);
+//app.use(beerRoutes);
+app.use(routeHandler);
 
 mongoose.connect('mongodb+srv://admin:CzKBfEqcFE1s6jXS@cluster0.c1ccg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
     useNewUrlParser: true,
