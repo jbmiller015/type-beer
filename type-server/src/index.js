@@ -22,7 +22,7 @@ app.use(authRoutes);
 //app.use(beerRoutes);
 app.use(routeHandler);
 
-mongoose.connect('mongodb+srv://admin:CzKBfEqcFE1s6jXS@cluster0.c1ccg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+mongoose.connect(db_string, {
     useNewUrlParser: true,
     useCreateIndex: true
 });
