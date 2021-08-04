@@ -19,4 +19,4 @@ const additionSchema = new mongoose.Schema({
     expirationDate: Date,
 });
 
-mongoose.model('addition', additionSchema);
+mongoose.model('Addition', additionSchema);

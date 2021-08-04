@@ -50,4 +50,4 @@ const CustomerSchema = new mongoose.Schema({
     }
 });
 
-mongoose.model('customer', CustomerSchema);
+mongoose.model('Customer', CustomerSchema);

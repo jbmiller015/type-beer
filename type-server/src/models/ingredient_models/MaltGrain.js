@@ -26,4 +26,4 @@ const maltGrainSchema = new mongoose.Schema({
 
 });
 
-mongoose.model('maltGrain', maltGrainSchema);
+mongoose.model('MaltGrain', maltGrainSchema);

@@ -23,4 +23,4 @@ const yeastSchema = new mongoose.Schema({
     flocculation: String
 });
 
-mongoose.model('yeast',yeastSchema);
+mongoose.model('Yeast',yeastSchema);

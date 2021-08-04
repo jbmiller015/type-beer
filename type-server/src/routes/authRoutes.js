@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-const User = mongoose.model('user');
+const User = mongoose.model('User');
 const jwtString = process.env.JWT_AUTH;
 
 const router = express.Router();

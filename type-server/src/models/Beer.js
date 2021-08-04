@@ -20,4 +20,4 @@ const beerSchema = new mongoose.Schema({
     desc: String
 });
 
-mongoose.model('beer', beerSchema);
+mongoose.model('Beer', beerSchema);

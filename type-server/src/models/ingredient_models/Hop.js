@@ -21,4 +21,4 @@ const hopSchema = new mongoose.Schema({
     note: String
 });
 
-mongoose.model('hop', hopSchema);
+mongoose.model('Hop', hopSchema);

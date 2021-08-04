@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 
-const Tank = mongoose.model('tank');
+const Tank = mongoose.model('Tank');
 
 const router = express.Router();
 
@@ -16,11 +16,20 @@ router.get('/tanks', async (req, res) => {
 });
 
 router.post('/tanks', async (req, res) => {
-    const {name, size,} = req.body;
+    const {name, size, beer, fill, fillDate, action, actionDate, clean, cleanDate} = req.body;
     if (!name || !size)
         return res.status(422).send({error: 'You must provide a name and size'});
     try {
-        const tank = new Tank({name, size, userId: req.user._id});
+        const tank = new Tank({name,
+            size,
+            beer,
+            fill,
+            fillDate,
+            action,
+            actionDate,
+            clean,
+            cleanDate,
+            userId: req.user._id});
         await tank.save();
         res.send(tank);
     } catch (e) {

@@ -2,10 +2,13 @@ require('dotenv').config();
 require('./models/User');
 require('./models/Beer');
 require('./models/Brewery');
+require('./models/Tank');
 const express = require('express');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
-const routeHandler = require('./routes/routeHandler');
+//const routeHandler = require('./routes/routeHandler');
+const tankRoutes = require('./routes/tankRoutes');
+const beerRoutes = require('./routes/beerRoutes');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
@@ -15,13 +18,13 @@ const requireAuth = require('./middlewares/requireAuth');
 const app = express();
 app.use(bodyParser.json());
 app.use(authRoutes);
-app.use(routeHandler);
+app.use(tankRoutes);
+app.use(beerRoutes);
+//app.use(routeHandler);
 
-mongoose.connect(db_string, {
+mongoose.connect('mongodb+srv://admin:CzKBfEqcFE1s6jXS@cluster0.c1ccg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
     useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
+    useCreateIndex: true
 });
 
 mongoose.connection.on('connected', () => {
@@ -29,7 +32,7 @@ mongoose.connection.on('connected', () => {
 });
 
 mongoose.connection.on('error', (err) => {
-    console.log('Connection error' + err);
+    console.log('Connection error: ' + err);
 });
 
 //Once Auth is required
@@ -37,10 +40,11 @@ app.get('/', requireAuth, (req, res) => {
     res.send('base');
 });
 
-/**
- app.get('/', (req, res) => {
-        res.send('base');
-});*/
+
+/**app.get('/', (req, res) => {
+    res.send('base');
+});
+ */
 
 app.listen(3000, () => {
     console.log('Listening on Port 3000');
