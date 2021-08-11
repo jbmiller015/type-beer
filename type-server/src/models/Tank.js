@@ -26,7 +26,7 @@ const tankSchema = new mongoose.Schema({
         required: false
     },
     fillDate: {
-        Date,
+        type: Date,
         required: false
     },
     action: {
@@ -34,15 +34,7 @@ const tankSchema = new mongoose.Schema({
         required: false
     },
     actionDate: {
-        Date,
-        required: false
-    },
-    clean: {
-        type: Boolean,
-        required: false
-    },
-    cleanDate: {
-        Date,
+        type: Date,
         required: false
     }
 });

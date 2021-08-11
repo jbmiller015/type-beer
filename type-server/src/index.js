@@ -24,7 +24,8 @@ app.use(routeHandler);
 
 mongoose.connect(db_string, {
     useNewUrlParser: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useUnifiedTopology: true
 });
 
 mongoose.connection.on('connected', () => {
