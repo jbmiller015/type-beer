@@ -29,12 +29,16 @@ const tankSchema = new mongoose.Schema({
         type: Date,
         required: false
     },
-    action: {
+    currPhase: {
         type: String,
         required: false
     },
-    actionDate: {
+    currPhaseDate: {
         type: Date,
+        required: false
+    },
+    nextPhase : {
+        type: String,
         required: false
     }
 });
