@@ -4,6 +4,7 @@ require('./models/Beer');
 require('./models/Brewery');
 require('./models/Tank');
 const express = require('express');
+const cors = require('cors');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
 const routeHandler = require('./routes/routeHandler');
@@ -16,11 +17,18 @@ const bodyParser = require('body-parser');
 const requireAuth = require('./middlewares/requireAuth');
 
 const app = express();
+
+
+
 app.use(bodyParser.json());
 app.use(authRoutes);
 //app.use(tankRoutes);
 //app.use(beerRoutes);
+app.use(cors)
 app.use(routeHandler);
+app.use(cors({
+    origin: '*'
+}));
 
 mongoose.connect(db_string, {
     useNewUrlParser: true,

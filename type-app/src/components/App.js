@@ -1,7 +1,10 @@
 import React from 'react';
+import BrewFloor from "./BrewFloor";
 
 const App = () => {
-    return (<div>App</div>);
+    return (<div>
+        <BrewFloor/>
+    </div>);
 };
 
 export default App;
