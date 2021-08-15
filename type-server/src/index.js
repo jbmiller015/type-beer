@@ -14,21 +14,17 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 //Use for authorized routes
-const requireAuth = require('./middlewares/requireAuth');
+//const requireAuth = require('./middlewares/requireAuth');
 
 const app = express();
-
-
+app.use(cors({origin: '*'}))
 
 app.use(bodyParser.json());
 app.use(authRoutes);
 //app.use(tankRoutes);
 //app.use(beerRoutes);
-app.use(cors)
 app.use(routeHandler);
-app.use(cors({
-    origin: '*'
-}));
+
 
 mongoose.connect(db_string, {
     useNewUrlParser: true,
@@ -45,15 +41,15 @@ mongoose.connection.on('error', (err) => {
 });
 
 //Once Auth is required
-app.get('/', requireAuth, (req, res) => {
-    res.send('base');
-});
-
-
-/**app.get('/', (req, res) => {
+/**app.get('/', requireAuth, (req, res) => {
     res.send('base');
 });
  */
+
+app.get('/', (req, res) => {
+    res.send('base');
+});
+
 
 app.listen(3000, () => {
     console.log('Listening on Port 3000');

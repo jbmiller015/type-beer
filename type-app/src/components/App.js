@@ -3,6 +3,7 @@ import BrewFloor from "./BrewFloor";
 
 const App = () => {
     return (<div>
+        Tanks:
         <BrewFloor/>
     </div>);
 };

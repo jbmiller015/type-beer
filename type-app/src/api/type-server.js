@@ -11,7 +11,7 @@ const instance = axios.create({
 });
 
 //automatically add authorization to requests once logged in
-instance.interceptors.request.use(
+/**instance.interceptors.request.use(
     async (config) => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -23,5 +23,6 @@ instance.interceptors.request.use(
         return Promise.reject(err);
     }
 );
+ */
 
 export default instance;

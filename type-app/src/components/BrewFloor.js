@@ -8,11 +8,13 @@ const BrewFloor = () => {
 
     useEffect(() => {
         const getTanks = async () => {
-            const {data} = await typeApi.get('/tanks')
-            setTanks(data)
+            const {data} = await typeApi.get('/tank');
+            console.log(data)
+            setTanks([...tanks, data]);
+            console.log("Tanks:", tanks);
         }
         getTanks();
-    }, [tanks]);
+    });
 
     const renderTanks = tanks.map(tank => {
         return (<Tank>{tank}</Tank>)

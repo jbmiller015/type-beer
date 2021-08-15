@@ -4,7 +4,7 @@ import React from 'react';
 //Should adjust look if filled
 const Tank = (tankData) => {
     return (
-        <div>
+        <div key={tankData._id}>
             <h2>{tankData.name}</h2>
             <p>Size: {tankData.size}</p>
             <p>Beer: {tankData.beer.name}</p>
