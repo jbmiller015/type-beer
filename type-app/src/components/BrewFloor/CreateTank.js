@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import typeApi from '../api/type-server'
+import typeApi from '../../api/type-server'
+import Dropdown from "./Dropdown";
 
 
 const CreateTank = (props) => {
@@ -8,7 +9,7 @@ const CreateTank = (props) => {
 
 
     const handleChange = e => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData(prevState => ({
             ...prevState,
             [name]: value
@@ -17,9 +18,10 @@ const CreateTank = (props) => {
 
     const onFormSubmit = async () => {
         try {
-            const response = await typeApi.post('/tanks', {formData});
+            const response = await typeApi.post('/tank', formData);
+            console.log(response);
         } catch (e) {
-
+            console.log(e);
         }
     }
 
@@ -35,24 +37,30 @@ const CreateTank = (props) => {
                     <input type="text" name="size" placeholder={props.size ? props.size : ""} onChange={handleChange}/>
                 </div>
                 <div className="field">
+                    <Dropdown label="Select Tank Contents" options={}/>
                     <label>Contents:</label>
-                    <input type="text" name="Contents" placeholder={props.contents ? props.contents : ""} onChange={handleChange}/>
+                    <input type="text" name="contents" placeholder={props.contents ? props.contents : ""}
+                           onChange={handleChange}/>
                 </div>
                 <div className="field">
                     <label>Fill:</label>
-                    <input type="boolean" name="fill" placeholder={props.fill ? props.fill : ""} onChange={handleChange}/>
+                    <input type="boolean" name="fill" placeholder={props.fill ? props.fill : ""}
+                           onChange={handleChange}/>
                 </div>
                 <div className="field">
                     <label>Fill Date:</label>
-                    <input type="datetime-local" name="fillDate" placeholder={props.fillDate ? props.fillDate : ""} onChange={handleChange}/>
+                    <input type="datetime-local" name="fillDate" placeholder={props.fillDate ? props.fillDate : ""}
+                           onChange={handleChange}/>
                 </div>
                 <div className="field">
                     <label>Current Phase:</label>
-                    <input type="text" name="currPhase" placeholder={props.currPhase ? props.currPhase : ""} onChange={handleChange}/>
+                    <input type="text" name="currPhase" placeholder={props.currPhase ? props.currPhase : ""}
+                           onChange={handleChange}/>
                 </div>
                 <div className="field">
                     <label>Next Phase:</label>
-                    <input type="text" name="nextPhase" placeholder={props.nextPhase ? props.nextPhase : ""} onChange={handleChange}/>
+                    <input type="text" name="nextPhase" placeholder={props.nextPhase ? props.nextPhase : ""}
+                           onChange={handleChange}/>
                 </div>
                 <div className="field">
                     <label>Next Phase:</label>

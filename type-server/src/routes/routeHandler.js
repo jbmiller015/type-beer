@@ -18,6 +18,7 @@ router.route('/:base').get(async (req, res) => {
     const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
     try {
+        console.log(req.body);
         const object = new Object(createModel(base, req));
         await object.save();
         res.send(object);

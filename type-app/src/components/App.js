@@ -1,11 +1,21 @@
 import React from 'react';
-import BrewFloor from "./BrewFloor";
+import {BrowserRouter, Route} from 'react-router-dom';
+import BrewFloor from "./BrewFloor/BrewFloor";
+import CreateTank from "./BrewFloor/CreateTank";
+import CreateBeer from "./Beer/CreateBeer";
 
 const App = () => {
-    return (<div>
-        Tanks:
-        <BrewFloor/>
-    </div>);
+    return (
+        <div id="switch">
+            <BrowserRouter>
+                <div>
+                    <Route path="/" exact component={BrewFloor}/>
+                    <Route path="/createtank" exact component={CreateTank}/>
+                    <Route path="/createbeer" exact component={CreateBeer}/>
+                </div>
+            </BrowserRouter>
+        </div>
+    );
 };
 
 export default App;

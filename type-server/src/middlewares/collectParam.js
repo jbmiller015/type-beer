@@ -1,5 +1,6 @@
 module.exports = {
     createModel: function (name, req) {
+
         switch (name) {
             case 'Brewery': {
                 return {
@@ -22,13 +23,12 @@ module.exports = {
                 return {
                     name: req.body.name,
                     size: req.body.size,
-                    beer: req.body.beer,
+                    contents: req.body.contents,
                     fill: req.body.fill,
                     fillDate: req.body.fillDate,
-                    action: req.body.action,
-                    actionDate: req.body.actionDate,
-                    clean: req.body.clean,
-                    cleanDate: req.body.cleanDate
+                    currPhase: req.body.currPhase,
+                    nextPhase: req.body.nextPhase,
+                    currPhaseDate: req.body.currPhaseDate
                 };
             }
             case 'Inventory':
