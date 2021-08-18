@@ -1,6 +1,7 @@
 import React from 'react';
 import Tank from "./Tank";
 import typeApi from "../../api/type-server";
+import { useHistory } from 'react-router-dom';
 
 
 class BrewFloor extends React.Component {
@@ -43,6 +44,7 @@ class BrewFloor extends React.Component {
     render() {
         const {error, isLoaded, tanks} = this.state;
 
+        const history = useHistory();
 
         if (error) {
             return <div>Error: {error.message}</div>;
@@ -55,7 +57,12 @@ class BrewFloor extends React.Component {
             })
 
             return (
-                <div>{tankComponents}</div>
+                <div>
+                    <button onClick={() => history.push('/createtank')}>
+                        Click me
+                    </button>
+                    <div>{tankComponents}</div>
+                </div>
             )
         }
     }

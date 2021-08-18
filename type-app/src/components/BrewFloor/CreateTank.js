@@ -1,11 +1,24 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import typeApi from '../../api/type-server'
 import Dropdown from "./Dropdown";
+import { useHistory } from 'react-router-dom';
 
 
 const CreateTank = (props) => {
 
+
+
+
     const [formData, setFormData] = useState({});
+    const [beers, setBeers] = useState([]);
+    const [selectedBeer, setSelectedBeer] = useState(beers[0]);
+    const history = useHistory();
+
+    useEffect(()=>{
+        typeApi.get('/beer').then(response => {
+            setBeers(response.data);
+        })
+    })
 
 
     const handleChange = e => {
@@ -20,10 +33,14 @@ const CreateTank = (props) => {
         try {
             const response = await typeApi.post('/tank', formData);
             console.log(response);
+
         } catch (e) {
             console.log(e);
+            return (
+              <div>Error:{e}</div>
+            );
         }
-    }
+    };
 
     return (
         <div>
@@ -37,9 +54,8 @@ const CreateTank = (props) => {
                     <input type="text" name="size" placeholder={props.size ? props.size : ""} onChange={handleChange}/>
                 </div>
                 <div className="field">
-                    <Dropdown label="Select Tank Contents" options={}/>
-                    <label>Contents:</label>
-                    <input type="text" name="contents" placeholder={props.contents ? props.contents : ""}
+                    <Dropdown label="Select Tank Contents" options={beers} selected={selectedBeer} onSelectedChange={setSelectedBeer}/>
+                    <input type="object" name="contents" placeholder={props.contents ? props.contents : ""}
                            onChange={handleChange}/>
                 </div>
                 <div className="field">
@@ -54,7 +70,7 @@ const CreateTank = (props) => {
                 </div>
                 <div className="field">
                     <label>Current Phase:</label>
-                    <input type="text" name="currPhase" placeholder={props.currPhase ? props.currPhase : ""}
+                    <input type="text" name="currPhase" placeholder={props.currPhase ? props.currPhase : ""} value={selectedBeer}
                            onChange={handleChange}/>
                 </div>
                 <div className="field">
