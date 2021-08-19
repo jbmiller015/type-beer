@@ -26,7 +26,7 @@ const CreateBeer = (props) => {
 
     return (
         <div>
-            <form onSubmit={onFormSubmit}>
+            <form className="ui form" onSubmit={onFormSubmit}>
                 <div className="field">
                     <label>Name:</label>
                     <input type="text" name="name" placeholder={props.name ? props.name : ""} onChange={handleChange}/>
@@ -37,7 +37,8 @@ const CreateBeer = (props) => {
                 </div>
                 <div className="field">
                     <label>Image:</label>
-                    <input type="image" name="image" placeholder={props.image ? props.image : ""}
+                    <input type="file" id="avatar" name="image" accept="image/png, image/jpeg"
+                           placeholder={props.image ? props.image : null}
                            onChange={handleChange}/>
                 </div>
                 <div className="field">

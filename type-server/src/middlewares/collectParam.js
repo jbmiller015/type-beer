@@ -16,7 +16,6 @@ module.exports = {
                     style: req.body.style,
                     pic: req.body.pic,
                     desc: req.body.desc,
-                    userId: req.user._id
                 };
             }
             case 'Tank': {
