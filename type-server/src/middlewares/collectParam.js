@@ -14,7 +14,7 @@ module.exports = {
                 return {
                     name: req.body.name,
                     style: req.body.style,
-                    pic: req.body.pic,
+                    image: req.body.image,
                     desc: req.body.desc,
                 };
             }

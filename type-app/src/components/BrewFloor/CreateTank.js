@@ -15,23 +15,13 @@ class CreateTank extends React.Component {
             currPhase: "",
             nextPhase: "",
             currPhaseDate: "",
-            beers: [],
             selectedBeer: ""
         }
     }
 
-    componentDidMount() {
-        typeApi.get('/beer').then(response => {
-            console.log(response.data);
-            this.setState({
-                beers: response.data,
-                selectedBeer: response.data[0]
-            });
-        })
-    }
 
-    setContents = content =>{
-        this.setState({contents:content});
+    setContents = content => {
+        this.setState({contents: content, selectedBeer: content.name});
         console.log(this.state.contents)
     }
 
@@ -43,7 +33,8 @@ class CreateTank extends React.Component {
         console.log(this.state)
     };
 
-    onFormSubmit = async () => {
+    onFormSubmit = async (e) => {
+        e.preventDefault();
 
         const formData = {
             name: this.state.name,
@@ -55,23 +46,22 @@ class CreateTank extends React.Component {
             nextPhase: this.state.nextPhase,
             currPhaseDate: this.state.currPhaseDate,
         }
-        try {
-            const response = await typeApi.post('/tank', formData);
-            console.log(response);
 
-        } catch (e) {
-            console.log(e);
-            return (
-                <div>Error:{e}</div>
-            );
-        }
-        this.props.history.push('/');
+
+        await typeApi.post('/tank', formData)
+            .then(res =>
+                this.props.history.push('/'))
+            .catch(err => {
+                console.error(err)
+            });
+
+
     };
 
     render() {
         return (
             <div>
-                <form onSubmit={this.onFormSubmit}>
+                <form className="ui form" onSubmit={this.onFormSubmit}>
                     <div className="field">
                         <label>Name:</label>
                         <input type="text" name="name" placeholder={this.props.name ? this.props.name : ""}
@@ -83,12 +73,9 @@ class CreateTank extends React.Component {
                                onChange={this.handleChange}/>
                     </div>
                     <div className="field">
-                        <Dropdown label="Select Tank Contents" options={this.state.beers}
-                                  selected={this.state.selectedBeer}
+                        <Dropdown label="Select Tank Contents"
+                                  selected={this.state.contents}
                                   onSelectedChange={this.setContents}/>
-                        <input type="object" name="contents"
-                               placeholder={this.props.contents ? this.props.contents : ""}
-                               onChange={this.handleChange}/>
                     </div>
                     <div className="field">
                         <label>Fill:</label>

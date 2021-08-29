@@ -1,27 +1,45 @@
 import React, {useState} from 'react';
 import typeApi from '../../api/type-server'
+import {useHistory} from "react-router-dom";
 
 
 const CreateBeer = (props) => {
 
     const [formData, setFormData] = useState({});
+    const history = useHistory();
 
 
     const handleChange = e => {
-        const {name, value} = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        const {name, files, value} = e.target;
+        if (name === "image") {
+            console.log(files[0]);
+            const reader = new FileReader();
+            reader.readAsDataURL(files[0]);
+
+            reader.addEventListener("load", () => {
+                setFormData(prevState => ({
+                    ...prevState,
+                    [name]: reader.result
+                }));
+            })
+        } else {
+            setFormData(prevState => ({
+                ...prevState,
+                [name]: value
+            }));
+        }
     };
 
-    const onFormSubmit = async () => {
-        try {
-            const response = await typeApi.post('/beer', formData);
-            console.log(response);
-        } catch (e) {
-            console.log(e);
-        }
+    const onFormSubmit = async (e) => {
+        e.preventDefault();
+        console.log(formData)
+
+        await typeApi.post('/beer', formData)
+            .then(res =>
+                history.push("/"))
+            .catch(err => {
+                console.error(err)
+            });
     }
 
     return (
@@ -32,8 +50,9 @@ const CreateBeer = (props) => {
                     <input type="text" name="name" placeholder={props.name ? props.name : ""} onChange={handleChange}/>
                 </div>
                 <div className="field">
-                    <label>Type:</label>
-                    <input type="text" name="type" placeholder={props.type ? props.type : ""} onChange={handleChange}/>
+                    <label>Style:</label>
+                    <input type="text" name="style" placeholder={props.style ? props.style : ""}
+                           onChange={handleChange}/>
                 </div>
                 <div className="field">
                     <label>Image:</label>

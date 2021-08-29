@@ -1,8 +1,12 @@
 import React, {useEffect, useState, useRef} from "react";
+import typeApi from '../../api/type-server'
 
-const Dropdown = ({options, selected, onSelectedChange, label}) => {
+const Dropdown = ({selected, onSelectedChange, label}) => {
 
     const [open, setOpen] = useState(false);
+    const [term, setTerm] = useState('');
+    const [debouncedTerm, setDebouncedTerm] = useState(term);
+    const [results, setResults] = useState([]);
 
 
     const ref = useRef();
@@ -24,7 +28,32 @@ const Dropdown = ({options, selected, onSelectedChange, label}) => {
         };
     }, []);
 
-    const renderedOptions = options.map((option, i) => {
+    useEffect(() => {
+        const timerId = setTimeout(() => {
+            setDebouncedTerm(term);
+        }, 1000);
+
+        return (() => {
+            clearTimeout(timerId)
+        })
+    }, [term])
+
+    useEffect(() => {
+        const search = async () => {
+            const {data} = await typeApi.get('/beer', {
+                params: {
+                    name: debouncedTerm
+                }
+            });
+            setResults(data);
+        };
+        if (debouncedTerm) {
+            search();
+        }
+
+    }, [debouncedTerm]);
+
+    const renderedOptions = results.map((option, i) => {
 
         if (option.name === selected.name) {
             return null;
@@ -51,7 +80,9 @@ const Dropdown = ({options, selected, onSelectedChange, label}) => {
                         setOpen(!open)
                     }}>
                     <i className="dropdown icon"/>
-                    <div className="text">{selected.name}</div>
+                    <label>Enter Search Term</label>
+                    <input value={selected.name ? selected.name : term} onChange={e => setTerm(e.target.value)}
+                           className="input"/>
                     <div className={`menu ${open ? 'visible transition' : ''}`}>{renderedOptions}</div>
                 </div>
             </div>
@@ -60,3 +91,5 @@ const Dropdown = ({options, selected, onSelectedChange, label}) => {
 };
 
 export default Dropdown;
+
+//<input className="text" type="text" placeholder={selected.name} value={selected.name}/>

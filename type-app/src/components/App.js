@@ -10,8 +10,8 @@ const App = () => {
             <BrowserRouter>
                 <div>
                     <Route path="/" exact component={BrewFloor}/>
-                    <Route path="/createtank" exact component={CreateTank}/>
-                    <Route path="/createbeer" exact component={CreateBeer}/>
+                    <Route path="/create/tank" exact component={CreateTank}/>
+                    <Route path="/create/beer" exact component={CreateBeer}/>
                 </div>
             </BrowserRouter>
         </div>

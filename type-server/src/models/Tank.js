@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Beer = mongoose.model('Beer');
 //const Customer = mongoose.model('Customer');
 const Schema = mongoose.Schema;
+const beerSchema = require('./Beer');
 
 const tankSchema = new mongoose.Schema({
     userId: {
@@ -16,9 +17,8 @@ const tankSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    beer: {
-        type: Schema.Types.ObjectId,
-        ref: 'Beer',
+    contents: {
+        type: beerSchema,
         required: false
     },
     fill: {
@@ -37,7 +37,7 @@ const tankSchema = new mongoose.Schema({
         type: Date,
         required: false
     },
-    nextPhase : {
+    nextPhase: {
         type: String,
         required: false
     }

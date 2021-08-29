@@ -55,10 +55,29 @@ class BrewFloor extends React.Component {
 
             return (
                 <div>
-                    <button onClick={() => this.props.history.push('/createtank')}>
-                        Create Tank
-                    </button>
-                    <div>{tankComponents}</div>
+                    <div className={"ui menu"}>
+                        <div className={"header item"}>
+                            <div className={"ui animated button"} tabIndex="0"
+                                 onClick={() => this.props.history.push('/create/tank')}>
+                                <div className={"visible content"}>Create Tank</div>
+                                <div className={"hidden content"}>
+                                    <i className={"right arrow icon"}></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={"header item"}>
+                            <div className={"ui animated button"} tabIndex="0"
+                                 onClick={() => this.props.history.push('/create/beer')}>
+                                <div className={"visible content"}>Create Beer</div>
+                                <div className={"hidden content"}>
+                                    <i className={"right arrow icon"}></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={"ui four column doubling stackable grid container"}>
+                        <div className={"ui link cards"}>{tankComponents}</div>
+                    </div>
                 </div>
             )
         }

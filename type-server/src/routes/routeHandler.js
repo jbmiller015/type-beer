@@ -12,13 +12,19 @@ const router = express.Router();
 router.route('/:base').get(async (req, res) => {
     const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
-    const getRes = await Object.find({});
+    const {name} = req.query;
+    let getRes;
+
+    if (name)
+        getRes = await Object.find({name: {$regex: name, $options: 'i'}});
+    else
+        getRes = await Object.find({});
+
     res.send(getRes);
 }).post(async (req, res) => {
     const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
     try {
-        console.log(req.body);
         const object = new Object(createModel(base, req));
         await object.save();
         res.send(object);
