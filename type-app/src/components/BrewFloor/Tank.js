@@ -1,8 +1,13 @@
 import React from 'react';
+import tankImage from '../../media/tankw.png'
+import './tank.css'
+import moment from "moment";
 
 
 //Should adjust look if filled
 const Tank = (props) => {
+
+    const {currPhase, currPhaseDate, contents} = props.tankData;
 
     const dateFormat = (date) => {
         let datetime = new Date(date);
@@ -10,31 +15,46 @@ const Tank = (props) => {
         result += "/" + datetime.getDay();
         result += "/" + datetime.getFullYear();
         return result;
-    }
+    };
+
+    const remainingTime = (phaseDate) => {
+        const nextMoment = moment(phaseDate);
+        return nextMoment.toNow(true);
+    };
 
     return (
-        <div className={"card"}>
-            <div className={"image"}>
-                <img src={props.tankData.contents.image ? props.tankData.contents.image : ""}/>
-            </div>
-            <div className={"content"}>
-                <div className={"header"}>{props.tankData.name ? props.tankData.name : ""}</div>
-                <div className={"meta"}>{props.tankData.size ? props.tankData.size : ""}</div>
-                <div
-                    className={"description"}>Contents: {props.tankData.contents.name ? props.tankData.contents.name : ""}</div>
-                <div className={"description"}>Current
-                    Phase: {props.tankData.currPhase ? props.tankData.currPhase : ""}</div>
-                <div className={"description"}>Next
-                    Phase: {props.tankData.nextPhase ? props.tankData.nextPhase : ""}</div>
-                <div className={"description"}>Fill: {props.tankData.fill ? props.tankData.fill : ""}</div>
-            </div>
-            <div className={"extra content"}>
-                <span
-                    className={"right floated"}>Fill Date: {props.tankData.fillDate ? dateFormat(props.tankData.fillDate) : ""}</span>
-                <span>Current Phase End Date: {props.tankData.currPhaseDate ? dateFormat(props.tankData.currPhaseDate) : ""}</span>
+        <div id={"container"} className={"col-lg-3"}>
+            <div className={"img-container"}>
+                <div className={"positioning"}>
+                    <div className={"ui card"} style={{maxWidth: '100%'}}>
+                        <div className={"image"}>
+                            <img src={contents.image ? contents.image : tankImage}/>
+                        </div>
+                        <div className={"content"}>
+                            <div className={"header"}>{contents.name ? contents.name : ""}</div>
+                            <div
+                                className={"meta"}>{remainingTime(currPhaseDate) ? remainingTime(currPhaseDate) : ""}</div>
+
+                        </div>
+                        <div className={"extra content"}>
+                        <span
+                            className={"right floated"}>Current Phase: {currPhase ? currPhase : ""}</span>
+                        </div>
+                    </div>
+                </div>
+                <img className={"outerImage"} src={tankImage}/>
             </div>
         </div>
     );
 };
 
 export default Tank;
+
+
+// <div
+//     className={"description"}>Contents: {props.tankData.contents.name ? props.tankData.contents.name : ""}</div>
+// <div className={"description"}>Current
+//     Phase: {props.tankData.currPhase ? props.tankData.currPhase : ""}</div>
+// <div className={"description"}>Next
+//     Phase: {props.tankData.nextPhase ? props.tankData.nextPhase : ""}</div>
+// <div className={"description"}>Fill: {props.tankData.fill ? props.tankData.fill : ""}</div>
