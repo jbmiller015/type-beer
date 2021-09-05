@@ -40,8 +40,24 @@ class BrewFloor extends React.Component {
         });
     }
 
+    deleteTank = (tankId) => {
+        console.log("delete Press")
+        typeApi.delete(`/tank/${tankId}`).then((res) => {
+        }).catch(err => {
+            console.error(err);
+        })
+
+        const tanks = this.state.tanks;
+        
+        this.setState({
+            tanks: this.state.tanks.filter((_, i) => {
+                return tanks[i]._id !== tankId;
+            })
+        });
+    }
 
     render() {
+
         const {error, isLoaded, tanks} = this.state;
 
         if (error) {
@@ -57,7 +73,7 @@ class BrewFloor extends React.Component {
         } else {
 
             let tankComponents = tanks.map((tank, i) => {
-                return (<Tank tankData={tank} key={i}/>)
+                return (<Tank tankData={tank} key={i} deleteTank={this.deleteTank}/>)
             })
 
             return (

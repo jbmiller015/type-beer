@@ -1,22 +1,19 @@
-import React, {useState} from 'react';
-import tankImage from '../../media/tankw.png';
+import React from 'react';
 import tankOverlay from '../../media/tankwwindow.png';
 import moment from "moment";
-import mergeImages from 'merge-images';
-
 
 //Should adjust look if filled
 const Tank = (props) => {
 
-    const {currPhase, currPhaseDate, contents} = props.tankData;
+    const {currPhase, currPhaseDate, contents, fill, _id} = props.tankData;
 
-    const dateFormat = (date) => {
+    /*const dateFormat = (date) => {
         let datetime = new Date(date);
         let result = datetime.getMonth();
         result += "/" + datetime.getDay();
         result += "/" + datetime.getFullYear();
         return result;
-    };
+    };*/
 
     const remainingTime = (phaseDate) => {
         const nextMoment = moment(phaseDate);
@@ -24,8 +21,8 @@ const Tank = (props) => {
     }
 
     const imageWrapper = {
-        backgroundColor: contents.image ? '' : '#DAA520',
-        backgroundImage: `url(${contents.image})`,
+        backgroundColor: (contents && !contents.image && fill) ? '#DAA520' : '',
+        backgroundImage: `url(${contents ? contents.image : ''})`,
         backgroundSize: '70% 100%',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center'
@@ -34,17 +31,24 @@ const Tank = (props) => {
 
     return (
         <div className={"center aligned column"}>
-            <div className={"ui link cards"}>
+            <div className={"ui cards"}>
                 <div className={"card"}>
                     <div className={"image"} style={imageWrapper}>
-                        <img src={tankOverlay}/>
+                        <img alt="tankOverlay" src={tankOverlay}/>
                     </div>
                     <div className={"content"}>
-                        <div className={"header"}>{contents.name ? contents.name : ""}</div>
+                        <div className={"header"}>{contents && contents.name ? contents.name : ""}</div>
                         <div className={"meta"}>{remainingTime(currPhaseDate) ? remainingTime(currPhaseDate) : ""}</div>
                     </div>
                     <div className={"extra content"}>
-                        <span>Current Phase: {currPhase ? currPhase : ""}</span>
+                        <span>{currPhase ? currPhase : ""}</span>
+                    </div>
+                    <div className="extra content">
+                        <div className="ui two buttons">
+                            <button className="ui basic green button">Details</button>
+                            <button className="ui basic red button" onClick={() => props.deleteTank(_id)}>Delete
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -54,12 +58,3 @@ const Tank = (props) => {
 
 export default Tank;
 
-
-//
-//<div
-//     className={"description"}>Contents: {props.tankData.contents.name ? props.tankData.contents.name : ""}</div>
-// <div className={"description"}>Current
-//     Phase: {props.tankData.currPhase ? props.tankData.currPhase : ""}</div>
-// <div className={"description"}>Next
-//     Phase: {props.tankData.nextPhase ? props.tankData.nextPhase : ""}</div>
-// <div className={"description"}>Fill: {props.tankData.fill ? props.tankData.fill : ""}</div>

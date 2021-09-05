@@ -48,8 +48,8 @@ router.route('/:base/:sub').get(async (req, res) => {
         res.status(422).send({error: e.message});
     }
 }).put(async (req, res) => {
+    const base = toUpper(req.params.base);
     const _id = req.params.sub;
-    const base = req.params.base;
     const Object = mongoose.model(base);
     try {
         await Object.findOneAndUpdate({_id}, createModel(base, req), {upsert: true});
@@ -58,8 +58,9 @@ router.route('/:base/:sub').get(async (req, res) => {
         res.status(422).send({error: e.message});
     }
 }).delete(async (req, res) => {
+    const base = toUpper(req.params.base);
     const _id = req.params.sub;
-    const Object = mongoose.model(req.params.base);
+    const Object = mongoose.model(base);
     try {
         await Object.findOneAndDelete({_id});
         res.send({deleted: _id});
