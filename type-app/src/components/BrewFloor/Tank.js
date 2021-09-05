@@ -20,62 +20,34 @@ const Tank = (props) => {
 
     const remainingTime = (phaseDate) => {
         const nextMoment = moment(phaseDate);
-        return nextMoment.toNow(true);
-    }
-
-    const OverlayImageStyle = {
-        position: "absolute",
-        top: "0",
-        left: "0",
-        maxWidth: "300px",
-        maxHeight: "300px"
-    }
-
-    const innerImageStyle = {
-        position: "absolute",
-        top: "85px",
-        left: "85px",
-        maxWidth: "110px",
-        maxHeight: "300px",
+        return nextMoment.toNow();
     }
 
     const imageWrapper = {
-        position: "relative",
-        maxWidth: "100%"
-    }
-    const card = {
-        border: "2px",
-        height: "300px"
+        backgroundColor: contents.image ? '' : '#DAA520',
+        backgroundImage: `url(${contents.image})`,
+        backgroundSize: '70% 100%',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center'
     }
 
-    const content = {
-        padding: "2px 16px"
-    }
 
     return (
-        <div className={"column"}>
-
+        <div className={"center aligned column"}>
             <div className={"ui link cards"}>
                 <div className={"card"}>
-                    <div className={"image"} style={{
-                        backgroundImage: `url(${contents.image})`,
-                        backgroundSize: '70% 100%',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundPosition: 'center'
-                    }}>
+                    <div className={"image"} style={imageWrapper}>
                         <img src={tankOverlay}/>
                     </div>
                     <div className={"content"}>
                         <div className={"header"}>{contents.name ? contents.name : ""}</div>
-                        <div
-                            className={"meta"}>{remainingTime(currPhaseDate) ? remainingTime(currPhaseDate) : ""}</div>
+                        <div className={"meta"}>{remainingTime(currPhaseDate) ? remainingTime(currPhaseDate) : ""}</div>
                     </div>
                     <div className={"extra content"}>
-                        <span className={"right floated"}>Current Phase: {currPhase ? currPhase : ""}</span>
+                        <span>Current Phase: {currPhase ? currPhase : ""}</span>
                     </div>
                 </div>
             </div>
-
         </div>
     );
 };

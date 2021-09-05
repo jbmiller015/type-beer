@@ -1,6 +1,7 @@
 import React from 'react';
 import typeApi from '../../api/type-server'
 import Dropdown from "./Dropdown";
+import NavComponent from "../NavComponent";
 
 
 class CreateTank extends React.Component {
@@ -61,6 +62,7 @@ class CreateTank extends React.Component {
     render() {
         return (
             <div>
+                <NavComponent/>
                 <form className="ui form" onSubmit={this.onFormSubmit}>
                     <div className="field">
                         <label>Name:</label>
@@ -75,7 +77,8 @@ class CreateTank extends React.Component {
                     <div className="field">
                         <Dropdown label="Select Tank Contents"
                                   selected={this.state.contents}
-                                  onSelectedChange={this.setContents}/>
+                                  onSelectedChange={this.setContents}
+                                  url="beer"/>
                     </div>
                     <div className="field">
                         <label>Fill:</label>

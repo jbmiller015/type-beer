@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import typeApi from '../../api/type-server'
+import NavComponent from "../NavComponent";
 import {useHistory} from "react-router-dom";
 
 
@@ -44,6 +45,7 @@ const CreateBeer = (props) => {
 
     return (
         <div>
+            <NavComponent/>
             <form className="ui form" onSubmit={onFormSubmit}>
                 <div className="field">
                     <label>Name:</label>

@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import typeApi from '../../api/type-server'
 
-const Dropdown = ({selected, onSelectedChange, label}) => {
+const Dropdown = ({selected, onSelectedChange, label, url}) => {
 
     const [open, setOpen] = useState(false);
     const [term, setTerm] = useState('');
@@ -40,7 +40,7 @@ const Dropdown = ({selected, onSelectedChange, label}) => {
 
     useEffect(() => {
         const search = async () => {
-            const {data} = await typeApi.get('/beer', {
+            const {data} = await typeApi.get(`/${url}`, {
                 params: {
                     name: debouncedTerm
                 }
