@@ -1,7 +1,8 @@
-import React from 'react';
-import tankImage from '../../media/tankw.png'
-import './tank.css'
+import React, {useState} from 'react';
+import tankImage from '../../media/tankw.png';
+import tankOverlay from '../../media/tankwwindow.png';
 import moment from "moment";
+import mergeImages from 'merge-images';
 
 
 //Should adjust look if filled
@@ -20,29 +21,60 @@ const Tank = (props) => {
     const remainingTime = (phaseDate) => {
         const nextMoment = moment(phaseDate);
         return nextMoment.toNow(true);
-    };
+    }
+
+    const OverlayImageStyle = {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        maxWidth: "300px",
+        maxHeight: "300px"
+    }
+
+    const innerImageStyle = {
+        position: "absolute",
+        top: "85px",
+        left: "85px",
+        maxWidth: "110px",
+        maxHeight: "300px",
+    }
+
+    const imageWrapper = {
+        position: "relative",
+        maxWidth: "100%"
+    }
+    const card = {
+        border: "2px",
+        height: "300px"
+    }
+
+    const content = {
+        padding: "2px 16px"
+    }
 
     return (
-        <div id={"container"} className={"col-lg-3"}>
-            <div className={"img-container"}>
-                <div className={"positioning"}>
-                    <div className={"ui card"} style={{maxWidth: '100%'}}>
-                        <div className={"image"}>
-                            <img src={contents.image ? contents.image : tankImage}/>
+        <div className={"column"}>
+            <div className={"ui segment"}>
+                <div className={"ui link cards"}>
+                    <div className={"card"}>
+                        <div className={"image"} style={{
+                            backgroundImage: `url(${contents.image})`,
+                            backgroundSize: '70% 100%',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'center'
+                        }}>
+                            <img src={tankOverlay}/>
                         </div>
                         <div className={"content"}>
                             <div className={"header"}>{contents.name ? contents.name : ""}</div>
                             <div
                                 className={"meta"}>{remainingTime(currPhaseDate) ? remainingTime(currPhaseDate) : ""}</div>
-
                         </div>
                         <div className={"extra content"}>
-                        <span
-                            className={"right floated"}>Current Phase: {currPhase ? currPhase : ""}</span>
+                            <span className={"right floated"}>Current Phase: {currPhase ? currPhase : ""}</span>
                         </div>
                     </div>
                 </div>
-                <img className={"outerImage"} src={tankImage}/>
             </div>
         </div>
     );
@@ -51,7 +83,8 @@ const Tank = (props) => {
 export default Tank;
 
 
-// <div
+//
+//<div
 //     className={"description"}>Contents: {props.tankData.contents.name ? props.tankData.contents.name : ""}</div>
 // <div className={"description"}>Current
 //     Phase: {props.tankData.currPhase ? props.tankData.currPhase : ""}</div>
