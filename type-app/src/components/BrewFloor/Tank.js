@@ -54,28 +54,28 @@ const Tank = (props) => {
 
     return (
         <div className={"column"}>
-            <div className={"ui segment"}>
-                <div className={"ui link cards"}>
-                    <div className={"card"}>
-                        <div className={"image"} style={{
-                            backgroundImage: `url(${contents.image})`,
-                            backgroundSize: '70% 100%',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'center'
-                        }}>
-                            <img src={tankOverlay}/>
-                        </div>
-                        <div className={"content"}>
-                            <div className={"header"}>{contents.name ? contents.name : ""}</div>
-                            <div
-                                className={"meta"}>{remainingTime(currPhaseDate) ? remainingTime(currPhaseDate) : ""}</div>
-                        </div>
-                        <div className={"extra content"}>
-                            <span className={"right floated"}>Current Phase: {currPhase ? currPhase : ""}</span>
-                        </div>
+
+            <div className={"ui link cards"}>
+                <div className={"card"}>
+                    <div className={"image"} style={{
+                        backgroundImage: `url(${contents.image})`,
+                        backgroundSize: '70% 100%',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundPosition: 'center'
+                    }}>
+                        <img src={tankOverlay}/>
+                    </div>
+                    <div className={"content"}>
+                        <div className={"header"}>{contents.name ? contents.name : ""}</div>
+                        <div
+                            className={"meta"}>{remainingTime(currPhaseDate) ? remainingTime(currPhaseDate) : ""}</div>
+                    </div>
+                    <div className={"extra content"}>
+                        <span className={"right floated"}>Current Phase: {currPhase ? currPhase : ""}</span>
                     </div>
                 </div>
             </div>
+
         </div>
     );
 };

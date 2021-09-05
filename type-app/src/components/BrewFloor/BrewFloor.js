@@ -76,7 +76,9 @@ class BrewFloor extends React.Component {
                         </div>
                     </div>
                     <div className={"ui three column grid"}>
-                        <div>{tankComponents}</div>
+                        <div className={"row"}>
+                            {tankComponents}
+                        </div>
                     </div>
                 </div>
             )
