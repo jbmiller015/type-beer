@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import tankOverlay from '../../media/tankwwindow.png';
 import moment from "moment";
 
 //Should adjust look if filled
 const Tank = (props) => {
+
+    const [edit, setEdit] = useState(false);
 
     const {currPhase, currPhaseDate, contents, fill, _id} = props.tankData;
 
@@ -43,12 +45,20 @@ const Tank = (props) => {
                     <div className={"extra content"}>
                         <span>{currPhase ? currPhase : ""}</span>
                     </div>
-                    <div className="extra content">
+                    <div className="extra content">{!edit ?
                         <div className="ui two buttons">
                             <button className="ui basic green button">Details</button>
+                            <button className="ui basic grey button" onClick={() => setEdit(true)}>Edit
+                            </button>
+                        </div> :
+                        <div className="ui three buttons">
+                            <button className="ui basic yellow button">Edit Details</button>
                             <button className="ui basic red button" onClick={() => props.deleteTank(_id)}>Delete
                             </button>
+                            <button className="ui basic grey button" onClick={() => setEdit(false)}>Cancel
+                            </button>
                         </div>
+                    }
                     </div>
                 </div>
             </div>
