@@ -48,7 +48,7 @@ class BrewFloor extends React.Component {
         })
 
         const tanks = this.state.tanks;
-        
+
         this.setState({
             tanks: this.state.tanks.filter((_, i) => {
                 return tanks[i]._id !== tankId;
@@ -79,8 +79,8 @@ class BrewFloor extends React.Component {
             return (
                 <div>
                     <NavComponent/>
-                    <div className={"ui equal width stackable grid"}
-                         style={{paddingInline: "5%"}}>
+                    <div className={"ui equal width centered stackable grid"}
+                         style={{paddingLeft: "5%"}}>
                         {tankComponents}
                     </div>
                 </div>

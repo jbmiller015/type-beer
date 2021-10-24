@@ -32,8 +32,8 @@ const Tank = (props) => {
 
 
     return (
-        <div className={"center aligned column"}>
-            <div className={"ui cards"}>
+        <div class="four wide column">
+            <div className={"ui link cards"}>
                 <div className={"card"}>
                     <div className={"image"} style={imageWrapper}>
                         <img alt="tankOverlay" src={tankOverlay}/>
@@ -43,23 +43,23 @@ const Tank = (props) => {
                         <div className={"meta"}>{remainingTime(currPhaseDate) ? remainingTime(currPhaseDate) : ""}</div>
                     </div>
                     <div className={"extra content"}>
-                        <span>{currPhase ? currPhase : ""}</span>
+                        <span style={{fontSize: "medium"}}>{currPhase ? currPhase : ""}</span>
+                        <div>{!edit ?
+                            <div>
+                                <button className="mini ui right floated icon button" onClick={() => setEdit(true)}>
+                                    <i className="setting icon"></i>
+                                </button>
+                            </div> :
+                            <div className="ui three buttons">
+                                <button className="ui basic yellow button">Edit Details</button>
+                                <button className="ui basic red button" onClick={() => props.deleteTank(_id)}>Delete
+                                </button>
+                                <button className="ui basic grey button" onClick={() => setEdit(false)}>Cancel
+                                </button>
+                            </div>
+                        }</div>
                     </div>
-                    <div className="extra content">{!edit ?
-                        <div className="ui two buttons">
-                            <button className="ui basic green button">Details</button>
-                            <button className="ui basic grey button" onClick={() => setEdit(true)}>Edit
-                            </button>
-                        </div> :
-                        <div className="ui three buttons">
-                            <button className="ui basic yellow button">Edit Details</button>
-                            <button className="ui basic red button" onClick={() => props.deleteTank(_id)}>Delete
-                            </button>
-                            <button className="ui basic grey button" onClick={() => setEdit(false)}>Cancel
-                            </button>
-                        </div>
-                    }
-                    </div>
+
                 </div>
             </div>
         </div>
