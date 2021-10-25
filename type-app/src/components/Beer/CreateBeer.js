@@ -1,76 +1,89 @@
-import React, {useState} from 'react';
+import React from 'react';
 import typeApi from '../../api/type-server'
 import NavComponent from "../NavComponent";
-import {useHistory} from "react-router-dom";
 
 
-const CreateBeer = (props) => {
+class CreateBeer extends React.Component {
 
-    const [formData, setFormData] = useState({});
-    const history = useHistory();
-
-
-    const handleChange = e => {
-        const {name, files, value} = e.target;
-        if (name === "image") {
-            console.log(files[0]);
-            const reader = new FileReader();
-            reader.readAsDataURL(files[0]);
-
-            reader.addEventListener("load", () => {
-                setFormData(prevState => ({
-                    ...prevState,
-                    [name]: reader.result
-                }));
-            })
-        } else {
-            setFormData(prevState => ({
-                ...prevState,
-                [name]: value
-            }));
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: "",
+            style: "",
+            image: "",
+            desc: ""
         }
-    };
+    }
 
-    const onFormSubmit = async (e) => {
+    onFormSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData)
+
+        const formData = {
+            name: this.state.name,
+            style: this.state.style,
+            image: this.state.image,
+            desc: this.state.desc
+        }
+
 
         await typeApi.post('/beer', formData)
             .then(res =>
-                history.push("/"))
+                this.props.history.push('/'))
             .catch(err => {
                 console.error(err)
             });
     }
 
-    return (
-        <div>
-            <NavComponent/>
-            <form className="ui form" onSubmit={onFormSubmit}>
-                <div className="field">
-                    <label>Name:</label>
-                    <input type="text" name="name" placeholder={props.name ? props.name : ""} onChange={handleChange}/>
-                </div>
-                <div className="field">
-                    <label>Style:</label>
-                    <input type="text" name="style" placeholder={props.style ? props.style : ""}
-                           onChange={handleChange}/>
-                </div>
-                <div className="field">
-                    <label>Image:</label>
-                    <input type="file" id="avatar" name="image" accept="image/png, image/jpeg"
-                           placeholder={props.image ? props.image : null}
-                           onChange={handleChange}/>
-                </div>
-                <div className="field">
-                    <label>Description:</label>
-                    <input type="text" name="desc" placeholder={props.desc ? props.desc : ""}
-                           onChange={handleChange}/>
-                </div>
-                <input type="submit" value="Submit"/>
-            </form>
-        </div>
-    );
-};
+
+    handleChange = e => {
+        const {name, files, value} = e.target;
+        if (name === "image") {
+            const reader = new FileReader();
+            reader.readAsDataURL(files[0]);
+            reader.addEventListener("load", () => {
+                this.setState({
+                    [name]: reader.result
+                })
+            })
+        } else {
+            this.setState({
+                [name]: value
+            })
+        }
+    };
+
+    render() {
+        return (
+            <div>
+                <NavComponent/>
+                <form className="ui form" onSubmit={this.onFormSubmit}>
+                    <div className="field">
+                        <label>Name:</label>
+                        <input type="text" name="name" placeholder={this.props.name ? this.props.name : ""}
+                               onChange={this.handleChange}/>
+                    </div>
+                    <div className="field">
+                        <label>Style:</label>
+                        <input type="text" name="style" placeholder={this.props.style ? this.props.style : ""}
+                               onChange={this.handleChange}/>
+                    </div>
+                    <div className="field">
+                        <label>Image:</label>
+                        <input type="file" id="avatar" name="image" accept="image/png, image/jpeg"
+                               placeholder={this.props.image ? this.props.image : null}
+                               onChange={this.handleChange}/>
+                    </div>
+                    <div className="field">
+                        <label>Description:</label>
+                        <input type="text" name="desc" placeholder={this.props.desc ? this.props.desc : ""}
+                               onChange={this.handleChange}/>
+                    </div>
+                    <input type="submit" value="Submit"/>
+                </form>
+            </div>
+        );
+    }
+}
+
 
 export default CreateBeer;

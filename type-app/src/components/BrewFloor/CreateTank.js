@@ -31,7 +31,6 @@ class CreateTank extends React.Component {
         this.setState({
             [name]: value
         })
-        console.log(this.state)
     };
 
     onFormSubmit = async (e) => {
@@ -114,7 +113,6 @@ class CreateTank extends React.Component {
                             <input type="submit" value="Submit"/>
                         </form>
                     </div>
-
                     {this.state.contents ?
                         <div style={{border: "1px"}} className="contents">
                             <img style={{maxWidth: "100px"}} src={this.state.contents.image}/>
