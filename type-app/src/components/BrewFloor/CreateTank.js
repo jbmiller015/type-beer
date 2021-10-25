@@ -63,54 +63,64 @@ class CreateTank extends React.Component {
         return (
             <div>
                 <NavComponent/>
-                <form className="ui form" onSubmit={this.onFormSubmit}>
-                    <div className="field">
-                        <label>Name:</label>
-                        <input type="text" name="name" placeholder={this.props.name ? this.props.name : ""}
-                               onChange={this.handleChange}/>
+                <div className="container" style={{display: "flex", flexDirection: "row", paddingLeft: "1%"}}>
+                    <div className="form" style={{paddingRight: "30%"}}>
+                        <form className="ui form" onSubmit={this.onFormSubmit}>
+                            <div className="field">
+                                <label>Name:</label>
+                                <input type="text" name="name" placeholder={this.props.name ? this.props.name : ""}
+                                       onChange={this.handleChange}/>
+                            </div>
+                            <div className="field">
+                                <label>Size:</label>
+                                <input type="text" name="size" placeholder={this.props.size ? this.props.size : ""}
+                                       onChange={this.handleChange}/>
+                            </div>
+                            <div className="field">
+                                <Dropdown label="Select Tank Contents"
+                                          selected={this.state.contents}
+                                          onSelectedChange={this.setContents}
+                                          url="beer"/>
+                            </div>
+                            <div className="field">
+                                <label>Fill:</label>
+                                <input type="boolean" name="fill" placeholder={this.props.fill ? this.props.fill : ""}
+                                       onChange={this.handleChange}/>
+                            </div>
+                            <div className="field">
+                                <label>Fill Date:</label>
+                                <input type="datetime-local" name="fillDate"
+                                       placeholder={this.props.fillDate ? this.props.fillDate : ""}
+                                       onChange={this.handleChange}/>
+                            </div>
+                            <div className="field">
+                                <label>Current Phase:</label>
+                                <input type="text" name="currPhase"
+                                       placeholder={this.props.currPhase ? this.props.currPhase : ""}
+                                       onChange={this.handleChange}/>
+                            </div>
+                            <div className="field">
+                                <label>Next Phase:</label>
+                                <input type="text" name="nextPhase"
+                                       placeholder={this.props.nextPhase ? this.props.nextPhase : ""}
+                                       onChange={this.handleChange}/>
+                            </div>
+                            <div className="field">
+                                <label>Next Phase:</label>
+                                <input type="datetime-local" name="currPhaseDate"
+                                       placeholder={this.props.currPhaseDate ? this.props.currPhaseDate : ""}
+                                       onChange={this.handleChange}/>
+                            </div>
+                            <input type="submit" value="Submit"/>
+                        </form>
                     </div>
-                    <div className="field">
-                        <label>Size:</label>
-                        <input type="text" name="size" placeholder={this.props.size ? this.props.size : ""}
-                               onChange={this.handleChange}/>
-                    </div>
-                    <div className="field">
-                        <Dropdown label="Select Tank Contents"
-                                  selected={this.state.contents}
-                                  onSelectedChange={this.setContents}
-                                  url="beer"/>
-                    </div>
-                    <div className="field">
-                        <label>Fill:</label>
-                        <input type="boolean" name="fill" placeholder={this.props.fill ? this.props.fill : ""}
-                               onChange={this.handleChange}/>
-                    </div>
-                    <div className="field">
-                        <label>Fill Date:</label>
-                        <input type="datetime-local" name="fillDate"
-                               placeholder={this.props.fillDate ? this.props.fillDate : ""}
-                               onChange={this.handleChange}/>
-                    </div>
-                    <div className="field">
-                        <label>Current Phase:</label>
-                        <input type="text" name="currPhase"
-                               placeholder={this.props.currPhase ? this.props.currPhase : ""}
-                               onChange={this.handleChange}/>
-                    </div>
-                    <div className="field">
-                        <label>Next Phase:</label>
-                        <input type="text" name="nextPhase"
-                               placeholder={this.props.nextPhase ? this.props.nextPhase : ""}
-                               onChange={this.handleChange}/>
-                    </div>
-                    <div className="field">
-                        <label>Next Phase:</label>
-                        <input type="datetime-local" name="currPhaseDate"
-                               placeholder={this.props.currPhaseDate ? this.props.currPhaseDate : ""}
-                               onChange={this.handleChange}/>
-                    </div>
-                    <input type="submit" value="Submit"/>
-                </form>
+
+                    {this.state.contents ?
+                        <div style={{border: "1px"}} className="contents">
+                            <img style={{maxWidth: "100px"}} src={this.state.contents.image}/>
+                        </div>
+                        : null}
+                </div>
             </div>
         );
     }

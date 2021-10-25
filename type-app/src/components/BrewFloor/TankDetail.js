@@ -17,6 +17,8 @@ const TankDetail = (props) => {
         return result;
     };*/
 
+
+
     const remainingTime = (phaseDate) => {
         const nextMoment = moment(phaseDate);
         return nextMoment.toNow();

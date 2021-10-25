@@ -2,6 +2,8 @@ import React from 'react';
 import Tank from "./Tank";
 import NavComponent from "../NavComponent";
 import typeApi from "../../api/type-server";
+import Modal from "../modal/Modal";
+import modal from "../modal/Modal.css"
 
 
 class BrewFloor extends React.Component {
@@ -12,8 +14,11 @@ class BrewFloor extends React.Component {
             error: null,
             isLoaded: false,
             tanks: [],
-            beers: []
+            beers: [],
+            show: false,
+            modalData: null
         };
+        this.showModal = this.showModal.bind(this);
     }
 
     componentDidMount() {
@@ -56,9 +61,30 @@ class BrewFloor extends React.Component {
         });
     }
 
+    /**
+     * Receives square data for modal.
+     * @param squareData
+     */
+    loadData = (tankData) => {
+
+        this.setState({
+            modalData: tankData
+        });
+        this.showModal();
+    };
+
+    /**
+     * Sets modal visibility.
+     */
+    showModal = () => {
+        this.setState({
+            show: !this.state.show,
+        });
+    };
+
     render() {
 
-        const {error, isLoaded, tanks} = this.state;
+        const {error, isLoaded, tanks, modalData} = this.state;
 
         if (error) {
             return <div>Error: {error.message}</div>;
@@ -73,12 +99,15 @@ class BrewFloor extends React.Component {
         } else {
 
             let tankComponents = tanks.map((tank, i) => {
-                return (<Tank tankData={tank} key={i} deleteTank={this.deleteTank}/>)
+                return (<Tank tankData={tank} key={i} onClick={this.loadData}/>)
             })
-
             return (
                 <div>
                     <NavComponent/>
+                    {modalData ?
+                        <Modal onClose={this.showModal} deleteTank={this.deleteTank} show={this.state.show}
+                               data={modalData}/> : null
+                    }
                     <div className={"ui equal width centered stackable grid"}
                          style={{paddingLeft: "5%"}}>
                         {tankComponents}

@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import tankOverlay from '../../media/tankwwindow.png';
 import moment from "moment";
+import Modal from "../modal/Modal";
 
 //Should adjust look if filled
 const Tank = (props) => {
-
-    const [edit, setEdit] = useState(false);
 
     const {currPhase, currPhaseDate, contents, fill, _id} = props.tankData;
 
@@ -32,8 +31,8 @@ const Tank = (props) => {
 
 
     return (
-        <div class="four wide column">
-            <div className={"ui link cards"}>
+        <div className="four wide column">
+            <div className={"ui cards"}>
                 <div className={"card"}>
                     <div className={"image"} style={imageWrapper}>
                         <img alt="tankOverlay" src={tankOverlay}/>
@@ -44,22 +43,11 @@ const Tank = (props) => {
                     </div>
                     <div className={"extra content"}>
                         <span style={{fontSize: "medium"}}>{currPhase ? currPhase : ""}</span>
-                        <div>{!edit ?
-                            <div>
-                                <button className="mini ui right floated icon button" onClick={() => setEdit(true)}>
-                                    <i className="setting icon"></i>
-                                </button>
-                            </div> :
-                            <div className="ui three buttons">
-                                <button className="ui basic yellow button">Edit Details</button>
-                                <button className="ui basic red button" onClick={() => props.deleteTank(_id)}>Delete
-                                </button>
-                                <button className="ui basic grey button" onClick={() => setEdit(false)}>Cancel
-                                </button>
-                            </div>
-                        }</div>
                     </div>
-
+                    <button className="ui bottom attached button" onClick={() => props.onClick(props.tankData)}>
+                        <i className="setting icon"></i>
+                        Details
+                    </button>
                 </div>
             </div>
         </div>
