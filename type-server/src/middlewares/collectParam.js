@@ -1,6 +1,5 @@
 module.exports = {
     createModel: function (name, req) {
-
         switch (name) {
             case 'Brewery': {
                 return {

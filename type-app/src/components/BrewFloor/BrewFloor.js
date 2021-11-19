@@ -104,12 +104,12 @@ class BrewFloor extends React.Component {
             return (
                 <div>
                     <NavComponent/>
+                    <div className="ui horizontal divider"/>
                     {modalData ?
                         <Modal onClose={this.showModal} deleteTank={this.deleteTank} show={this.state.show}
                                data={modalData}/> : null
                     }
-                    <div className={"ui equal width centered stackable grid"}
-                         style={{paddingLeft: "5%"}}>
+                    <div className={"ui padded equal height centered stackable grid"}>
                         {tankComponents}
                     </div>
                 </div>

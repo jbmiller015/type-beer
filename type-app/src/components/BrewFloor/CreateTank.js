@@ -31,6 +31,7 @@ class CreateTank extends React.Component {
         this.setState({
             [name]: value
         })
+        console.log(this.state)
     };
 
     onFormSubmit = async (e) => {
@@ -68,7 +69,8 @@ class CreateTank extends React.Component {
                             <div className="field">
                                 <label>Name:</label>
                                 <input type="text" name="name" placeholder={this.props.name ? this.props.name : ""}
-                                       onChange={this.handleChange}/>
+                                       onChange={this.handleChange}
+                                />
                             </div>
                             <div className="field">
                                 <label>Size:</label>
