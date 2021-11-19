@@ -12,7 +12,7 @@
     visibility: visible;
     overflow: auto;
     z-index: 1;
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     margin-left: auto;
