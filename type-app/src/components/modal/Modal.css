@@ -1,7 +1,7 @@
 /*CSS source: krissnawat/simple-react-modal*/
 
 .modal {
-    width: 70%;
+    width: 75%;
     height: auto;
     background: white;
     border: 1px solid #ccc;
@@ -11,12 +11,18 @@
     opacity: 1;
     visibility: visible;
     overflow: auto;
-    z-index: 1;
+    z-index: 1000;
     position: fixed;
     left: 0;
     right: 0;
     margin-left: auto;
     margin-right: auto;
+}
+
+@media screen and (max-width: 850px) {
+    .modal {
+        height: 60%;
+    }
 }
 
 .modal.off {
@@ -41,6 +47,7 @@
 
 .modal .content {
     padding: 1rem;
+    overflow-y: initial;
 }
 
 .modal .actions {
@@ -49,15 +56,4 @@
     padding: 0.5rem 1rem;
 }
 
-.modal .actions button {
-    border: 0;
-    background: #D9534F;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    font-size: 0.8rem;
-    line-height: 1;
-}
 
-#centered-toggle-button {
-    position: absolute;
-}

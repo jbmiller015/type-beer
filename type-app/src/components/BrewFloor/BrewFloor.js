@@ -46,7 +46,6 @@ class BrewFloor extends React.Component {
     }
 
     deleteTank = (tankId) => {
-        console.log("delete Press")
         typeApi.delete(`/tank/${tankId}`).then((res) => {
         }).catch(err => {
             console.error(err);
@@ -59,6 +58,19 @@ class BrewFloor extends React.Component {
                 return tanks[i]._id !== tankId;
             })
         });
+    }
+
+    editTank = (tankId, data) => {
+        console.log(data)
+        typeApi.put(`/tank/${tankId}`, data).then((res) => {
+            this.setState(prevState => ({
+                tanks: prevState.tanks.map(
+                    tank => tank._id === tankId ? res.data : tank
+                )
+            }))
+        }).catch(err => {
+            console.error(err);
+        })
     }
 
     /**
@@ -99,14 +111,17 @@ class BrewFloor extends React.Component {
         } else {
 
             let tankComponents = tanks.map((tank, i) => {
-                return (<Tank tankData={tank} key={i} onClick={this.loadData}/>)
+                return (<Tank tankData={tank} key={i} loadData={this.loadData}/>)
             })
             return (
                 <div>
                     <NavComponent/>
                     <div className="ui horizontal divider"/>
                     {modalData ?
-                        <Modal onClose={this.showModal} deleteTank={this.deleteTank} show={this.state.show}
+                        <Modal onClose={this.showModal}
+                               deleteTank={this.deleteTank}
+                               editTank={this.editTank}
+                               show={this.state.show}
                                data={modalData}/> : null
                     }
                     <div className={"ui padded equal height centered stackable grid"}>

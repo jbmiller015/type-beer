@@ -5,12 +5,14 @@ import NavComponent from "../NavComponent";
 
 
 class CreateTank extends React.Component {
+
     constructor(props) {
         super(props);
+
         this.state = {
             name: "",
             size: "",
-            contents: {},
+            contents: null,
             fill: false,
             fillDate: "",
             currPhase: "",
@@ -23,7 +25,6 @@ class CreateTank extends React.Component {
 
     setContents = content => {
         this.setState({contents: content, selectedBeer: content.name});
-        console.log(this.state.contents)
     }
 
     handleChange = e => {
@@ -31,7 +32,6 @@ class CreateTank extends React.Component {
         this.setState({
             [name]: value
         })
-        console.log(this.state)
     };
 
     onFormSubmit = async (e) => {
@@ -63,61 +63,57 @@ class CreateTank extends React.Component {
         return (
             <div>
                 <NavComponent/>
-                <div className="container" style={{display: "flex", flexDirection: "row", paddingLeft: "1%"}}>
+                <div className="container"
+                     style={{display: "flex", flexDirection: "row", flexWrap: "wrap", paddingLeft: "1%"}}>
                     <div className="form" style={{paddingRight: "30%"}}>
                         <form className="ui form" onSubmit={this.onFormSubmit}>
                             <div className="field">
                                 <label>Name:</label>
-                                <input type="text" name="name" placeholder={this.props.name ? this.props.name : ""}
-                                       onChange={this.handleChange}
-                                />
+                                <input type="text" name="name" onChange={this.handleChange}/>
                             </div>
                             <div className="field">
                                 <label>Size:</label>
-                                <input type="text" name="size" placeholder={this.props.size ? this.props.size : ""}
-                                       onChange={this.handleChange}/>
+                                <input type="text" name="size" onChange={this.handleChange}/>
                             </div>
                             <div className="field">
                                 <Dropdown label="Select Tank Contents"
-                                          selected={this.state.contents}
                                           onSelectedChange={this.setContents}
                                           url="beer"/>
                             </div>
                             <div className="field">
                                 <label>Fill:</label>
-                                <input type="boolean" name="fill" placeholder={this.props.fill ? this.props.fill : ""}
-                                       onChange={this.handleChange}/>
+                                <input type="boolean" name="fill" onChange={this.handleChange}/>
                             </div>
                             <div className="field">
                                 <label>Fill Date:</label>
-                                <input type="datetime-local" name="fillDate"
-                                       placeholder={this.props.fillDate ? this.props.fillDate : ""}
-                                       onChange={this.handleChange}/>
+                                <input type="datetime-local" name="fillDate" onChange={this.handleChange}/>
                             </div>
                             <div className="field">
                                 <label>Current Phase:</label>
-                                <input type="text" name="currPhase"
-                                       placeholder={this.props.currPhase ? this.props.currPhase : ""}
-                                       onChange={this.handleChange}/>
+                                <input type="text" name="currPhase" onChange={this.handleChange}/>
                             </div>
                             <div className="field">
                                 <label>Next Phase:</label>
-                                <input type="text" name="nextPhase"
-                                       placeholder={this.props.nextPhase ? this.props.nextPhase : ""}
-                                       onChange={this.handleChange}/>
+                                <input type="text" name="nextPhase" onChange={this.handleChange}/>
                             </div>
                             <div className="field">
                                 <label>Next Phase:</label>
-                                <input type="datetime-local" name="currPhaseDate"
-                                       placeholder={this.props.currPhaseDate ? this.props.currPhaseDate : ""}
-                                       onChange={this.handleChange}/>
+                                <input type="datetime-local" name="currPhaseDate" onChange={this.handleChange}/>
                             </div>
                             <input type="submit" value="Submit"/>
                         </form>
                     </div>
                     {this.state.contents ?
-                        <div style={{border: "1px"}} className="contents">
-                            <img style={{maxWidth: "100px"}} src={this.state.contents.image}/>
+                        <div className="ui card">
+                            <div className="ui basic top attached label" style={{zIndex: "1"}}>Tank Contents:</div>
+                            <div className="image">
+                                <img src={this.state.contents.image}/>
+                            </div>
+                            <div className="content">
+                                <div className="header">{this.state.contents.name}</div>
+                                <div className="meta">{this.state.contents.style}</div>
+                                <div className="description">{this.state.contents.desc}</div>
+                            </div>
                         </div>
                         : null}
                 </div>

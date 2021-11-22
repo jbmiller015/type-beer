@@ -1,28 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import tankOverlay from '../../media/tankwwindow.png';
 import moment from "moment";
-import Modal from "../modal/Modal";
 
-//Should adjust look if filled
 const Tank = (props) => {
 
-    const [name, setName] = useState("card");
-    const {currPhase, currPhaseDate, contents, fill, _id} = props.tankData;
+    const [className, setClassName] = useState("card");
+    const {currPhase, currPhaseDate, contents, fill, name} = props.tankData;
 
     useEffect(() => {
         if (currPhaseDate) {
-            moment().diff(currPhaseDate) > 0 ? setName("red card") : setName("green card")
+            moment().diff(currPhaseDate) > 0 ? setClassName("red card") : setClassName("green card")
         }
     })
-
-
-    /*const dateFormat = (date) => {
-        let datetime = new Date(date);
-        let result = datetime.getMonth();
-        result += "/" + datetime.getDay();
-        result += "/" + datetime.getFullYear();
-        return result;
-    };*/
 
 
     const imageWrapper = {
@@ -41,7 +30,8 @@ const Tank = (props) => {
     return (
         <div className={"item"}>
             <div className={"ui cards"} style={cardStyle}>
-                <div className={name}>
+                <div className={className}>
+                    <div className="ui basic big top attached label" style={{zIndex: "1"}}>{name}</div>
                     <div className={"image"} style={imageWrapper}>
                         <img alt="tankOverlay" src={tankOverlay}/>
                     </div>
@@ -53,14 +43,13 @@ const Tank = (props) => {
                     <div className={"extra content"}>
                         <span style={{fontSize: "medium"}}>{currPhase ? currPhase : ""}</span>
                     </div>
-                    <button className="ui bottom attached button" onClick={() => props.onClick(props.tankData)}>
+                    <button className="ui bottom attached button" onClick={() => props.loadData(props.tankData)}>
                         <i className="setting icon"/>
                         Details
                     </button>
                 </div>
             </div>
         </div>
-
     );
 };
 

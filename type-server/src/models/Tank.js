@@ -11,7 +11,7 @@ const tankSchema = new mongoose.Schema({
     },
     name: {
         type: String,
-        required: true
+        required: true,
     },
     size: {
         type: String,

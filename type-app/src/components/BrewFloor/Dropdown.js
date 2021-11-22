@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import typeApi from '../../api/type-server'
 
-const Dropdown = ({selected, onSelectedChange, label, url}) => {
+const Dropdown = ({onSelectedChange, label, url}) => {
 
     const [open, setOpen] = useState(false);
     const [term, setTerm] = useState('');
@@ -31,7 +31,7 @@ const Dropdown = ({selected, onSelectedChange, label, url}) => {
     useEffect(() => {
         const timerId = setTimeout(() => {
             setDebouncedTerm(term);
-        }, 1000);
+        }, 100);
 
         return (() => {
             clearTimeout(timerId)
@@ -51,19 +51,16 @@ const Dropdown = ({selected, onSelectedChange, label, url}) => {
             search();
         }
 
-    }, [debouncedTerm]);
+    }, [debouncedTerm, url]);
 
     const renderedOptions = results.map((option, i) => {
-
-        if (option.name === selected.name) {
-            return null;
-        }
 
         return (
             <div
                 key={i}
                 className="item"
                 onClick={() => {
+                    setTerm(option.name)
                     onSelectedChange(option)
                 }}>
                 {option.name}
@@ -71,22 +68,21 @@ const Dropdown = ({selected, onSelectedChange, label, url}) => {
         );
     });
     return (
-        <div className="ui form" ref={ref}>
-            <div className="field">
-                <label className="label">{label}</label>
-                <div
-                    className={`ui selection dropdown ${open ? 'visible active' : ''}`}
-                    onClick={() => {
-                        setOpen(!open)
-                    }}>
-                    <i className="dropdown icon"/>
-                    <label>Enter Search Term</label>
-                    <input value={selected.name ? selected.name : term} onChange={e => setTerm(e.target.value)}
-                           className="input"/>
-                    <div className={`menu ${open ? 'visible transition' : ''}`}>{renderedOptions}</div>
-                </div>
+        <div className="field" ref={ref}>
+            <label className="label">{label}</label>
+            <div
+                className={`ui selection dropdown ${open ? 'visible active' : ''}`}
+                onClick={() => {
+                    setOpen(!open)
+                }}>
+                <i className="dropdown icon"/>
+                <label>Enter Search Term</label>
+                <input value={term} onChange={e => setTerm(e.target.value)}
+                       className="input"/>
+                <div className={`menu ${open ? 'visible transition' : ''}`}>{renderedOptions}</div>
             </div>
         </div>
+
     );
 };
 
