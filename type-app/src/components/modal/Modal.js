@@ -11,12 +11,9 @@ class Modal extends Component {
             verify: false,
             data: this.props.data,
         }
-
-        console.log(this.state.data)
     }
 
     onClose = event => {
-        this.setState({data: null})
         this.props.onClose && this.props.onClose(event);
     };
 
@@ -28,7 +25,6 @@ class Modal extends Component {
                 [name]: value
             }
         }))
-        console.log(this.state)
     };
 
     setContents = content => {

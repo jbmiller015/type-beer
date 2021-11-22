@@ -61,7 +61,6 @@ class BrewFloor extends React.Component {
     }
 
     editTank = (tankId, data) => {
-        console.log(data)
         typeApi.put(`/tank/${tankId}`, data).then((res) => {
             this.setState(prevState => ({
                 tanks: prevState.tanks.map(
