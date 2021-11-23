@@ -90,8 +90,9 @@ class Modal extends Component {
             )
         }
     }
-    content = ()=>{
-      return this.props.tankModal ? <TankContent props={this.state.data}/> : <BeerContent props={this.state.data}/>;
+    content = () => {
+        return this.props.tankModal === true ? <TankContent data={this.state.data}/> :
+            <BeerContent data={this.state.data}/>;
     };
 
     render() {
@@ -104,7 +105,7 @@ class Modal extends Component {
             <div className="modal" id="modal">
                 <h2>{data.name}</h2>
                 {!this.state.edit ? this.content()
-                     :
+                    :
                     <div className="content">
                         <EditTank passed={data} handleChange={this.handleChange} setConents={this.setContents}/>
                     </div>

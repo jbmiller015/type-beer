@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import tankOverlay from '../../media/tankwwindow.png';
+import beerOverlay from '../../media/beerwwindow.png';
 import moment from "moment";
 
 const Beer = (props) => {
@@ -8,9 +8,9 @@ const Beer = (props) => {
     const imageWrapper = {
         backgroundColor: !image ? '#DAA520' : '',
         backgroundImage: `url(${image ? image : ''})`,
-        backgroundSize: '70% 100%',
+        backgroundSize: '70% 70%',
         backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center bottom',
     };
 
     const cardStyle = {
@@ -23,7 +23,7 @@ const Beer = (props) => {
             <div className={"ui cards"} style={cardStyle}>
                 <div className="card">
                     <div className={"image"} style={imageWrapper}>
-                        <img alt="tankOverlay" src={tankOverlay}/>
+                        <img alt="tankOverlay" src={beerOverlay}/>
                     </div>
                     <div className={"content"}>
                         <div className={"header"}>{name ? name : ""}</div>
