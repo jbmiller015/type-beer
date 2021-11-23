@@ -7,7 +7,7 @@ const NavComponent = (props) => {
 
     return (
         <div style={{paddingInline: "1%"}}>
-            <div className={"ui borderless fluid three item menu"}>
+            <div className={"ui borderless fluid four item menu"}>
                 <div className={"item"}>
                     <div className={"fluid ui basic animated button"} tabIndex="0"
                          onClick={() => history.push('/')}>
@@ -30,6 +30,15 @@ const NavComponent = (props) => {
                     <div className={"fluid ui basic animated button"} tabIndex="0"
                          onClick={() => history.push('/create/beer')}>
                         <div className={"visible content"}>Create Beer</div>
+                        <div className={"hidden content"}>
+                            <i className={"right arrow icon"}/>
+                        </div>
+                    </div>
+                </div>
+                <div className={"item"}>
+                    <div className={"fluid ui basic animated button"} tabIndex="0"
+                         onClick={() => history.push('/fridge')}>
+                        <div className={"visible content"}>Beers</div>
                         <div className={"hidden content"}>
                             <i className={"right arrow icon"}/>
                         </div>

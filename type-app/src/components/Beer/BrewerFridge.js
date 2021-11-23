@@ -1,19 +1,19 @@
 import React from 'react';
-import Tank from "./Tank";
+import Beer from "./Beer";
 import NavComponent from "../NavComponent";
 import typeApi from "../../api/type-server";
 import Modal from "../modal/Modal";
 import modal from "../modal/Modal.css"
 
 
-class BrewFloor extends React.Component {
+class BrewerFridge extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             error: null,
             isLoaded: false,
-            tanks: [],
+            beer: [],
             beers: [],
             show: false,
             modalData: null
@@ -22,16 +22,6 @@ class BrewFloor extends React.Component {
     }
 
     componentDidMount() {
-        typeApi.get('/tank').then(response => {
-            this.setState({
-                tanks: response.data,
-            });
-        }, error => {
-            this.setState({
-                isLoaded: true,
-                error
-            })
-        });
         typeApi.get('/beer').then(response => {
             this.setState({
                 isLoaded: true,
@@ -95,7 +85,7 @@ class BrewFloor extends React.Component {
 
     render() {
 
-        const {error, isLoaded, tanks, modalData} = this.state;
+        const {error, isLoaded, beers, modalData} = this.state;
 
         if (error) {
             return <div>Error: {error.message}</div>;
@@ -104,13 +94,12 @@ class BrewFloor extends React.Component {
 
                 <div className="ui active centered inline inverted dimmer">
                     <div className="ui big text loader">Loading</div>
-
                 </div>
             );
         } else {
 
-            let tankComponents = tanks.map((tank, i) => {
-                return (<Tank tankData={tank} key={i} loadData={this.loadData}/>)
+            let beerComponents = beers.map((beer, i) => {
+                return (<Beer beerData={beer} key={i} loadData={this.loadData}/>)
             })
             return (
                 <div>
@@ -122,10 +111,10 @@ class BrewFloor extends React.Component {
                                editTank={this.editTank}
                                show={this.state.show}
                                data={modalData}
-                                tankModal="true"/> : null
+                               tankModal="false"/> : null
                     }
                     <div className={"ui padded equal height centered stackable grid"}>
-                        {tankComponents}
+                        {beerComponents}
                     </div>
                 </div>
             )
@@ -133,4 +122,4 @@ class BrewFloor extends React.Component {
     }
 }
 
-export default BrewFloor;
+export default BrewerFridge;
