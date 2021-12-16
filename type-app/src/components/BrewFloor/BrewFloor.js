@@ -11,8 +11,9 @@ class BrewFloor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            error: null,
+            error: [],
             isLoaded: false,
+            infoMessage: null,
             tanks: [],
             beers: [],
             show: false,
@@ -26,30 +27,32 @@ class BrewFloor extends React.Component {
             this.setState({
                 tanks: response.data,
             });
-        }, error => {
-            console.log(error)
-            this.setState({
+        }, err => {
+            this.setState(state => ({
                 isLoaded: true,
-                error
-            })
+                error: [...state.error, err.message]
+            }))
         });
         typeApi.get('/beer', {headers: {'Authorization': sessionStorage.getItem('token')}}).then(response => {
             this.setState({
                 isLoaded: true,
                 beers: response.data,
             });
-        }, error => {
-            this.setState({
+        }, err => {
+            this.setState(state => ({
                 isLoaded: true,
-                error
-            })
+                error: [...state.error, err.message]
+            }))
         });
     }
 
     deleteTank = (tankId) => {
         typeApi.delete(`/tank/${tankId}`).then((res) => {
+            this.setState({infoMessage: "Deleted Tank:" + tankId})
         }).catch(err => {
-            console.error(err);
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
         })
 
         const tanks = this.state.tanks;
@@ -94,22 +97,38 @@ class BrewFloor extends React.Component {
         });
     };
 
+
     render() {
 
         const {error, isLoaded, tanks, modalData} = this.state;
 
-        if (error) {
-            return <div>Error: {error.message}</div>;
-        } else if (!isLoaded) {
+        let errMessage = error.map((err, i) => {
             return (
+                <div key={i} className={"ui error message"}>
+                    <i className="close icon" onClick={() => this.setState({error: []})}/>
+                    <div className={"header"}>
+                        {err}
+                    </div>
+                </div>
+            )
+        })
 
+        let infoMessage = (
+            <div className={"ui info message"}>
+                <i className="close icon" onClick={() => this.setState({infoMessage: null})}/>
+                <div className={"header"}>
+                    {this.state.infoMessage}
+                </div>
+            </div>
+        );
+
+        if (!isLoaded) {
+            return (
                 <div className="ui active centered inline inverted dimmer">
                     <div className="ui big text loader">Loading</div>
-
                 </div>
             );
         } else {
-
             let tankComponents = tanks.map((tank, i) => {
                 return (<Tank tankData={tank} key={i} loadData={this.loadData}/>)
             })
@@ -117,6 +136,8 @@ class BrewFloor extends React.Component {
                 <div>
                     <NavComponent/>
                     <div className="ui horizontal divider"/>
+                    {error.length > 0 ? errMessage : null}
+                    {this.state.infoMessage ? infoMessage : null}
                     {modalData ?
                         <Modal onClose={this.showModal}
                                deleteTank={this.deleteTank}

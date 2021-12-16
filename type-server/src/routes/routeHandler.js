@@ -31,7 +31,7 @@ router.route('/:base').get(async (req, res) => {
         await object.save();
         res.send(object);
     } catch (e) {
-        res.status(422).send({error: e.message});
+        res.status(422).send(e.message);
     }
 });
 
@@ -47,7 +47,7 @@ router.route('/:base/:sub').get(async (req, res) => {
         await object.save();
         res.send(object);
     } catch (e) {
-        res.status(422).send({error: e.message});
+        res.status(422).send( e.message);
     }
 }).put(async (req, res) => {
     const base = toUpper(req.params.base);
@@ -57,7 +57,7 @@ router.route('/:base/:sub').get(async (req, res) => {
         await Object.findOneAndUpdate({_id}, createModel(base, req), {upsert: true});
         res.send(req.body);
     } catch (e) {
-        res.status(422).send({error: e.message});
+        res.status(422).send( e.message);
     }
 }).delete(async (req, res) => {
     const base = toUpper(req.params.base);
@@ -67,7 +67,7 @@ router.route('/:base/:sub').get(async (req, res) => {
         await Object.findOneAndDelete({_id});
         res.send({deleted: _id});
     } catch (e) {
-        res.status(422).send({error: e.message});
+        res.status(422).send( e.message);
     }
 });
 
@@ -79,7 +79,7 @@ router.route('/:base/:sub/:ref').put(async (req, res) => {
         await Object.findOneAndUpdate({_id}, createModel(sub, req), {upsert: true});
         res.send(req.body);
     } catch (e) {
-        res.status(422).send({error: e.message});
+        res.status(422).send(e.message);
     }
 }).delete(async (req, res) => {
     const _id = req.params.ref;
@@ -88,7 +88,7 @@ router.route('/:base/:sub/:ref').put(async (req, res) => {
         await Object.findOneAndDelete({_id});
         res.send({deleted: _id});
     } catch (e) {
-        res.status(422).send({error: e.message});
+        res.status(422).send( e.message);
     }
 });
 

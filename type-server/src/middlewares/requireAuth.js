@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
     const {authorization} = req.headers;
 
     if (!authorization)
-        return res.status(401).send({error: 'You must be logged in.'});
+        return res.status(401).send('You must be logged in.');
 
     let token = authorization.replace('Bearer ', '');
     token = token.substring(1, token.length - 1);
@@ -17,7 +17,7 @@ module.exports = (req, res, next) => {
     jwt.verify(token, jwtString, async (err, payload) => {
         if (err) {
             console.log(err)
-            return res.status(401).send({error: 'You must be logged in.'});
+            return res.status(401).send('You must be logged in.');
         }
 
         const {userId} = payload;

@@ -44,7 +44,7 @@ const AuthForm = ({setToken}) => {
                             <div className={"header"}>
                                 {error.status + ": " + error.statusText}
                             </div>
-                            <div><p>{error.data.error}</p></div>
+                            <div><p>{error.data}</p></div>
                         </div>
                         : null
                 }

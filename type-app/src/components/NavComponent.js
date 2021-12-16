@@ -1,8 +1,12 @@
 import React from 'react';
 import {useHistory} from "react-router-dom";
 
+import useToken from "../hooks/useToken";
+
 const NavComponent = (props) => {
-    let history = useHistory();
+
+    const {token, setToken} = useToken();
+    const history = useHistory();
 
     return (
         <div style={{paddingInline: "1%"}}>
@@ -60,7 +64,8 @@ const NavComponent = (props) => {
                                 <div className={"fluid ui red button"} tabIndex="0"
                                      onClick={() => {
                                          localStorage.clear()
-                                         history.push('/')
+                                         setToken()
+                                         window.location.reload()
                                      }}>
                                     <div className={"content"}>Log out</div>
                                 </div>
