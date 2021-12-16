@@ -2,3 +2,5 @@
 .env
 .cert
 .key
+/config/ssl/server.cert
+/config/ssl/server.key
