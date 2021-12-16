@@ -123,7 +123,7 @@ class BrewFloor extends React.Component {
                                editTank={this.editTank}
                                show={this.state.show}
                                data={modalData}
-                               tankModal="true"/> : null
+                               tankModal={true}/> : null
                     }
                     <div className={"ui padded equal height centered stackable grid"}>
                         {tankComponents}

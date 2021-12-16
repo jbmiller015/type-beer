@@ -19,11 +19,6 @@
     margin-right: auto;
 }
 
-@media screen and (max-width: 850px) {
-    .modal {
-        height: 60%;
-    }
-}
 
 .modal.off {
     opacity: 0;

@@ -30,6 +30,7 @@ class Modal extends Component {
         }))
     };
 
+    //TODO: Look at how this is being submitted
     setContents = content => {
         this.setState(prevState => ({
             data: {
@@ -38,6 +39,11 @@ class Modal extends Component {
             }
         }));
     };
+
+    //TODO: Implement edit beer
+    setBeer = () =>{
+
+    }
 
     buttons = () => {
         if (this.state.edit) {
@@ -91,7 +97,8 @@ class Modal extends Component {
         }
     }
     content = () => {
-        return this.props.tankModal === true ? <TankContent data={this.state.data}/> :
+        console.log(this.props.tankModal)
+        return this.props.tankModal ? <TankContent data={this.state.data}/> :
             <BeerContent data={this.state.data}/>;
     };
 
@@ -102,7 +109,7 @@ class Modal extends Component {
         const {data} = this.props;
 
         return (
-            <div className="modal" id="modal">
+            <div style={this.state.edit ? {height:"60%"}:{height: "auto"}} className="modal" id="modal">
                 <h2>{data.name}</h2>
                 {!this.state.edit ? this.content()
                     :

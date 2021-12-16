@@ -111,7 +111,7 @@ class BrewerFridge extends React.Component {
                                editTank={this.editTank}
                                show={this.state.show}
                                data={modalData}
-                               tankModal="false"/> : null
+                               tankModal={false}/> : null
                     }
                     <div className={"ui padded equal height centered stackable grid"}>
                         {beerComponents}
