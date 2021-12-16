@@ -20,7 +20,7 @@ router.route('/signup').post(async (req, res) => {
     }
 });
 
-router.post('/signin', async (req, res) => {
+router.post('/login', async (req, res) => {
     const {email, password} = req.body;
 
     if (!email || !password)
@@ -29,7 +29,7 @@ router.post('/signin', async (req, res) => {
     const user = await User.findOne({email});
 
     if (!user)
-        return res.status(404).send({error: 'Invalid Password or email'});
+        return res.status(401).send({error: 'Invalid Password or email'});
 
     try {
         await user.comparePassword(password);

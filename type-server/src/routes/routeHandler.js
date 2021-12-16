@@ -7,7 +7,7 @@ const createModel = collectParam.createModel;
 const router = express.Router();
 
 //Active: Requires authorization.
-//router.use(requireAuth);
+router.use(requireAuth);
 
 router.route('/:base').get(async (req, res) => {
     const base = toUpper(req.params.base);
@@ -16,12 +16,14 @@ router.route('/:base').get(async (req, res) => {
     let getRes;
 
     if (name)
-        getRes = await Object.find({name: {$regex: name, $options: 'i'}});
+        getRes = await Object.find({name: {$regex: name, $options: 'i'}, userId: req.user._id});
     else
-        getRes = await Object.find({});
+        getRes = await Object.find({userId: req.user._id});
 
     res.send(getRes);
 }).post(async (req, res) => {
+    console.log(req.body)
+    console.log(req.user)
     const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
     try {

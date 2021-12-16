@@ -3,7 +3,8 @@ import axios from 'axios';
 
 const instance = axios.create({
     //paste ngrok url here to connect
-    baseURL: 'http://localhost:3000/',
+    //baseURL: 'https://ec2-3-132-249-207.us-east-2.compute.amazonaws.com:8080/',
+    baseURL: 'http://localhost:8080/',
     header: {
         'Accept': 'application/json',
         'Content-Type': 'multipart/form-data'
@@ -11,7 +12,7 @@ const instance = axios.create({
 });
 
 //automatically add authorization to requests once logged in
-/**instance.interceptors.request.use(
+instance.interceptors.request.use(
     async (config) => {
         const token = localStorage.getItem('token');
         if (token) {
@@ -23,6 +24,5 @@ const instance = axios.create({
         return Promise.reject(err);
     }
 );
- */
 
 export default instance;

@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import beerOverlay from '../../media/beerwwindow.png';
-import moment from "moment";
 
 const Beer = (props) => {
     const {name, style, image} = props.beerData;

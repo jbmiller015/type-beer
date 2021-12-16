@@ -4,8 +4,16 @@ import BrewFloor from "./BrewFloor/BrewFloor";
 import CreateTank from "./BrewFloor/CreateTank";
 import CreateBeer from "./Beer/CreateBeer";
 import BrewerFridge from "./Beer/BrewerFridge";
+import AuthForm from "./Account/AuthForm";
+import useToken from "../hooks/useToken";
 
 const App = () => {
+
+    const {token, setToken} = useToken();
+
+    if (!localStorage.getItem('token')) {
+        return <AuthForm setToken={setToken}/>
+    }
     return (
         <div id="switch">
             <BrowserRouter>

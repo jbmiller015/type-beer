@@ -15,6 +15,7 @@ module.exports = {
                     style: req.body.style,
                     image: req.body.image,
                     desc: req.body.desc,
+                    userId: req.user._id
                 };
             }
             case 'Tank': {
@@ -26,7 +27,8 @@ module.exports = {
                     fillDate: req.body.fillDate,
                     currPhase: req.body.currPhase,
                     nextPhase: req.body.nextPhase,
-                    currPhaseDate: req.body.currPhaseDate
+                    currPhaseDate: req.body.currPhaseDate,
+                    userId: req.user._id
                 };
             }
             case 'Inventory':

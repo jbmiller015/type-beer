@@ -3,8 +3,12 @@ require('./models/User');
 require('./models/Beer');
 require('./models/Brewery');
 require('./models/Tank');
+
 const express = require('express');
+const app = express();
 const cors = require('cors');
+const fs = require('fs');
+const https = require('https');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
 const routeHandler = require('./routes/routeHandler');
@@ -14,16 +18,13 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 //Use for authorized routes
-//const requireAuth = require('./middlewares/requireAuth');
+const requireAuth = require('./middlewares/requireAuth');
 
-const app = express();
-app.use(cors({origin: '*'}))
+app.use(cors({origin: ['http://localhost:3006'], credentials: true}));
 
 app.use(bodyParser.json({limit: '60mb'}));
 app.use(express.urlencoded({extended: true, limit: '60mb'}));
-//app.use(authRoutes);
-//app.use(tankRoutes);
-//app.use(beerRoutes);
+app.use(authRoutes);
 app.use(routeHandler);
 
 
@@ -41,17 +42,26 @@ mongoose.connection.on('error', (err) => {
     console.log('Connection error: ' + err);
 });
 
-//Once Auth is required
-/**app.get('/', requireAuth, (req, res) => {
+//Auth is required
+app.get('/', requireAuth, (req, res) => {
+    res.send('base');
+});
+
+/**
+ app.get('/', (req, res) => {
     res.send('base');
 });
  */
 
-app.get('/', (req, res) => {
-    res.send('base');
-});
+const port = process.env.PORT || '8080';
 
+/*https.createServer({
+    key: fs.readFileSync(__dirname + '/server.key'),
+    cert: fs.readFileSync(__dirname + '/server.cert')
+}, app).listen(port, () => {
+    console.log('Securely Listening on Port 8080')
+})*/
 
-app.listen(3000, () => {
-    console.log('Listening on Port 3000');
+app.listen(port, () => {
+    console.log('Listening on Port 8080')
 })

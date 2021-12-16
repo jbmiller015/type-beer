@@ -22,17 +22,18 @@ class BrewFloor extends React.Component {
     }
 
     componentDidMount() {
-        typeApi.get('/tank').then(response => {
+        typeApi.get('/tank', {headers: {'Authorization': sessionStorage.getItem('token')}}).then(response => {
             this.setState({
                 tanks: response.data,
             });
         }, error => {
+            console.log(error)
             this.setState({
                 isLoaded: true,
                 error
             })
         });
-        typeApi.get('/beer').then(response => {
+        typeApi.get('/beer', {headers: {'Authorization': sessionStorage.getItem('token')}}).then(response => {
             this.setState({
                 isLoaded: true,
                 beers: response.data,
@@ -122,7 +123,7 @@ class BrewFloor extends React.Component {
                                editTank={this.editTank}
                                show={this.state.show}
                                data={modalData}
-                                tankModal="true"/> : null
+                               tankModal="true"/> : null
                     }
                     <div className={"ui padded equal height centered stackable grid"}>
                         {tankComponents}
