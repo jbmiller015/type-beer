@@ -69,7 +69,7 @@ const AuthForm = ({setToken}) => {
                             <div className={"ui left icon input"}>
                                 <i className={"user icon"}/>
                                 <input
-                                    type="text"
+                                    type="password"
                                     placeholder="Password"
                                     value={password}
                                     autoCapitalize="none"
