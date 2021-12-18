@@ -26,7 +26,6 @@ class BrewFloor extends React.Component {
 
     componentDidMount() {
         typeApi.get('/tank').then(response => {
-            console.log('Loaded')
             this.setState({
                 tanks: response.data,
             });
@@ -198,10 +197,10 @@ class BrewFloor extends React.Component {
             let components;
             this.state.tanksActive ?
                 components = tanks.map((tank, i) => {
-                    return (<Tank tankData={tank} key={i} loadData={this.loadData}/>)
+                    return (<Tank tankData={tank} key={i} loadData={this.loadData} detailButtonVisible={true}/>)
                 }) :
                 components = beers.map((beer, i) => {
-                    return (<Beer beerData={beer} key={i} loadData={this.loadData}/>)
+                    return (<Beer beerData={beer} key={i} loadData={this.loadData} detailButtonVisible={true}/>)
                 })
             return (
                 <div>

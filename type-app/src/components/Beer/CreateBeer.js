@@ -1,6 +1,7 @@
 import React from 'react';
 import typeApi from '../../api/type-server'
 import NavComponent from "../NavComponent";
+import Beer from "./Beer";
 
 
 class CreateBeer extends React.Component {
@@ -28,7 +29,7 @@ class CreateBeer extends React.Component {
 
         await typeApi.post('/beer', formData)
             .then(res =>
-                this.props.history.push('/'))
+                this.props.history.push('/fridge'))
             .catch(err => {
                 console.error(err)
             });
@@ -52,13 +53,14 @@ class CreateBeer extends React.Component {
         }
     };
 
-    //TODO:Adjust components to center
     render() {
         return (
             <div>
                 <NavComponent tanks={false}/>
-                <div className="container" style={{display: "flex", flexDirection: "row", justifyContent:"center", width:"40%"}}>
-                    <div className="form" >
+                <div className="ui horizontal divider"/>
+                <div className="container"
+                     style={{display: "flex", flexWrap: "wrap", flexDirection: "row", justifyContent: "center"}}>
+                    <div className="form" style={{padding: "2%"}}>
                         <form className="ui form" onSubmit={this.onFormSubmit}>
                             <div className="field">
                                 <label>Name:</label>
@@ -79,10 +81,17 @@ class CreateBeer extends React.Component {
                             <div className="field">
                                 <label>Description:</label>
                                 <textarea name="desc" placeholder={this.props.desc ? this.props.desc : ""}
-                                       onChange={this.handleChange}/>
+                                          onChange={this.handleChange}/>
                             </div>
-                            <input type="submit" value="Submit"/>
+                            <button className="ui button" type="submit">Submit</button>
                         </form>
+                    </div>
+                    <div className={"example"} style={{paddingInline: "2%", paddingTop: "2%"}}>
+                        {this.state.name.length > 0 || this.state.style.length > 0 || this.state.image.length > 0 ?
+                            <Beer beerData={{name: this.state.name, style: this.state.style, image: this.state.image}}
+                                  detailButtonVisible={false}/>
+                            : null
+                        }
                     </div>
                 </div>
             </div>

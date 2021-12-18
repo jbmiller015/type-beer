@@ -31,22 +31,23 @@ const Tank = (props) => {
         <div className={"item"}>
             <div className={"ui cards"} style={cardStyle}>
                 <div className={className}>
-                    <div className="ui basic big top attached label" style={{zIndex: "1"}}>{name}</div>
+                    <div className="ui basic big top center aligned attached label" style={{zIndex: "1"}}>{name}</div>
                     <div className={"image"} style={imageWrapper}>
                         <img alt="tankOverlay" src={tankOverlay}/>
                     </div>
                     <div className={"content"}>
-                        <div className={"header"}>{contents && contents.name ? contents.name : ""}</div>
+                        <div className={"center aligned header"}>{contents && contents.name ? contents.name : ""}</div>
                         <div
-                            className={"meta"}>{moment(currPhaseDate).fromNow() ? moment(currPhaseDate).fromNow() : ""}</div>
+                            className={"center aligned meta"}>{moment(currPhaseDate).fromNow() ? moment(currPhaseDate).fromNow() : ""}</div>
                     </div>
-                    <div className={"extra content"}>
+                    <div className={"center aligned extra content"}>
                         <span style={{fontSize: "medium"}}>{currPhase ? currPhase : ""}</span>
                     </div>
-                    <button className="ui bottom attached button" onClick={() => props.loadData(props.tankData)}>
-                        <i className="setting icon"/>
-                        Details
-                    </button>
+                    {props.detailButtonVisible ?
+                        <button className="ui bottom attached button" onClick={() => props.loadData(props.tankData)}>
+                            <i className="setting icon"/>
+                            Details
+                        </button> : null}
                 </div>
             </div>
         </div>

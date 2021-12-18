@@ -2,6 +2,8 @@ import React from 'react';
 import typeApi from '../../api/type-server'
 import Dropdown from "./Dropdown";
 import NavComponent from "../NavComponent";
+import Beer from "../Beer/Beer";
+import Tank from "./Tank";
 
 
 class CreateTank extends React.Component {
@@ -13,12 +15,13 @@ class CreateTank extends React.Component {
             name: "",
             size: "",
             contents: null,
-            fill: false,
+            fill: true,
             fillDate: "",
             currPhase: "",
             nextPhase: "",
             currPhaseDate: "",
-            selectedBeer: ""
+            selectedBeer: "",
+            showExample: false
         }
     }
 
@@ -28,9 +31,13 @@ class CreateTank extends React.Component {
     }
 
     handleChange = e => {
-        const {name, value} = e.target;
+        let {name, value, checked} = e.target;
+        if (name === "fill") {
+            value = checked
+        }
         this.setState({
-            [name]: value
+            [name]: value,
+            showExample: true
         })
     };
 
@@ -64,9 +71,10 @@ class CreateTank extends React.Component {
         return (
             <div>
                 <NavComponent tanks={false}/>
+                <div className="ui horizontal divider"/>
                 <div className="container"
-                     style={{display: "flex", flexDirection: "row", flexWrap: "wrap", paddingLeft: "1%"}}>
-                    <div className="form" style={{paddingRight: "30%"}}>
+                     style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
+                    <div className="form" style={{padding: "2%"}}>
                         <form className="ui form" onSubmit={this.onFormSubmit}>
                             <div className="field">
                                 <label>Name:</label>
@@ -82,8 +90,12 @@ class CreateTank extends React.Component {
                                           url="beer"/>
                             </div>
                             <div className="field">
-                                <label>Fill:</label>
-                                <input type="boolean" name="fill" onChange={this.handleChange}/>
+                                <div className="ui checkbox">
+                                    <input type="checkbox" name="fill" tabIndex="0"
+                                           onChange={this.handleChange}
+                                           defaultChecked={this.state.fill}/>
+                                    <label>Filled</label>
+                                </div>
                             </div>
                             <div className="field">
                                 <label>Fill Date:</label>
@@ -101,22 +113,15 @@ class CreateTank extends React.Component {
                                 <label>Next Phase:</label>
                                 <input type="datetime-local" name="currPhaseDate" onChange={this.handleChange}/>
                             </div>
-                            <input type="submit" value="Submit"/>
+                            <button className="ui button" type="submit">Submit</button>
                         </form>
                     </div>
-                    {this.state.contents ?
-                        <div className="ui card">
-                            <div className="ui basic top attached label" style={{zIndex: "1"}}>Tank Contents:</div>
-                            <div className="image">
-                                <img src={this.state.contents.image}/>
-                            </div>
-                            <div className="content">
-                                <div className="header">{this.state.contents.name}</div>
-                                <div className="meta">{this.state.contents.style}</div>
-                                <div className="description">{this.state.contents.desc}</div>
-                            </div>
-                        </div>
-                        : null}
+                    <div className={"example"} style={{paddingInline: "2%", paddingTop: "2%"}}>
+                        {this.state.contents || this.state.showExample ?
+                            <Tank tankData={this.state}
+                                  detailButtonVisible={false}/>
+                            : null}
+                    </div>
                 </div>
             </div>
         );

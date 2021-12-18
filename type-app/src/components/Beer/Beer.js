@@ -25,13 +25,14 @@ const Beer = (props) => {
                         <img alt="tankOverlay" src={beerOverlay}/>
                     </div>
                     <div className={"content"}>
-                        <div className={"header"}>{name ? name : ""}</div>
-                        <div className={"meta"}>{style ? style : ""}</div>
+                        <div className={"center aligned header"}>{name ? name : ""}</div>
+                        <div className={"center aligned meta"}>{style ? style : ""}</div>
                     </div>
-                    <button className="ui bottom attached button" onClick={() => props.loadData(props.beerData)}>
-                        <i className="setting icon"/>
-                        Details
-                    </button>
+                    {props.detailButtonVisible ?
+                        <button className="ui bottom attached button" onClick={() => props.loadData(props.beerData)}>
+                            <i className="setting icon"/>
+                            Details
+                        </button> : null}
                 </div>
             </div>
         </div>
