@@ -22,8 +22,6 @@ router.route('/:base').get(async (req, res) => {
 
     res.send(getRes);
 }).post(async (req, res) => {
-    console.log(req.body)
-    console.log(req.user)
     const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
     try {

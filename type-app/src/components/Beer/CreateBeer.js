@@ -57,8 +57,8 @@ class CreateBeer extends React.Component {
         return (
             <div>
                 <NavComponent tanks={false}/>
-                <div className="container" style={{display: "flex", flexDirection: "row", paddingLeft: "1%"}}>
-                    <div className="form" style={{paddingRight: "30%"}}>
+                <div className="container" style={{display: "flex", flexDirection: "row", justifyContent:"center", width:"40%"}}>
+                    <div className="form" >
                         <form className="ui form" onSubmit={this.onFormSubmit}>
                             <div className="field">
                                 <label>Name:</label>

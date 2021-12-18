@@ -26,16 +26,6 @@ class Modal extends Component {
         this.props.onClose && this.props.onClose(event);
     };
 
-    handleChange = e => {
-        const {name, value} = e.target;
-        this.setState(prevState => ({
-            data: {
-                ...prevState.data,
-                [name]: value
-            }
-        }))
-    };
-
     handleEditChange = e => {
         const {name, value} = e.target;
         this.setState(prevState => ({

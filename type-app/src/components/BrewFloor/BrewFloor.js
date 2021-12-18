@@ -69,10 +69,7 @@ class BrewFloor extends React.Component {
     }
 
     deleteBeer = async (beerId) => {
-        console.log("deleting")
         for (let el of this.state.tanks) {
-            console.log("contents id", el.contents._id)
-            console.log("beerId", beerId)
             if (el.contents._id === beerId) {
                 this.setState(state => ({
                     error: [...state.error, `Cannot Delete Beer. This beer is currently in the tank, ${el.name}. Remove the beer from the tank before removing the beer from your fridge.`]
@@ -80,9 +77,6 @@ class BrewFloor extends React.Component {
                 break;
             }
         }
-
-        console.log("Errors:" + this.state.error.length)
-        console.log(this.state.error)
 
         if (this.state.error.length === 0) {
             await typeApi.delete(`/beer/${beerId}`).then((res) => {
@@ -107,6 +101,7 @@ class BrewFloor extends React.Component {
     editTank = async (tankId, data) => {
         let index = this.state.tanks.indexOf(data);
         if (index < 0 || this.state.tanks[index]._id !== tankId) {
+            console.log("Tank match found")
             await typeApi.put(`/tank/${tankId}`, data).then((res) => {
                 this.setState(prevState => ({
                     tanks: prevState.tanks.map(
@@ -114,26 +109,36 @@ class BrewFloor extends React.Component {
                     )
                 }))
             }).catch(err => {
-                console.error(err);
+                this.setState(state => ({
+                    error: [...state.error, err.message]
+                }))
             })
         }
     }
 
-    //TODO:Edit beer should change state of associated tanks locally and in DB
     editBeer = async (beerId, data) => {
-        let index = this.state.beers.indexOf(data);
-        if (index < 0 || this.state.beers[index]._id !== beerId) {
-            await typeApi.put(`/beer/${beerId}`, data).then((res) => {
-                this.setState(prevState => ({
-                    beers: prevState.beers.map(
-                        beer => beer._id === beerId ? res.data : beer
-                    )
-                }))
-            }).catch(err => {
-                console.error(err);
-            })
+        for (let el of this.state.tanks) {
+            if (el.contents._id === beerId) {
+                let tank = el;
+                tank.contents = data;
+                await this.editTank(tank._id, tank);
+                break;
+            }
         }
+
+        await typeApi.put(`/beer/${beerId}`, data).then((res) => {
+            this.setState(prevState => ({
+                beers: prevState.beers.map(
+                    beer => beer._id === beerId ? res.data : beer
+                )
+            }))
+        }).catch(err => {
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
+        })
     }
+
 
     loadData = (modalData) => {
         this.setState({
