@@ -4,6 +4,7 @@ import NavComponent from "../NavComponent";
 import typeApi from "../../api/type-server";
 import Modal from "../modal/Modal";
 import modal from "../modal/Modal.css"
+import Beer from "../Beer/Beer";
 
 
 class BrewFloor extends React.Component {
@@ -17,13 +18,15 @@ class BrewFloor extends React.Component {
             tanks: [],
             beers: [],
             show: false,
-            modalData: null
+            modalData: null,
+            tanksActive: this.props.tanks
         };
         this.showModal = this.showModal.bind(this);
     }
 
     componentDidMount() {
-        typeApi.get('/tank', {headers: {'Authorization': sessionStorage.getItem('token')}}).then(response => {
+        typeApi.get('/tank').then(response => {
+            console.log('Loaded')
             this.setState({
                 tanks: response.data,
             });
@@ -33,7 +36,7 @@ class BrewFloor extends React.Component {
                 error: [...state.error, err.message]
             }))
         });
-        typeApi.get('/beer', {headers: {'Authorization': sessionStorage.getItem('token')}}).then(response => {
+        typeApi.get('/beer').then(response => {
             this.setState({
                 isLoaded: true,
                 beers: response.data,
@@ -47,6 +50,7 @@ class BrewFloor extends React.Component {
     }
 
     deleteTank = (tankId) => {
+        console.log("deleting")
         typeApi.delete(`/tank/${tankId}`).then((res) => {
             this.setState({infoMessage: "Deleted Tank:" + tankId})
         }).catch(err => {
@@ -64,26 +68,76 @@ class BrewFloor extends React.Component {
         });
     }
 
-    editTank = (tankId, data) => {
-        typeApi.put(`/tank/${tankId}`, data).then((res) => {
-            this.setState(prevState => ({
-                tanks: prevState.tanks.map(
-                    tank => tank._id === tankId ? res.data : tank
-                )
-            }))
-        }).catch(err => {
-            console.error(err);
-        })
+    deleteBeer = async (beerId) => {
+        console.log("deleting")
+        for (let el of this.state.tanks) {
+            console.log("contents id", el.contents._id)
+            console.log("beerId", beerId)
+            if (el.contents._id === beerId) {
+                this.setState(state => ({
+                    error: [...state.error, `Cannot Delete Beer. This beer is currently in the tank, ${el.name}. Remove the beer from the tank before removing the beer from your fridge.`]
+                }))
+                break;
+            }
+        }
+
+        console.log("Errors:" + this.state.error.length)
+        console.log(this.state.error)
+
+        if (this.state.error.length === 0) {
+            await typeApi.delete(`/beer/${beerId}`).then((res) => {
+                this.setState({infoMessage: "Deleted Beer:" + beerId})
+            }).catch(err => {
+                this.setState(state => ({
+                    error: [...state.error, err.message]
+                }))
+            })
+
+            const beers = this.state.beers;
+
+            this.setState({
+                beers: this.state.beers.filter((_, i) => {
+                    return beers[i]._id !== beerId;
+                })
+            });
+        }
     }
 
-    /**
-     * Receives square data for modal.
-     * @param squareData
-     */
-    loadData = (tankData) => {
 
+    editTank = async (tankId, data) => {
+        let index = this.state.tanks.indexOf(data);
+        if (index < 0 || this.state.tanks[index]._id !== tankId) {
+            await typeApi.put(`/tank/${tankId}`, data).then((res) => {
+                this.setState(prevState => ({
+                    tanks: prevState.tanks.map(
+                        tank => tank._id === tankId ? res.data : tank
+                    )
+                }))
+            }).catch(err => {
+                console.error(err);
+            })
+        }
+    }
+
+    //TODO:Edit beer should change state of associated tanks locally and in DB
+    editBeer = async (beerId, data) => {
+        let index = this.state.beers.indexOf(data);
+        if (index < 0 || this.state.beers[index]._id !== beerId) {
+            await typeApi.put(`/beer/${beerId}`, data).then((res) => {
+                this.setState(prevState => ({
+                    beers: prevState.beers.map(
+                        beer => beer._id === beerId ? res.data : beer
+                    )
+                }))
+            }).catch(err => {
+                console.error(err);
+            })
+        }
+    }
+
+    loadData = (modalData) => {
         this.setState({
-            modalData: tankData
+            modalData
         });
         this.showModal();
     };
@@ -92,15 +146,22 @@ class BrewFloor extends React.Component {
      * Sets modal visibility.
      */
     showModal = () => {
-        this.setState({
-            show: !this.state.show,
-        });
+        if (this.state.modalData) {
+            this.setState({
+                show: false,
+                modalData: null
+            });
+        } else {
+            this.setState({
+                show: true,
+            });
+        }
     };
 
 
     render() {
 
-        const {error, isLoaded, tanks, modalData} = this.state;
+        const {error, isLoaded, tanks, beers, modalData} = this.state;
 
         let errMessage = error.map((err, i) => {
             return (
@@ -129,25 +190,41 @@ class BrewFloor extends React.Component {
                 </div>
             );
         } else {
-            let tankComponents = tanks.map((tank, i) => {
-                return (<Tank tankData={tank} key={i} loadData={this.loadData}/>)
-            })
+            let components;
+            this.state.tanksActive ?
+                components = tanks.map((tank, i) => {
+                    return (<Tank tankData={tank} key={i} loadData={this.loadData}/>)
+                }) :
+                components = beers.map((beer, i) => {
+                    return (<Beer beerData={beer} key={i} loadData={this.loadData}/>)
+                })
             return (
                 <div>
-                    <NavComponent/>
+                    <NavComponent tanks={true} toggleActive={(state) => {
+                        this.setState({tanksActive: state})
+                    }}/>
                     <div className="ui horizontal divider"/>
                     {error.length > 0 ? errMessage : null}
                     {this.state.infoMessage ? infoMessage : null}
-                    {modalData ?
-                        <Modal onClose={this.showModal}
-                               deleteTank={this.deleteTank}
-                               editTank={this.editTank}
-                               show={this.state.show}
-                               data={modalData}
-                               tankModal={true}/> : null
+                    {this.state.tanksActive ?
+                        modalData ?
+                            <Modal onClose={this.showModal}
+                                   deleteTank={this.deleteTank}
+                                   editTank={this.editTank}
+                                   show={this.state.show}
+                                   data={modalData}
+                                   tankModal={true}/> : null
+                        : modalData ?
+                            <Modal onClose={this.showModal}
+                                   deleteBeer={this.deleteBeer}
+                                   editBeer={this.editBeer}
+                                   show={this.state.show}
+                                   data={modalData}
+                                   tankModal={false}/> : null
                     }
+
                     <div className={"ui padded equal height centered stackable grid"}>
-                        {tankComponents}
+                        {components}
                     </div>
                 </div>
             )

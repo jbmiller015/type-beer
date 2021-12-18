@@ -13,7 +13,7 @@ const NavComponent = (props) => {
             <div className={"ui borderless fluid four item menu"}>
                 <div className={"item"}>
                     <div className={"fluid ui basic animated fade button"} tabIndex="0"
-                         onClick={() => history.push('/')}>
+                         onClick={() => props.tanks ? props.toggleActive(true) : history.push('/')}>
                         <div className={"visible content"}>Brew Floor</div>
                         <div className={"hidden content"}>
                             <i className={"warehouse icon"}/>
@@ -22,7 +22,7 @@ const NavComponent = (props) => {
                 </div>
                 <div className={"item"}>
                     <div className={"fluid ui basic animated fade button"} tabIndex="0"
-                         onClick={() => history.push('/fridge')}>
+                         onClick={() => props.tanks ? props.toggleActive(false) : history.push('/fridge')}>
                         <div className={"visible content"}>Beers</div>
                         <div className={"hidden content"}>
                             <i className={"beer icon"}/>

@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {BrowserRouter, Route} from 'react-router-dom';
 import BrewFloor from "./BrewFloor/BrewFloor";
 import CreateTank from "./BrewFloor/CreateTank";
 import CreateBeer from "./Beer/CreateBeer";
-import BrewerFridge from "./Beer/BrewerFridge";
 import AuthForm from "./Account/AuthForm";
 import useToken from "../hooks/useToken";
 
@@ -18,10 +17,10 @@ const App = () => {
         <div id="switch">
             <BrowserRouter>
                 <div>
-                    <Route path="/" exact component={BrewFloor}/>
+                    <Route path="/" exact component={() => (<BrewFloor tanks={true}/>)}/>
                     <Route path="/create/tank" exact component={CreateTank}/>
                     <Route path="/create/beer" exact component={CreateBeer}/>
-                    <Route path="/fridge" exact component={BrewerFridge}/>
+                    <Route path="/fridge" exact component={() => (<BrewFloor tanks={false}/>)}/>
                 </div>
             </BrowserRouter>
         </div>

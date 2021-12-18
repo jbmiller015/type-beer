@@ -59,10 +59,11 @@ class CreateTank extends React.Component {
 
     };
 
+    //TODO:Adjust components to center
     render() {
         return (
             <div>
-                <NavComponent/>
+                <NavComponent tanks={false}/>
                 <div className="container"
                      style={{display: "flex", flexDirection: "row", flexWrap: "wrap", paddingLeft: "1%"}}>
                     <div className="form" style={{paddingRight: "30%"}}>

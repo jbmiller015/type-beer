@@ -1,5 +1,5 @@
 import React from 'react';
-import Dropdown from "./Dropdown";
+import Dropdown from "../BrewFloor/Dropdown";
 
 class EditTank extends React.Component {
 
@@ -12,11 +12,11 @@ class EditTank extends React.Component {
             <div>
                 <form className="ui form">
                     <div className="field">
-                        <label>Name: {this.props.passed.name}</label>
+                        <label>Tank Name: {this.props.passed.name}</label>
                         <input type="text" name="name" onChange={this.props.handleChange}/>
                     </div>
                     <div className="field">
-                        <label>Size: {this.props.passed.size}</label>
+                        <label>Tank Size: {this.props.passed.size}</label>
                         <input type="text" name="size" onChange={this.props.handleChange}/>
                     </div>
                     <div className="field">
