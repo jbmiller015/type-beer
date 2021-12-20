@@ -18,8 +18,8 @@ const tankSchema = new mongoose.Schema({
         required: true
     },
     contents: {
-        type: beerSchema,
-        required: false
+        type: Schema.Types.ObjectId,
+        ref: 'Beer'
     },
     fill: {
         type: Boolean,

@@ -13,10 +13,6 @@ const beerSchema = new mongoose.Schema({
             type: String,
             required: true
         },
-        image: {
-            type: String,
-            required: false
-        },
         desc: {
             type: String,
             required: false

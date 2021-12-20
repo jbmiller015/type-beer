@@ -55,7 +55,7 @@ const AuthForm = ({setToken}) => {
                                 <i className={"user icon"}/>
                                 <input
                                     type="text"
-                                    placeholder="Email Address"
+                                    placeholder="Email"
                                     value={email}
                                     autoCapitalize="none"
                                     autoCorrect="false"
