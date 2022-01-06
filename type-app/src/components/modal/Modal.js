@@ -27,7 +27,10 @@ class Modal extends Component {
     };
 
     handleEditChange = e => {
-        const {name, value} = e.target;
+        let {name, value, checked} = e.target;
+        if (name === "fill") {
+            value = checked
+        }
         this.setState(prevState => ({
             editData: {
                 ...prevState.editData,
@@ -40,7 +43,7 @@ class Modal extends Component {
         this.setState(prevState => ({
             editData: {
                 ...prevState.editData,
-                contents: content
+                contents: content._id
             }
         }));
     };
@@ -66,7 +69,6 @@ class Modal extends Component {
             return (
                 <div className="actions"><h4>Are You Sure?</h4>
                     <button className="ui red button" onClick={async (e) => {
-                        console.log("I'm sure")
                         this.props.tankModal ? await this.props.deleteTank(this.props.data._id) : await this.props.deleteBeer(this.props.data._id);
                         this.setState({verify: false})
                         this.onClose(e);
@@ -126,8 +128,6 @@ class Modal extends Component {
                     this.editContent()
                     :
                     this.content()}
-                {data.contents && data.contents.image ?
-                    <img alt="contents" style={{maxWidth: "100px"}} src={data.contents.image}/> : null}
                 {this.buttons()}
             </div>
         );

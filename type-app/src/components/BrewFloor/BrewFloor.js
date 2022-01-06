@@ -15,8 +15,8 @@ class BrewFloor extends React.Component {
             error: [],
             isLoaded: false,
             infoMessage: null,
-            tanks: [],
-            beers: [],
+            tanks: {},
+            beers: {},
             show: false,
             modalData: null,
             tanksActive: this.props.tanks
@@ -24,22 +24,33 @@ class BrewFloor extends React.Component {
         this.showModal = this.showModal.bind(this);
     }
 
-    componentDidMount() {
-        typeApi.get('/tank').then(response => {
-            this.setState({
-                tanks: response.data,
-            });
+    async componentDidMount() {
+        await typeApi.get('/tank').then(response => {
+            console.log('get Called')
+            response.data.map(el => {
+                this.setState(prevState => ({
+                    tanks: {
+                        ...prevState.tanks,
+                        [el._id]: el
+                    }
+                }))
+            })
         }, err => {
             this.setState(state => ({
                 isLoaded: true,
                 error: [...state.error, err.message]
             }))
         });
-        typeApi.get('/beer').then(response => {
-            this.setState({
-                isLoaded: true,
-                beers: response.data,
-            });
+        await typeApi.get('/beer').then(response => {
+            response.data.map(el => {
+                this.setState(prevState => ({
+                    beers: {
+                        ...prevState.beers,
+                        [el._id]: el
+                    },
+                    isLoaded: true,
+                }))
+            })
         }, err => {
             this.setState(state => ({
                 isLoaded: true,
@@ -49,88 +60,68 @@ class BrewFloor extends React.Component {
     }
 
     deleteTank = (tankId) => {
-        console.log("deleting")
         typeApi.delete(`/tank/${tankId}`).then((res) => {
+            let newState = {...this.state};
+            delete newState.tanks[tankId];
+            this.setState(newState);
             this.setState({infoMessage: "Deleted Tank:" + tankId})
         }).catch(err => {
             this.setState(state => ({
                 error: [...state.error, err.message]
             }))
         })
-
-        const tanks = this.state.tanks;
-
-        this.setState({
-            tanks: this.state.tanks.filter((_, i) => {
-                return tanks[i]._id !== tankId;
-            })
-        });
     }
 
     deleteBeer = async (beerId) => {
-        for (let el of this.state.tanks) {
-            if (el.contents._id === beerId) {
+        for (let el in this.state.tanks) {
+            if (this.state.beers[this.state.tanks[el].contents]) {
                 this.setState(state => ({
                     error: [...state.error, `Cannot Delete Beer. This beer is currently in the tank, ${el.name}. Remove the beer from the tank before removing the beer from your fridge.`]
                 }))
-                break;
             }
         }
 
         if (this.state.error.length === 0) {
             await typeApi.delete(`/beer/${beerId}`).then((res) => {
+                let newState = {...this.state};
+                delete newState.beers[beerId];
+                this.setState(newState);
                 this.setState({infoMessage: "Deleted Beer:" + beerId})
             }).catch(err => {
                 this.setState(state => ({
                     error: [...state.error, err.message]
                 }))
             })
-
-            const beers = this.state.beers;
-
-            this.setState({
-                beers: this.state.beers.filter((_, i) => {
-                    return beers[i]._id !== beerId;
-                })
-            });
         }
     }
 
 
     editTank = async (tankId, data) => {
-        let index = this.state.tanks.indexOf(data);
-        if (index < 0 || this.state.tanks[index]._id !== tankId) {
-            console.log("Tank match found")
-            await typeApi.put(`/tank/${tankId}`, data).then((res) => {
-                this.setState(prevState => ({
-                    tanks: prevState.tanks.map(
-                        tank => tank._id === tankId ? res.data : tank
-                    )
-                }))
-            }).catch(err => {
-                this.setState(state => ({
-                    error: [...state.error, err.message]
-                }))
-            })
-        }
+        await typeApi.put(`/tank/${tankId}`, data).then((res) => {
+            let newState = {...this.state};
+            newState.tanks[tankId] = res.data;
+            this.setState(newState);
+        }).catch(err => {
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
+        })
     }
 
     editBeer = async (beerId, data) => {
-        for (let el of this.state.tanks) {
-            if (el.contents._id === beerId) {
-                let tank = el;
-                tank.contents = data;
+        for (let el in this.state.tanks) {
+            if (this.state.tanks[el].contents === beerId) {
+                let tank = this.state.tanks[el];
+                tank.contents = data._id;
                 await this.editTank(tank._id, tank);
                 break;
             }
         }
 
         await typeApi.put(`/beer/${beerId}`, data).then((res) => {
-            this.setState(prevState => ({
-                beers: prevState.beers.map(
-                    beer => beer._id === beerId ? res.data : beer
-                )
-            }))
+            let newState = {...this.state};
+            newState.beers[beerId] = res.data;
+            this.setState(newState);
         }).catch(err => {
             this.setState(state => ({
                 error: [...state.error, err.message]
@@ -139,11 +130,24 @@ class BrewFloor extends React.Component {
     }
 
 
-    loadData = (modalData) => {
+    loadTankData = (modalData) => {
+        const beer = this.state.beers[modalData.contents]
+        modalData.contents = beer;
         this.setState({
             modalData
         });
-        this.showModal();
+        this.setState({
+            show: true,
+        });
+    };
+
+    loadBeerData = (modalData) => {
+        this.setState({
+            modalData
+        });
+        this.setState({
+            show: true,
+        });
     };
 
     /**
@@ -196,11 +200,15 @@ class BrewFloor extends React.Component {
         } else {
             let components;
             this.state.tanksActive ?
-                components = tanks.map((tank, i) => {
-                    return (<Tank tankData={tank} key={i} loadData={this.loadData} detailButtonVisible={true}/>)
+                components = Object.keys(tanks).map((tank, i) => {
+                    return (
+                        <Tank tankData={tanks[tank]} key={i} contents={this.state.beers[tanks[tank].contents]}
+                              loadData={this.loadTankData}
+                              detailButtonVisible={true}/>)
                 }) :
-                components = beers.map((beer, i) => {
-                    return (<Beer beerData={beer} key={i} loadData={this.loadData} detailButtonVisible={true}/>)
+                components = Object.keys(beers).map((beer, i) => {
+                    return (
+                        <Beer beerData={beers[beer]} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
                 })
             return (
                 <div>

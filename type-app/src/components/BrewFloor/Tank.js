@@ -5,7 +5,8 @@ import moment from "moment";
 const Tank = (props) => {
 
     const [className, setClassName] = useState("card");
-    const {currPhase, currPhaseDate, contents, fill, name} = props.tankData;
+    const {currPhase, currPhaseDate, fill, name} = props.tankData;
+    const {contents} = props
 
     useEffect(() => {
         if (currPhaseDate) {
@@ -15,8 +16,7 @@ const Tank = (props) => {
 
 
     const imageWrapper = {
-        backgroundColor: (contents && !contents.image && fill) ? '#DAA520' : '',
-        backgroundImage: `url(${contents ? contents.image : ''})`,
+        backgroundColor: (contents && fill) ? '#DAA520' : '',
         backgroundSize: '70% 100%',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center'
@@ -25,6 +25,14 @@ const Tank = (props) => {
     const cardStyle = {
         marginBottom: "2%"
     };
+
+    const phase = () => {
+        if (contents) {
+            return currPhase ? currPhase : ""
+        } else {
+            return "Empty"
+        }
+    }
 
 
     return (
@@ -41,7 +49,7 @@ const Tank = (props) => {
                             className={"center aligned meta"}>{moment(currPhaseDate).fromNow() ? moment(currPhaseDate).fromNow() : ""}</div>
                     </div>
                     <div className={"center aligned extra content"}>
-                        <span style={{fontSize: "medium"}}>{currPhase ? currPhase : ""}</span>
+                        <span style={{fontSize: "medium"}}>{phase()}</span>
                     </div>
                     {props.detailButtonVisible ?
                         <button className="ui bottom attached button" onClick={() => props.loadData(props.tankData)}>

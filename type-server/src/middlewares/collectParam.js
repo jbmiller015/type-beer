@@ -24,10 +24,19 @@ module.exports = {
                     size: req.body.size,
                     contents: req.body.contents,
                     fill: req.body.fill,
+                    tankType: req.body.tankType,
                     fillDate: req.body.fillDate,
-                    currPhase: req.body.currPhase,
-                    nextPhase: req.body.nextPhase,
-                    currPhaseDate: req.body.currPhaseDate,
+                    process: req.body.process,
+                    userId: req.user._id
+                };
+            }
+            case 'Process': {
+                return {
+                    name: req.body.name,
+                    expectedYield: req.body.expectedYield,
+                    actualYield: req.body.actualYield,
+                    contents: req.body.contents,
+                    phases: req.body.phases,
                     userId: req.user._id
                 };
             }

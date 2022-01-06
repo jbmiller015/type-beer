@@ -2,11 +2,11 @@ import React from 'react';
 import typeApi from '../../api/type-server'
 import Dropdown from "../Fields/Dropdown";
 import Phase from "../Fields/Phase";
+import Tank from "../BrewFloor/Tank";
 import NavComponent from "../NavComponent";
-import Tank from "./Tank";
 
 
-class CreateTank extends React.Component {
+class CreateProcess extends React.Component {
 
 
     constructor(props) {
@@ -14,11 +14,9 @@ class CreateTank extends React.Component {
 
         this.state = {
             name: "",
-            size: "",
-            tankType: "",
+            exceptedYield: "",
+            actualYield: "",
             contents: null,
-            fill: false,
-            fillDate: "",
             phases: [],
             selectedBeer: "",
             showExample: false,
@@ -29,6 +27,16 @@ class CreateTank extends React.Component {
 
     setContents = async content => {
         this.setState({contents: content._id, selectedBeer: content.name});
+    }
+
+    handleDropdownChange = data => {
+        const {index} = data;
+        if (index !== undefined) {
+            this.handleFieldChange(index, data);
+        } else {
+            this.handleChange(data)
+        }
+
     }
 
     handleChange = e => {
@@ -43,15 +51,20 @@ class CreateTank extends React.Component {
     };
 
     handleFieldChange = (index, e) => {
+
+        console.log(e)
         let {name, value, checked} = e.target;
         if (name === "complete") {
             value = checked
         }
         let phases = [...this.state.phases];
-        let phase = phases[index];
-        phase[name] = value
-        phases[index] = phase;
-        this.setState({phases})
+        phases[index] = value;
+        this.setState({phases});
+        console.log(this.state)
+    }
+
+    handleTransferPhase = () => {
+
     }
 
     onFormSubmit = async (e) => {
@@ -81,30 +94,35 @@ class CreateTank extends React.Component {
         return this.state.fill ?
             <div className="field">
                 <label>Fill Date:</label>
-                <input type="datetime-local" name="fillDate" onChange={this.handleChange}/>
+                <input type="datetime-local" name="fillDate" onChange={this.handleFieldChange}/>
             </div> : null
     }
 
     contentField = () => {
         return this.state.fill ?
             <div className="field">
-                <Dropdown label="Select Tank Contents" onSelectedChange={this.setContents} url="beer"/>
+                <Dropdown label="Select Tank Contents" onSelectedChange={this.setContents} url="beer"
+                          target={'contents'}/>
             </div> : null
     }
 
     phaseFields = () => {
         return this.state.phases.map((phase, i) => {
-            return <Phase phaseData={phase} key={i} index={i} handleChange={this.handleFieldChange}
-                          removePhase={this.removePhase}/>
+            console.log(this.state.phases)
+            return <Phase phaseData={phase} key={i} index={i}
+                          handleFieldChange={this.handleFieldChange}
+                          removePhase={this.removePhase}
+                          previousPhaseTank={i > 0 ? this.state.phases[i - 1].startTank : null}
+            />
         });
     }
 
     phaseButton = () => {
         return this.state.contents && this.state.fill ?
             <div className="phase button" style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
-                <button className="ui primary button" onClick={this.addPhase}>
+                <div className="ui primary button" onClick={this.addPhase}>
                     Add Phase
-                </button>
+                </div>
             </div> : null
     }
 
@@ -156,7 +174,10 @@ class CreateTank extends React.Component {
                             </div>
                             {this.fillDateField()}
                             {this.contentField()}
+                            <div className="ui horizontal divider"/>
                             {this.phaseFields()}
+                            <div className="ui horizontal divider"/>
+                            <div className="ui horizontal divider"/>
                             {this.phaseButton()}
                             <button className="ui button" type="submit">Submit</button>
                         </form>
@@ -173,4 +194,4 @@ class CreateTank extends React.Component {
     }
 }
 
-export default CreateTank;
+export default CreateProcess;

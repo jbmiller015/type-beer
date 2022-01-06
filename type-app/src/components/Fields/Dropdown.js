@@ -1,11 +1,12 @@
 import React, {useEffect, useState, useRef} from "react";
 import typeApi from '../../api/type-server'
 
-const Dropdown = ({onSelectedChange, label, url}) => {
+const Dropdown = ({onSelectedChange, label, url, target, defaultTerm}) => {
 
+    console.log(defaultTerm)
     const [open, setOpen] = useState(false);
-    const [term, setTerm] = useState('');
-    const [debouncedTerm, setDebouncedTerm] = useState(term);
+    const [term, setTerm] = useState(defaultTerm);
+    const [debouncedTerm, setDebouncedTerm] = useState(defaultTerm);
     const [results, setResults] = useState([]);
 
 
@@ -38,6 +39,7 @@ const Dropdown = ({onSelectedChange, label, url}) => {
         })
     }, [term])
 
+
     useEffect(() => {
         const search = async () => {
             const {data} = await typeApi.get(`/${url}`, {
@@ -45,7 +47,8 @@ const Dropdown = ({onSelectedChange, label, url}) => {
                     name: debouncedTerm
                 }
             });
-            setResults(data);
+            const filteredData = filterResults(data);
+            setResults(filteredData);
         };
         if (debouncedTerm) {
             search();
@@ -53,13 +56,22 @@ const Dropdown = ({onSelectedChange, label, url}) => {
 
     }, [debouncedTerm, url]);
 
-    const renderedOptions = results.map((option, i) => {
+    const filterResults = (data) => {
+        if (target === 'startTank') {
 
+        }
+        if (target === 'endTank') {
+
+        }
+        return data;
+    }
+
+    const renderedOptions = results.map((option, i) => {
         return (
             <div
                 key={i}
                 className="item"
-                onClick={() => {
+                onClick={(e) => {
                     setTerm(option.name)
                     onSelectedChange(option)
                 }}>

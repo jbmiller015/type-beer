@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Beer = mongoose.model('Beer');
-//const Customer = mongoose.model('Customer');
 const Schema = mongoose.Schema;
 const beerSchema = require('./Beer');
 
@@ -17,6 +16,10 @@ const tankSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    tankType: {
+        type: String,
+        required: true,
+    },
     contents: {
         type: Schema.Types.ObjectId,
         ref: 'Beer'
@@ -27,18 +30,6 @@ const tankSchema = new mongoose.Schema({
     },
     fillDate: {
         type: Date,
-        required: false
-    },
-    currPhase: {
-        type: String,
-        required: false
-    },
-    currPhaseDate: {
-        type: Date,
-        required: false
-    },
-    nextPhase: {
-        type: String,
         required: false
     }
 });

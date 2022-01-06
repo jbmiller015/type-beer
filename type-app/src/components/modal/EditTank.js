@@ -1,5 +1,5 @@
 import React from 'react';
-import Dropdown from "../BrewFloor/Dropdown";
+import Dropdown from "../Fields/Dropdown";
 
 class EditTank extends React.Component {
 
@@ -25,9 +25,12 @@ class EditTank extends React.Component {
                                   url="beer"/>
                     </div>
                     <div className="field">
-                        <label>Fill: {this.props.passed.fill}</label>
-                        <input type="boolean" name="fill"
-                               onChange={this.props.handleChange}/>
+                        <div className="ui checkbox">
+                            <input type="checkbox" name="fill" tabIndex="0"
+                                   onChange={this.props.handleChange}
+                                   defaultChecked={this.props.passed.fill}/>
+                            <label>Filled</label>
+                        </div>
                     </div>
                     <div className="field">
                         <label>Fill Date: {this.props.passed.fillDate}</label>

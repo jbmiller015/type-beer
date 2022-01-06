@@ -11,7 +11,6 @@ class CreateBeer extends React.Component {
         this.state = {
             name: "",
             style: "",
-            image: "",
             desc: ""
         }
     }
@@ -22,7 +21,6 @@ class CreateBeer extends React.Component {
         const formData = {
             name: this.state.name,
             style: this.state.style,
-            image: this.state.image,
             desc: this.state.desc
         }
 
@@ -87,7 +85,7 @@ class CreateBeer extends React.Component {
                         </form>
                     </div>
                     <div className={"example"} style={{paddingInline: "2%", paddingTop: "2%"}}>
-                        {this.state.name.length > 0 || this.state.style.length > 0 || this.state.image.length > 0 ?
+                        {this.state.name.length > 0 || this.state.style.length > 0 ?
                             <Beer beerData={{name: this.state.name, style: this.state.style, image: this.state.image}}
                                   detailButtonVisible={false}/>
                             : null

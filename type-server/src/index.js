@@ -3,6 +3,7 @@ require('./models/User');
 require('./models/Beer');
 require('./models/Brewery');
 require('./models/Tank');
+require('./models/Process');
 
 const express = require('express');
 const app = express();

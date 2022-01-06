@@ -12,10 +12,12 @@ router.use(requireAuth);
 router.route('/:base').get(async (req, res) => {
     const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
-    const {name} = req.query;
+    const {id, name} = req.query;
     let getRes;
 
-    if (name)
+    if (id)
+        getRes = await Object.find({_id: id, userId: req.user._id});
+    else if (name)
         getRes = await Object.find({name: {$regex: name, $options: 'i'}, userId: req.user._id});
     else
         getRes = await Object.find({userId: req.user._id});
@@ -34,8 +36,15 @@ router.route('/:base').get(async (req, res) => {
 });
 
 router.route('/:base/:sub').get(async (req, res) => {
-    const Object = mongoose.model(req.params.sub);
-    const getRes = await Object.find({userId: req.user._id});
+    let Object;
+    let getRes;
+    if (req.params.sub.length === 24) {
+        Object = mongoose.model(req.params.base);
+        getRes = await Object.find({userId: req.user._id, _id: req.params.sub});
+    } else {
+        Object = mongoose.model(req.params.sub);
+        getRes = await Object.find({userId: req.user._id});
+    }
     res.send(getRes);
 }).post(async (req, res) => {
     const sub = req.params.sub;
