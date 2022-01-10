@@ -2,8 +2,6 @@ import React, {useEffect, useState, useRef} from "react";
 import typeApi from '../../api/type-server'
 
 const Dropdown = ({onSelectedChange, label, url, target, defaultTerm}) => {
-
-    console.log(defaultTerm)
     const [open, setOpen] = useState(false);
     const [term, setTerm] = useState(defaultTerm);
     const [debouncedTerm, setDebouncedTerm] = useState(defaultTerm);

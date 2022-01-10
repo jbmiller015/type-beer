@@ -9,7 +9,6 @@ const Phase = (props) => {
         removePhase,
         handleFieldChange,
         phaseData,
-        previousPhaseTank
     } = props;
 
     const [fieldName, setFieldName] = useState("field");
@@ -41,11 +40,20 @@ const Phase = (props) => {
 
     const handleTransferCheck = e => {
         let {checked} = e.target;
-        checked ? setTransfer(true) : setTransfer(false);
+        if (checked) {
+            setTransfer(true)
+            setPhaseName("Transfer");
+        } else {
+            setTransfer(false);
+            setPhaseName("")
+        }
     };
 
-    const endDateField = () => (
-        index > 0 && transfer ?
+    const endDateField = () => {
+
+        const pastTank = phaseData.previousPhase
+
+        return index > 0 && transfer ?
             <div className={fieldName}>
                 <label>Transfer Date:</label>
                 <input type="date" name="transferDate" value={endDate ? endDate : ""}
@@ -58,7 +66,7 @@ const Phase = (props) => {
             </div> : <div>
                 <div className={fieldName}>
                     <label>Start Date:</label>
-                    <input type="date" name="startDate" value={startDate ? startDate : ""}
+                    <input type="date" name="startDate" value={pastTank ? pastTank.endDate : startDate}
                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
                            onChange={(e) => setStartDate(e.target.value)}/>
                 </div>
@@ -68,13 +76,16 @@ const Phase = (props) => {
                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
                            onChange={(e) => setEndDate(e.target.value)}/>
                 </div>
-            </div>);
+            </div>
+    };
 
     const endTankField = () => {
+        const pastTank = phaseData.previousPhase;
+
         return (index > 0 && transfer ? <div>
             <div className={fieldName}>
                 <Dropdown label="Select Start Tank" onSelectedChange={setStartTank} url="tank" index={index}
-                          target={'startTank'} defaultTerm={previousPhaseTank.name ? previousPhaseTank.name : ""}/>
+                          target={'startTank'} defaultTerm={pastTank ? pastTank.endTank.name : ""}/>
             </div>
             <div className={fieldName}>
                 <Dropdown label="Select End Tank" defaultTerm={endTank ? endTank.name : ""}
@@ -86,9 +97,13 @@ const Phase = (props) => {
     };
 
     const startTankField = () => {
-        return previousPhaseTank === null ? <div className={fieldName}>
+        return phaseData.previousPhase === null ? <div className={fieldName}>
             <Dropdown label="Select Start Tank" defaultTerm={startTank ? startTank.name : ""}
-                      onSelectedChange={setStartTank} url="tank"
+                      onSelectedChange={(tank) => {
+                          setStartTank(tank);
+                          setEndTank(tank);
+                      }}
+                      url="tank"
                       index={index}
                       target={'startTank'}/>
         </div> : null
@@ -98,7 +113,9 @@ const Phase = (props) => {
         handleFieldChange(index, {target: {name: 'submit', value: {phaseName, startDate, endDate, startTank, endTank}}})
     }
 
-    return (!editPhase ?
+    return (
+
+        !editPhase ?
             <div className="ui clearing segment">
                 <p>Phase Name: {phaseName}</p>
                 <div className="ui left floated basic yellow icon button" onClick={(e) => setEditPhase(true)}>
@@ -109,7 +126,8 @@ const Phase = (props) => {
                 </div>
             </div>
             :
-            <div className="grouped fields" style={{border: '1px solid #ccc', borderRadius: '10px', padding: '10px'}}>
+            <div className="grouped fields"
+                 style={{border: '1px solid #ccc', borderRadius: '10px', padding: '10px'}}>
                 <div className={fieldName}>
                     <label className="label">Phase {index + 1}: </label>
                     {index > 0 ? <div className="field">
@@ -151,7 +169,8 @@ const Phase = (props) => {
                         </div>
                     </div>
                     <div className={'field'}>
-                        <div className="ui right floated basic red icon button" onClick={(e) => removePhase(index, e)}>
+                        <div className="ui right floated basic red icon button"
+                             onClick={(e) => removePhase(index, e)}>
                             <i className="trash alternate outline icon"/>
                         </div>
                     </div>

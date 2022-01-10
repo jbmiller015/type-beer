@@ -17,10 +17,25 @@ class CreateProcess extends React.Component {
             exceptedYield: "",
             actualYield: "",
             contents: null,
+            startDate: null,
+            endDate: null,
             phases: [],
             selectedBeer: "",
             showExample: false,
             typeDropDown: false
+        }
+
+    }
+
+
+    screenSize = () => {
+        if (window.innerWidth < 500) {
+            return "90%"
+        }
+        if (window.innerWidth >= 500 && window.innerWidth < 1050) {
+            return "60%"
+        } else {
+            return "30%"
         }
     }
 
@@ -51,8 +66,6 @@ class CreateProcess extends React.Component {
     };
 
     handleFieldChange = (index, e) => {
-
-        console.log(e)
         let {name, value, checked} = e.target;
         if (name === "complete") {
             value = checked
@@ -61,10 +74,6 @@ class CreateProcess extends React.Component {
         phases[index] = value;
         this.setState({phases});
         console.log(this.state)
-    }
-
-    handleTransferPhase = () => {
-
     }
 
     onFormSubmit = async (e) => {
@@ -90,40 +99,88 @@ class CreateProcess extends React.Component {
 
     };
 
-    fillDateField = () => {
-        return this.state.fill ?
+    startDateField = () => {
+        return (
             <div className="field">
-                <label>Fill Date:</label>
-                <input type="datetime-local" name="fillDate" onChange={this.handleFieldChange}/>
-            </div> : null
+                <label>Start Date:</label>
+                <input type="date" name="startDate"
+                       onChange={(e) => this.setState({startDate: e.target.value})}/>
+            </div>
+        );
+    }
+    endDateField = () => {
+        return (
+            <div className="field">
+                <label>End Date:</label>
+                <input type="date" name="endDate"
+                       onChange={(e) => this.setState({endDate: e.target.value})}/>
+            </div>
+        );
     }
 
     contentField = () => {
-        return this.state.fill ?
+        return (
             <div className="field">
                 <Dropdown label="Select Tank Contents" onSelectedChange={this.setContents} url="beer"
                           target={'contents'}/>
-            </div> : null
+            </div>
+        );
     }
 
     phaseFields = () => {
         return this.state.phases.map((phase, i) => {
-            console.log(this.state.phases)
-            return <Phase phaseData={phase} key={i} index={i}
-                          handleFieldChange={this.handleFieldChange}
-                          removePhase={this.removePhase}
-                          previousPhaseTank={i > 0 ? this.state.phases[i - 1].startTank : null}
+            return <Phase
+                phaseData={{
+                    phase,
+                    previousPhase: i > 0 ? this.state.phases[i - 1] : null,
+                    startDate: i > 0 ? null : this.state.startDate
+                }}
+                key={i} index={i}
+                handleFieldChange={this.handleFieldChange}
+                removePhase={this.removePhase}
+
             />
         });
     }
 
     phaseButton = () => {
-        return this.state.contents && this.state.fill ?
-            <div className="phase button" style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
-                <div className="ui primary button" onClick={this.addPhase}>
-                    Add Phase
+        if (this.state.phases.length > 0 && !this.state.endDate) {
+            return (<div className="field">
+                <div className="phase button" style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
+                    <div className="ui primary button" onClick={this.addPhase}>
+                        Add Phase
+                    </div>
                 </div>
-            </div> : null
+            </div>);
+        } else if (!this.state.contents || !this.state.startDate) {
+            return null
+        } else if (this.state.phases.length === 0 && !this.state.showEndDateField) {
+            return (<div className="choice">
+                <div className="field">
+                    <div className="basic phase button"
+                         style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
+                        <div className="ui primary button" onClick={(e => {
+                            this.setState({showEndDateField: true})
+                        })}>
+                            Basic Brew
+                        </div>
+                    </div>
+                </div>
+                <div className="ui horizontal divider">
+                    Or
+                </div>
+                <div className="field">
+                    <div className="phase button"
+                         style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
+                        <div className="ui primary button" onClick={this.addPhase}>
+                            Add Phase
+                        </div>
+                    </div>
+                </div>
+            </div>)
+        }
+
+
     }
 
     addPhase = (e) => {
@@ -138,6 +195,31 @@ class CreateProcess extends React.Component {
         this.setState({phases});
     }
 
+    defaultPhase = () => {
+        if (this.state.showEndDateField) {
+            this.state.phases.push({
+                phaseName: `Standard Brew: ${this.state.selectedBeer}`,
+                startDate: this.state.startDate,
+                endDate: this.state.endDate
+            })
+            return (
+                <div>
+                    {this.endDateField()}
+                    <div className={"field"}>
+                        <Dropdown label="Select Start Tank" defaultTerm={""}
+                                  onSelectedChange={(tank) => {
+                                      this.handleFieldChange(0, {target: {name: 'startTank', value: tank}})
+                                  }}
+                                  url="tank"
+                                  index={0}
+                                  target={'startTank'}/>
+                    </div>
+                </div>
+
+            )
+        } else return null
+    }
+
     render() {
         return (
             <div>
@@ -145,49 +227,36 @@ class CreateProcess extends React.Component {
                 <div className="ui horizontal divider"/>
                 <div className="container"
                      style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
-                    <div className="form" style={{padding: "2%"}}>
+                    <div className="form" style={{padding: "1%", minWidth: this.screenSize()}}>
                         <form className="ui form" onSubmit={this.onFormSubmit}>
                             <div className="required field">
-                                <label>Tank Name:</label>
+                                <label>Process Name:</label>
                                 <input type="text" name="name" onChange={this.handleChange}/>
                             </div>
                             <div className="required field">
-                                <label>Tank Size:</label>
-                                <input type="text" name="size" onChange={this.handleChange}/>
+                                <label>Expected Yield:</label>
+                                <input type="text" name="expectedYield" onChange={this.handleChange}/>
                             </div>
-                            <div className="required field">
-                                <label>Tank Type:</label>
-                                <select className="ui dropdown" onChange={this.handleChange}>
-                                    <option defaultValue="" hidden>Choose Type</option>
-                                    <option value="brite">Brite</option>
-                                    <option value="fermenter">Fermenter</option>
-                                    <option value="kettle">Kettle</option>
-                                </select>
+                            <div className="disabled field">
+                                <label>Actual Yield:</label>
+                                <input type="text" name="actualYield" onChange={this.handleChange}/>
                             </div>
-                            <div className="field">
-                                <div className="ui checkbox">
-                                    <input type="checkbox" name="fill" tabIndex="0"
-                                           onChange={this.handleChange}
-                                           defaultChecked={this.state.fill}/>
-                                    <label>Filled</label>
-                                </div>
-                            </div>
-                            {this.fillDateField()}
                             {this.contentField()}
-                            <div className="ui horizontal divider"/>
-                            {this.phaseFields()}
-                            <div className="ui horizontal divider"/>
-                            <div className="ui horizontal divider"/>
-                            {this.phaseButton()}
+                            {this.startDateField()}
+                            {!this.state.endDate && this.state.phases.length < 1 ? this.phaseButton() : null}
+                            {this.defaultPhase()}
                             <button className="ui button" type="submit">Submit</button>
                         </form>
                     </div>
-                    <div className={"example"} style={{paddingInline: "2%", paddingTop: "2%"}}>
-                        {this.state.fill || this.state.showExample ?
-                            <Tank tankData={{name: this.state.name, contents: {name: this.state.selectedBeer}}}
-                                  detailButtonVisible={false}/>
-                            : null}
-                    </div>
+                    {this.state.phases.length >= 1 ? <div className={"phases"}
+                                                          style={{padding: "1%", minWidth: this.screenSize()}}>
+                        <div className="form" style={{padding: "2%"}}>
+                            <form className="ui form">
+                                {this.phaseFields()}
+                                {this.state.phases.length > 0 && !this.state.endDate ? this.phaseButton() : null}
+                            </form>
+                        </div>
+                    </div> : null}
                 </div>
             </div>
         );
