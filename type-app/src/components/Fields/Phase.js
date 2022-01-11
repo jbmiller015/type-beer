@@ -2,8 +2,6 @@ import React, {useEffect, useState} from "react";
 import Dropdown from "./Dropdown";
 
 const Phase = (props) => {
-
-    console.log(props)
     const {
         index,
         removePhase,
@@ -15,7 +13,7 @@ const Phase = (props) => {
     const [transfer, setTransfer] = useState(false);
     const [editPhase, setEditPhase] = useState(true);
     const [phaseName, setPhaseName] = useState(phaseData.phaseName);
-    const [startDate, setStartDate] = useState(phaseData.startDate);
+    const [startDate, setStartDate] = useState(phaseData.previousPhase ? phaseData.previousPhase.startDate : phaseData.startDate);
     const [endDate, setEndDate] = useState(phaseData.endDate);
     const [startTank, setStartTank] = useState(phaseData.startTank);
     const [endTank, setEndTank] = useState(phaseData.endTank);
@@ -54,7 +52,7 @@ const Phase = (props) => {
         const pastTank = phaseData.previousPhase
 
         return index > 0 && transfer ?
-            <div className={fieldName}>
+            <div className={fieldName} id={"startDate" || "endDate"}>
                 <label>Transfer Date:</label>
                 <input type="date" name="transferDate" value={endDate ? endDate : ""}
                        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
@@ -64,13 +62,13 @@ const Phase = (props) => {
 
                        }}/>
             </div> : <div>
-                <div className={fieldName}>
+                <div className={fieldName} id={"startDate"}>
                     <label>Start Date:</label>
                     <input type="date" name="startDate" value={pastTank ? pastTank.endDate : startDate}
                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
                            onChange={(e) => setStartDate(e.target.value)}/>
                 </div>
-                <div className={fieldName}>
+                <div className={fieldName} id={"endDate"}>
                     <label>End Date:</label>
                     <input type="date" name="endDate" value={endDate ? endDate : ""}
                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
@@ -83,11 +81,11 @@ const Phase = (props) => {
         const pastTank = phaseData.previousPhase;
 
         return (index > 0 && transfer ? <div>
-            <div className={fieldName}>
+            <div className={fieldName} id={"startTank"}>
                 <Dropdown label="Select Start Tank" onSelectedChange={setStartTank} url="tank" index={index}
                           target={'startTank'} defaultTerm={pastTank ? pastTank.endTank.name : ""}/>
             </div>
-            <div className={fieldName}>
+            <div className={fieldName} id={"endTank"}>
                 <Dropdown label="Select End Tank" defaultTerm={endTank ? endTank.name : ""}
                           onSelectedChange={setEndTank} url="tank"
                           index={index}
@@ -97,7 +95,7 @@ const Phase = (props) => {
     };
 
     const startTankField = () => {
-        return phaseData.previousPhase === null ? <div className={fieldName}>
+        return phaseData.previousPhase === null ? <div className={fieldName} id={"startTank" || "endTank"}>
             <Dropdown label="Select Start Tank" defaultTerm={startTank ? startTank.name : ""}
                       onSelectedChange={(tank) => {
                           setStartTank(tank);
@@ -110,14 +108,30 @@ const Phase = (props) => {
     }
 
     function submitPhase() {
-        handleFieldChange(index, {target: {name: 'submit', value: {phaseName, startDate, endDate, startTank, endTank}}})
+        const phase = {phaseName, startDate, endDate, startTank, endTank}
+        for (let el in phase) {
+            if (!phase[el]) {
+                document.getElementById(el).className = "required field error"
+            }
+        }
+        if (phaseName && startDate && endDate && startTank && endTank) {
+            setEditPhase(false);
+            setFieldName("field");
+            handleFieldChange(index, {
+                target: {
+                    name: 'submit',
+                    value: {phaseName, startDate, endDate, startTank, endTank}
+                }
+            })
+        }
     }
 
     return (
 
         !editPhase ?
             <div className="ui clearing segment">
-                <p>Phase Name: {phaseName}</p>
+                <h3>{phaseName}</h3>
+                <h4>{startDate} - {endDate}</h4>
                 <div className="ui left floated basic yellow icon button" onClick={(e) => setEditPhase(true)}>
                     <i className="edit icon"/>
                 </div>
@@ -128,7 +142,7 @@ const Phase = (props) => {
             :
             <div className="grouped fields"
                  style={{border: '1px solid #ccc', borderRadius: '10px', padding: '10px'}}>
-                <div className={fieldName}>
+                <div className={fieldName} id={"phaseName"}>
                     <label className="label">Phase {index + 1}: </label>
                     {index > 0 ? <div className="field">
                         <div className="ui checkbox">
@@ -162,7 +176,6 @@ const Phase = (props) => {
                 <div className={'inline fields'}>
                     <div className={'field'}>
                         <div className="ui left floated basic green icon button" onClick={(e) => {
-                            setEditPhase(false)
                             submitPhase()
                         }}>
                             <i className="check icon"/>

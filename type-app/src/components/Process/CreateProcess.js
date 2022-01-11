@@ -22,7 +22,8 @@ class CreateProcess extends React.Component {
             phases: [],
             selectedBeer: "",
             showExample: false,
-            typeDropDown: false
+            typeDropDown: false,
+            showDefault: false
         }
 
     }
@@ -73,7 +74,6 @@ class CreateProcess extends React.Component {
         let phases = [...this.state.phases];
         phases[index] = value;
         this.setState({phases});
-        console.log(this.state)
     }
 
     onFormSubmit = async (e) => {
@@ -154,13 +154,13 @@ class CreateProcess extends React.Component {
             </div>);
         } else if (!this.state.contents || !this.state.startDate) {
             return null
-        } else if (this.state.phases.length === 0 && !this.state.showEndDateField) {
+        } else if (this.state.phases.length === 0 && !this.state.showDefault) {
             return (<div className="choice">
                 <div className="field">
                     <div className="basic phase button"
                          style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
                         <div className="ui primary button" onClick={(e => {
-                            this.setState({showEndDateField: true})
+                            this.setState({showDefault: true})
                         })}>
                             Basic Brew
                         </div>
@@ -196,7 +196,7 @@ class CreateProcess extends React.Component {
     }
 
     defaultPhase = () => {
-        if (this.state.showEndDateField) {
+        if (this.state.showDefault) {
             this.state.phases.push({
                 phaseName: `Standard Brew: ${this.state.selectedBeer}`,
                 startDate: this.state.startDate,
@@ -218,6 +218,18 @@ class CreateProcess extends React.Component {
 
             )
         } else return null
+    }
+
+    phaseCollection = () => {
+        return this.state.phases.length >= 1 && !this.state.showDefault ?
+            <div className={"phases"} style={{padding: "1%", minWidth: this.screenSize()}}>
+                <div className="form" style={{padding: "2%"}}>
+                    <form className="ui form">
+                        {this.phaseFields()}
+                        {this.state.phases.length > 0 && !this.state.endDate ? this.phaseButton() : null}
+                    </form>
+                </div>
+            </div> : null
     }
 
     render() {
@@ -248,15 +260,7 @@ class CreateProcess extends React.Component {
                             <button className="ui button" type="submit">Submit</button>
                         </form>
                     </div>
-                    {this.state.phases.length >= 1 ? <div className={"phases"}
-                                                          style={{padding: "1%", minWidth: this.screenSize()}}>
-                        <div className="form" style={{padding: "2%"}}>
-                            <form className="ui form">
-                                {this.phaseFields()}
-                                {this.state.phases.length > 0 && !this.state.endDate ? this.phaseButton() : null}
-                            </form>
-                        </div>
-                    </div> : null}
+                    {this.phaseCollection()}
                 </div>
             </div>
         );
