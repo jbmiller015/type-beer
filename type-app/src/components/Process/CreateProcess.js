@@ -76,6 +76,46 @@ class CreateProcess extends React.Component {
         this.setState({phases});
     }
 
+    validatePhase = (phase) => {
+        let result = {
+            valid: true,
+            message: {
+                fields: [],
+                error: ""
+            }
+        }
+
+        const checkObjs = () => {
+            for (let el in phase) {
+                if (!phase[el]) {
+                    result.message.fields.push(el);
+                    result.message.error = "Missing value in required field: " + el;
+                    result.valid = false;
+                }
+            }
+            return result.valid;
+        }
+        //Check Required Fields
+
+        if (!checkObjs()) {
+            return result;
+        }
+
+        const {phaseName, startDate, endDate, startTank, endTank} = phase;
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        if (start > end) {
+            return {
+                valid: false,
+                message: "false"
+            }
+        } else
+            return {
+                valid: true,
+                message: "true"
+            }
+    }
+
     onFormSubmit = async (e) => {
         e.preventDefault();
 
@@ -138,7 +178,7 @@ class CreateProcess extends React.Component {
                 key={i} index={i}
                 handleFieldChange={this.handleFieldChange}
                 removePhase={this.removePhase}
-
+                validatePhase={this.validatePhase}
             />
         });
     }

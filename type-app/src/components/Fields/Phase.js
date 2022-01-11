@@ -7,6 +7,7 @@ const Phase = (props) => {
         removePhase,
         handleFieldChange,
         phaseData,
+        validatePhase
     } = props;
 
     const [fieldName, setFieldName] = useState("field");
@@ -109,20 +110,21 @@ const Phase = (props) => {
 
     function submitPhase() {
         const phase = {phaseName, startDate, endDate, startTank, endTank}
-        for (let el in phase) {
-            if (!phase[el]) {
-                document.getElementById(el).className = "required field error"
+        const {valid, message} = validatePhase(phase);
+        if (valid) {
+
+            if (phaseName && startDate && endDate && startTank && endTank) {
+                setEditPhase(false);
+                setFieldName("field");
+                handleFieldChange(index, {
+                    target: {
+                        name: 'submit',
+                        value: {phaseName, startDate, endDate, startTank, endTank}
+                    }
+                })
             }
-        }
-        if (phaseName && startDate && endDate && startTank && endTank) {
-            setEditPhase(false);
-            setFieldName("field");
-            handleFieldChange(index, {
-                target: {
-                    name: 'submit',
-                    value: {phaseName, startDate, endDate, startTank, endTank}
-                }
-            })
+        } else {
+            console.log(message)
         }
     }
 
