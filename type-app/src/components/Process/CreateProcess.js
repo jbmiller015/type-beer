@@ -79,41 +79,36 @@ class CreateProcess extends React.Component {
     validatePhase = (phase) => {
         let result = {
             valid: true,
-            message: {
+            error: {
                 fields: [],
-                error: ""
+                messages: []
             }
         }
-
         const checkObjs = () => {
             for (let el in phase) {
                 if (!phase[el]) {
-                    result.message.fields.push(el);
-                    result.message.error = "Missing value in required field: " + el;
+                    result.error.fields.push(el);
+                    result.error.messages.push("Missing value in required field: " + el);
                     result.valid = false;
                 }
             }
-            return result.valid;
         }
-        //Check Required Fields
+        const {startDate, endDate, startTank, endTank} = phase;
+        const checkDates = () => {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            if (start > end) {
+                result.valid = false;
+                result.error.fields.push("startDate");
+                result.error.fields.push("endDate");
+                result.error.messages.push("End Date Cannot be before Start Date");
 
-        if (!checkObjs()) {
-            return result;
+            }
         }
 
-        const {phaseName, startDate, endDate, startTank, endTank} = phase;
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        if (start > end) {
-            return {
-                valid: false,
-                message: "false"
-            }
-        } else
-            return {
-                valid: true,
-                message: "true"
-            }
+        checkObjs();
+        checkDates();
+        return result;
     }
 
     onFormSubmit = async (e) => {
@@ -168,6 +163,7 @@ class CreateProcess extends React.Component {
     }
 
     phaseFields = () => {
+        console.log(this.state.phases)
         return this.state.phases.map((phase, i) => {
             return <Phase
                 phaseData={{
@@ -225,7 +221,21 @@ class CreateProcess extends React.Component {
 
     addPhase = (e) => {
         e.preventDefault()
-        this.setState({phases: [...this.state.phases, {}]})
+        const size = this.state.phases.length;
+        console.log(this.state.phases.length)
+        if (this.state.phases.length >= 1) {
+            console.log(this.state.phases[size - 1])
+            const newPhase = {
+                startDate: this.state.phases[size - 1].endDate,
+                startTank: this.state.phases[size - 1].endTank,
+                endTank: this.state.phases[size - 1].endTank
+            }
+            this.setState({
+                phases: [...this.state.phases, newPhase]
+            })
+        } else {
+            this.setState({phases: [...this.state.phases, {}]})
+        }
     }
 
     removePhase = (index, e) => {

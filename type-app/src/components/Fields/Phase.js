@@ -10,18 +10,21 @@ const Phase = (props) => {
         validatePhase
     } = props;
 
+    console.log(phaseData)
+
     const [fieldName, setFieldName] = useState("field");
     const [transfer, setTransfer] = useState(false);
     const [editPhase, setEditPhase] = useState(true);
-    const [phaseName, setPhaseName] = useState(phaseData.phaseName);
-    const [startDate, setStartDate] = useState(phaseData.previousPhase ? phaseData.previousPhase.startDate : phaseData.startDate);
-    const [endDate, setEndDate] = useState(phaseData.endDate);
-    const [startTank, setStartTank] = useState(phaseData.startTank);
-    const [endTank, setEndTank] = useState(phaseData.endTank);
+    const [phaseName, setPhaseName] = useState(phaseData.phase.phaseName);
+    const [startDate, setStartDate] = useState(phaseData.phase.startDate);
+    const [endDate, setEndDate] = useState(phaseData.phase.endDate);
+    const [startTank, setStartTank] = useState(phaseData.phase.startTank);
+    const [endTank, setEndTank] = useState(phaseData.phase.endTank);
 
     useEffect(() => {
         if (transfer) {
             phaseData.phaseName = "Transfer"
+            setEndDate(startDate);
             handleFieldChange(
                 index, {
                     target: {name: 'phaseName', value: "Transfer"}
@@ -50,12 +53,10 @@ const Phase = (props) => {
 
     const endDateField = () => {
 
-        const pastTank = phaseData.previousPhase
-
         return index > 0 && transfer ?
             <div className={fieldName} id={"startDate" || "endDate"}>
                 <label>Transfer Date:</label>
-                <input type="date" name="transferDate" value={endDate ? endDate : ""}
+                <input type="date" name="transferDate" value={startDate ? startDate : ""}
                        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
                        onChange={(e) => {
                            setEndDate(e.target.value)
@@ -65,7 +66,7 @@ const Phase = (props) => {
             </div> : <div>
                 <div className={fieldName} id={"startDate"}>
                     <label>Start Date:</label>
-                    <input type="date" name="startDate" value={pastTank ? pastTank.endDate : startDate}
+                    <input type="date" name="startDate" value={startDate ? startDate : ""}
                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
                            onChange={(e) => setStartDate(e.target.value)}/>
                 </div>
@@ -79,12 +80,11 @@ const Phase = (props) => {
     };
 
     const endTankField = () => {
-        const pastTank = phaseData.previousPhase;
 
         return (index > 0 && transfer ? <div>
             <div className={fieldName} id={"startTank"}>
                 <Dropdown label="Select Start Tank" onSelectedChange={setStartTank} url="tank" index={index}
-                          target={'startTank'} defaultTerm={pastTank ? pastTank.endTank.name : ""}/>
+                          target={'startTank'} defaultTerm={startTank ? startTank.name : ""}/>
             </div>
             <div className={fieldName} id={"endTank"}>
                 <Dropdown label="Select End Tank" defaultTerm={endTank ? endTank.name : ""}
@@ -96,23 +96,26 @@ const Phase = (props) => {
     };
 
     const startTankField = () => {
-        return phaseData.previousPhase === null ? <div className={fieldName} id={"startTank" || "endTank"}>
-            <Dropdown label="Select Start Tank" defaultTerm={startTank ? startTank.name : ""}
-                      onSelectedChange={(tank) => {
-                          setStartTank(tank);
-                          setEndTank(tank);
-                      }}
-                      url="tank"
-                      index={index}
-                      target={'startTank'}/>
+        return phaseData.previousPhase === null ? <div>
+            <div className={fieldName} id={"startTank"}>
+                <Dropdown label="Select Start Tank" defaultTerm={startTank ? startTank.name : ""}
+                          onSelectedChange={(tank) => {
+                              setStartTank(tank);
+                              setEndTank(tank);
+                          }}
+                          url="tank"
+                          index={index}
+                          target={'startTank'}/>
+            </div>
+            <div className={fieldName} id={"endTank"}>
+            </div>
         </div> : null
     }
 
     function submitPhase() {
         const phase = {phaseName, startDate, endDate, startTank, endTank}
-        const {valid, message} = validatePhase(phase);
+        const {valid, error} = validatePhase(phase);
         if (valid) {
-
             if (phaseName && startDate && endDate && startTank && endTank) {
                 setEditPhase(false);
                 setFieldName("field");
@@ -124,7 +127,14 @@ const Phase = (props) => {
                 })
             }
         } else {
-            console.log(message)
+            console.log(error.fields.length)
+            for (let field of error.fields) {
+                console.log(field)
+                document.getElementById(field).className = "required field error"
+            }
+            for (let message of error.messages) {
+                console.log(message)
+            }
         }
     }
 
@@ -194,4 +204,5 @@ const Phase = (props) => {
 
     );
 }
+
 export default Phase;
