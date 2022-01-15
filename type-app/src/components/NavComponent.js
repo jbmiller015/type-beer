@@ -44,6 +44,15 @@ const NavComponent = (props) => {
                                 </div>
                             </div>
                             <div className={"item"}>
+                                <div className={"fluid ui basic animated fade button"} tabIndex="0"
+                                     onClick={() => history.push('/processes')}>
+                                    <div className={"visible content"}>Processes</div>
+                                    <div className={"hidden content"}>
+                                        <i className={"beer icon"}/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={"item"}>
                                 <div style={{textAlign: "center"}} className={"fluid ui basic simple dropdown button"}>
                                     <span className={"text"}>Create</span>
                                     <i className="dropdown icon"/>

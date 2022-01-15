@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import typeApi from '../../api/type-server'
 
-const Dropdown = ({onSelectedChange, label, url, target, defaultTerm}) => {
+const Dropdown = ({onSelectedChange, label, url, target, defaultTerm, startDate, endDate}) => {
     const [open, setOpen] = useState(false);
     const [term, setTerm] = useState(defaultTerm);
     const [debouncedTerm, setDebouncedTerm] = useState(defaultTerm);
@@ -39,30 +39,27 @@ const Dropdown = ({onSelectedChange, label, url, target, defaultTerm}) => {
 
 
     useEffect(() => {
+        let config = {
+            params: {
+                name: debouncedTerm,
+            }
+        }
+        if (target === 'startTank') {
+            config.params.fill = false;
+            config.params.startDate = startDate;
+            config.params.endDate = endDate;
+            url = 'process/active'
+        }
+
         const search = async () => {
-            const {data} = await typeApi.get(`/${url}`, {
-                params: {
-                    name: debouncedTerm
-                }
-            });
-            const filteredData = filterResults(data);
-            setResults(filteredData);
+            const {data} = await typeApi.get(`/${url}`, config);
+            setResults(data);
         };
         if (debouncedTerm) {
             search();
         }
 
     }, [debouncedTerm, url]);
-
-    const filterResults = (data) => {
-        if (target === 'startTank') {
-
-        }
-        if (target === 'endTank') {
-
-        }
-        return data;
-    }
 
     const renderedOptions = results.map((option, i) => {
         return (

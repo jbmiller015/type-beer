@@ -72,7 +72,13 @@ class CreateProcess extends React.Component {
             value = checked
         }
         let phases = [...this.state.phases];
-        phases[index] = value;
+        if (this.state.showDefault) {
+            phases[index][name] = value;
+            if (name === 'startTank')
+                phases[index].endTank = value;
+        } else {
+            phases[index] = value;
+        }
         this.setState({phases});
     }
 
@@ -102,7 +108,6 @@ class CreateProcess extends React.Component {
                 result.error.fields.push("startDate");
                 result.error.fields.push("endDate");
                 result.error.messages.push("End Date Cannot be before Start Date");
-
             }
         }
 
@@ -114,17 +119,19 @@ class CreateProcess extends React.Component {
     onFormSubmit = async (e) => {
         e.preventDefault();
 
+        console.log(this.state);
         const formData = {
             name: this.state.name,
-            size: this.state.size,
+            exceptedYield: this.state.exceptedYield,
+            actualYield: this.state.actualYield,
+            startDate: this.state.startDate,
+            endDate: this.state.endDate ? this.state.endDate : this.state.phases[this.state.phases.length - 1].endDate,
             contents: this.state.contents,
-            fill: this.state.fill,
-            fillDate: this.state.fillDate,
             phases: this.state.phases
         }
 
 
-        await typeApi.post('/tank', formData)
+        await typeApi.post('/process', formData)
             .then(res =>
                 this.props.history.push('/'))
             .catch(err => {
@@ -148,7 +155,10 @@ class CreateProcess extends React.Component {
             <div className="field">
                 <label>End Date:</label>
                 <input type="date" name="endDate"
-                       onChange={(e) => this.setState({endDate: e.target.value})}/>
+                       onChange={(e) => {
+                           this.setState({endDate: e.target.value});
+                           this.handleFieldChange(0, {target: {name: 'endDate', value: e.target.value}})
+                       }}/>
             </div>
         );
     }
@@ -234,7 +244,7 @@ class CreateProcess extends React.Component {
                 phases: [...this.state.phases, newPhase]
             })
         } else {
-            this.setState({phases: [...this.state.phases, {}]})
+            this.setState({phases: [...this.state.phases, {startDate: this.state.startDate}]})
         }
     }
 
@@ -247,25 +257,33 @@ class CreateProcess extends React.Component {
 
     defaultPhase = () => {
         if (this.state.showDefault) {
-            this.state.phases.push({
-                phaseName: `Standard Brew: ${this.state.selectedBeer}`,
-                startDate: this.state.startDate,
-                endDate: this.state.endDate
-            })
+            if (this.state.phases.length < 1) {
+                this.state.phases.push({
+                    phaseName: `Standard Brew: ${this.state.selectedBeer}`,
+                    startDate: this.state.startDate
+                })
+            }
+            console.log(this.state.phases)
             return (
                 <div>
                     {this.endDateField()}
                     <div className={"field"}>
-                        <Dropdown label="Select Start Tank" defaultTerm={""}
-                                  onSelectedChange={(tank) => {
-                                      this.handleFieldChange(0, {target: {name: 'startTank', value: tank}})
-                                  }}
-                                  url="tank"
-                                  index={0}
-                                  target={'startTank'}/>
+                        {this.state.endDate ? <Dropdown label="Select Start Tank" defaultTerm={""}
+                                                        onSelectedChange={(tank) => {
+                                                            this.handleFieldChange(0, {
+                                                                target: {
+                                                                    name: 'startTank',
+                                                                    value: tank._id
+                                                                }
+                                                            })
+                                                        }}
+                                                        url="tank"
+                                                        index={0}
+                                                        startDate={this.state.startDate}
+                                                        endDate={this.state.endDate}
+                                                        target={'startTank'}/> : null}
                     </div>
                 </div>
-
             )
         } else return null
     }

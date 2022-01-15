@@ -6,6 +6,7 @@ import CreateBeer from "./Beer/CreateBeer";
 import AuthForm from "./Account/AuthForm";
 import useToken from "../hooks/useToken";
 import CreateProcess from "./Process/CreateProcess";
+import Process from "./Process/Process";
 
 const App = () => {
 
@@ -23,6 +24,7 @@ const App = () => {
                     <Route path="/create/beer" exact component={CreateBeer}/>
                     <Route path="/create/process" exact component={CreateProcess}/>
                     <Route path="/fridge" exact component={() => (<BrewFloor tanks={false}/>)}/>
+                    <Route path="/processes" exact component={Process}/>
                 </div>
             </BrowserRouter>
         </div>

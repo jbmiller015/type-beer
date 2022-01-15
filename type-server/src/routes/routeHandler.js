@@ -12,13 +12,13 @@ router.use(requireAuth);
 router.route('/:base').get(async (req, res) => {
     const base = toUpper(req.params.base);
     const Object = mongoose.model(base);
-    const {id, name} = req.query;
+    const {id, name, fill} = req.query;
     let getRes;
 
     if (id)
         getRes = await Object.find({_id: id, userId: req.user._id});
     else if (name)
-        getRes = await Object.find({name: {$regex: name, $options: 'i'}, userId: req.user._id});
+        getRes = await Object.find({name: {$regex: name, $options: 'i'}, userId: req.user._id, fill});
     else
         getRes = await Object.find({userId: req.user._id});
 
@@ -38,9 +38,51 @@ router.route('/:base').get(async (req, res) => {
 router.route('/:base/:sub').get(async (req, res) => {
     let Object;
     let getRes;
+    const {startDate, endDate, name} = req.query;
+    const base = toUpper(req.params.base);
     if (req.params.sub.length === 24) {
-        Object = mongoose.model(req.params.base);
+        Object = mongoose.model(base);
         getRes = await Object.find({userId: req.user._id, _id: req.params.sub});
+    } else if (req.params.sub === 'active') {
+        Object = mongoose.model(base);
+        if (startDate && endDate) {
+            getRes = await Object.find({
+                userId: req.user._id,
+                startDate: {$lte: new Date(startDate)},
+                endDate: {$lte: new Date(endDate), $gte: new Date(startDate)}
+            });
+            for (let el of await Object.find({
+                userId: req.user._id,
+                startDate: {$gte: new Date(startDate), $lte: new Date(endDate)},
+                endDate: {$gte: new Date(endDate)}
+            })) {
+                getRes.push(el);
+            }
+            let tankList = [];
+            for (let el of getRes) {
+                for (let le of el.phases) {
+                    const {startTank, endTank} = le;
+                    if (startTank.toString() === endTank.toString() && tankList.indexOf(startTank.toString()) === -1) {
+                        tankList.push(startTank.toString());
+                    } else {
+                        if (tankList.indexOf(startTank.toString()) === -1)
+                            tankList.push(startTank.toString());
+                        if (tankList.indexOf(endTank.toString()) === -1)
+                            tankList.push(endTank.toString());
+                    }
+                }
+            }
+            let tanks = await mongoose.model('Tank').find({userId: req.user._id, name: {$regex: name, $options: 'i'}})
+            getRes = tanks.filter(tank => {
+                return tankList.indexOf(tank._id.toString()) === -1
+            });
+        } else {
+            getRes = await Object.find({
+                userId: req.user._id,
+                startDate: {$lte: new Date()},
+                endDate: {$gte: new Date()}
+            });
+        }
     } else {
         Object = mongoose.model(req.params.sub);
         getRes = await Object.find({userId: req.user._id});

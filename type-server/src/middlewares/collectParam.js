@@ -36,6 +36,8 @@ module.exports = {
                     expectedYield: req.body.expectedYield,
                     actualYield: req.body.actualYield,
                     contents: req.body.contents,
+                    startDate: req.body.startDate,
+                    endDate: req.body.endDate,
                     phases: req.body.phases,
                     userId: req.user._id
                 };

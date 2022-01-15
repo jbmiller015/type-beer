@@ -20,16 +20,8 @@ const tankSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    contents: {
-        type: Schema.Types.ObjectId,
-        ref: 'Beer'
-    },
     fill: {
         type: Boolean,
-        required: false
-    },
-    fillDate: {
-        type: Date,
         required: false
     }
 });

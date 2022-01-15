@@ -22,6 +22,14 @@ const processSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    startDate: {
+        type: Date,
+        required: true
+    },
+    endDate: {
+        type: Date,
+        required: true
+    },
     phases: [{
         phaseName: String,
         startTank: {

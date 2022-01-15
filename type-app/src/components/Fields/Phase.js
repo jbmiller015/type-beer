@@ -98,14 +98,16 @@ const Phase = (props) => {
     const startTankField = () => {
         return phaseData.previousPhase === null ? <div>
             <div className={fieldName} id={"startTank"}>
-                <Dropdown label="Select Start Tank" defaultTerm={startTank ? startTank.name : ""}
-                          onSelectedChange={(tank) => {
-                              setStartTank(tank);
-                              setEndTank(tank);
-                          }}
-                          url="tank"
-                          index={index}
-                          target={'startTank'}/>
+                {endDate ? <Dropdown label="Select Start Tank" defaultTerm={startTank ? startTank.name : ""}
+                                     onSelectedChange={(tank) => {
+                                         setStartTank(tank);
+                                         setEndTank(tank);
+                                     }}
+                                     url="tank"
+                                     index={index}
+                                     startDate={startDate}
+                                     endDate={endDate}
+                                     target={'startTank'}/> : null}
             </div>
             <div className={fieldName} id={"endTank"}>
             </div>

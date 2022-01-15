@@ -17,6 +17,7 @@ class BrewFloor extends React.Component {
             infoMessage: null,
             tanks: {},
             beers: {},
+            processes: {},
             show: false,
             modalData: null,
             tanksActive: this.props.tanks
@@ -26,7 +27,6 @@ class BrewFloor extends React.Component {
 
     async componentDidMount() {
         await typeApi.get('/tank').then(response => {
-            console.log('get Called')
             response.data.map(el => {
                 this.setState(prevState => ({
                     tanks: {
@@ -46,6 +46,22 @@ class BrewFloor extends React.Component {
                 this.setState(prevState => ({
                     beers: {
                         ...prevState.beers,
+                        [el._id]: el
+                    },
+                    isLoaded: true,
+                }))
+            })
+        }, err => {
+            this.setState(state => ({
+                isLoaded: true,
+                error: [...state.error, err.message]
+            }))
+        });
+        await typeApi.get('/process').then(response => {
+            response.data.map(el => {
+                this.setState(prevState => ({
+                    processes: {
+                        ...prevState.processes,
                         [el._id]: el
                     },
                     isLoaded: true,
