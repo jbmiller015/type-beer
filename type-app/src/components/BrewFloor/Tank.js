@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import tankOverlay from '../../media/tankwwindow.png';
 import moment from "moment";
-
+//TODO: Combine Process data and Tank
 const Tank = (props) => {
 
     const [className, setClassName] = useState("card");
