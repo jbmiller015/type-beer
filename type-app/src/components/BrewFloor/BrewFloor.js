@@ -215,17 +215,11 @@ class BrewFloor extends React.Component {
                 </div>
             );
         } else {
-            let components;
-            this.state.tanksActive ?
-                components = Object.keys(tanks).map((tank, i) => {
+            let components = Object.keys(tanks).map((tank, i) => {
                     return (
                         <Tank tankData={tanks[tank]} key={i} contents={this.state.beers[tanks[tank].contents]}
                               loadData={this.loadTankData}
                               detailButtonVisible={true}/>)
-                }) :
-                components = Object.keys(beers).map((beer, i) => {
-                    return (
-                        <Beer beerData={beers[beer]} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
                 })
             return (
                 <div>

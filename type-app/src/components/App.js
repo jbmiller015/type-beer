@@ -7,6 +7,7 @@ import AuthForm from "./Account/AuthForm";
 import useToken from "../hooks/useToken";
 import CreateProcess from "./Process/CreateProcess";
 import Process from "./Process/Process";
+import Fridge from "./Beer/Fridge";
 
 const App = () => {
 
@@ -19,11 +20,11 @@ const App = () => {
         <div id="switch">
             <BrowserRouter>
                 <div>
-                    <Route path="/" exact component={() => (<BrewFloor tanks={true}/>)}/>
+                    <Route path="/" exact component={BrewFloor}/>
                     <Route path="/create/tank" exact component={CreateTank}/>
                     <Route path="/create/beer" exact component={CreateBeer}/>
                     <Route path="/create/process" exact component={CreateProcess}/>
-                    <Route path="/fridge" exact component={() => (<BrewFloor tanks={false}/>)}/>
+                    <Route path="/fridge" exact component={Fridge}/>
                     <Route path="/processes" exact component={Process}/>
                 </div>
             </BrowserRouter>
