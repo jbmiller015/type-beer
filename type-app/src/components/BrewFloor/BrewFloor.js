@@ -5,6 +5,7 @@ import typeApi from "../../api/type-server";
 import Modal from "../modal/Modal";
 import modal from "../modal/Modal.css"
 import Beer from "../Beer/Beer";
+import Message from "../Messages/Message";
 
 //TODO:Break off beers to new component
 //TODO:Get list of active beers from server by ids
@@ -17,7 +18,6 @@ class BrewFloor extends React.Component {
             isLoaded: false,
             infoMessage: null,
             tanks: {},
-            beers: {},
             processes: {},
             show: false,
             modalData: null,
@@ -42,22 +42,7 @@ class BrewFloor extends React.Component {
                 error: [...state.error, err.message]
             }))
         });
-        await typeApi.get('/beer').then(response => {
-            response.data.map(el => {
-                this.setState(prevState => ({
-                    beers: {
-                        ...prevState.beers,
-                        [el._id]: el
-                    },
-                    isLoaded: true,
-                }))
-            })
-        }, err => {
-            this.setState(state => ({
-                isLoaded: true,
-                error: [...state.error, err.message]
-            }))
-        });
+
         await typeApi.get('/process').then(response => {
             response.data.map(el => {
                 this.setState(prevState => ({
@@ -89,55 +74,11 @@ class BrewFloor extends React.Component {
         })
     }
 
-    deleteBeer = async (beerId) => {
-        for (let el in this.state.tanks) {
-            if (this.state.beers[this.state.tanks[el].contents]) {
-                this.setState(state => ({
-                    error: [...state.error, `Cannot Delete Beer. This beer is currently in the tank, ${el.name}. Remove the beer from the tank before removing the beer from your fridge.`]
-                }))
-            }
-        }
-
-        if (this.state.error.length === 0) {
-            await typeApi.delete(`/beer/${beerId}`).then((res) => {
-                let newState = {...this.state};
-                delete newState.beers[beerId];
-                this.setState(newState);
-                this.setState({infoMessage: "Deleted Beer:" + beerId})
-            }).catch(err => {
-                this.setState(state => ({
-                    error: [...state.error, err.message]
-                }))
-            })
-        }
-    }
-
 
     editTank = async (tankId, data) => {
         await typeApi.put(`/tank/${tankId}`, data).then((res) => {
             let newState = {...this.state};
             newState.tanks[tankId] = res.data;
-            this.setState(newState);
-        }).catch(err => {
-            this.setState(state => ({
-                error: [...state.error, err.message]
-            }))
-        })
-    }
-
-    editBeer = async (beerId, data) => {
-        for (let el in this.state.tanks) {
-            if (this.state.tanks[el].contents === beerId) {
-                let tank = this.state.tanks[el];
-                tank.contents = data._id;
-                await this.editTank(tank._id, tank);
-                break;
-            }
-        }
-
-        await typeApi.put(`/beer/${beerId}`, data).then((res) => {
-            let newState = {...this.state};
-            newState.beers[beerId] = res.data;
             this.setState(newState);
         }).catch(err => {
             this.setState(state => ({
@@ -190,23 +131,9 @@ class BrewFloor extends React.Component {
 
         let errMessage = error.map((err, i) => {
             return (
-                <div key={i} className={"ui error message"}>
-                    <i className="close icon" onClick={() => this.setState({error: []})}/>
-                    <div className={"header"}>
-                        {err}
-                    </div>
-                </div>
+                <Message key={i} messageType={'error'} onClose={() => this.setState({error: []})} message={err}/>
             )
         })
-
-        let infoMessage = (
-            <div className={"ui info message"}>
-                <i className="close icon" onClick={() => this.setState({infoMessage: null})}/>
-                <div className={"header"}>
-                    {this.state.infoMessage}
-                </div>
-            </div>
-        );
 
         if (!isLoaded) {
             return (
@@ -216,11 +143,11 @@ class BrewFloor extends React.Component {
             );
         } else {
             let components = Object.keys(tanks).map((tank, i) => {
-                    return (
-                        <Tank tankData={tanks[tank]} key={i} contents={this.state.beers[tanks[tank].contents]}
-                              loadData={this.loadTankData}
-                              detailButtonVisible={true}/>)
-                })
+                return (
+                    <Tank tankData={tanks[tank]} key={i} contents={this.state.beers[tanks[tank].contents]}
+                          loadData={this.loadTankData}
+                          detailButtonVisible={true}/>)
+            })
             return (
                 <div>
                     <NavComponent tanks={true} toggleActive={(state) => {
@@ -228,23 +155,16 @@ class BrewFloor extends React.Component {
                     }}/>
                     <div className="ui horizontal divider"/>
                     {error.length > 0 ? errMessage : null}
-                    {this.state.infoMessage ? infoMessage : null}
-                    {this.state.tanksActive ?
-                        modalData ?
-                            <Modal onClose={this.showModal}
-                                   deleteTank={this.deleteTank}
-                                   editTank={this.editTank}
-                                   show={this.state.show}
-                                   data={modalData}
-                                   tankModal={true}/> : null
-                        : modalData ?
-                            <Modal onClose={this.showModal}
-                                   deleteBeer={this.deleteBeer}
-                                   editBeer={this.editBeer}
-                                   show={this.state.show}
-                                   data={modalData}
-                                   tankModal={false}/> : null
-                    }
+                    {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
+                                                       onClose={() => this.setState({infoMessage: null})}/> : null}
+
+                    <Modal onClose={this.showModal}
+                           deleteTank={this.deleteTank}
+                           editTank={this.editTank}
+                           show={this.state.show}
+                           data={modalData}
+                           tankModal={true}/>
+
 
                     <div className={"ui padded equal height centered stackable grid"}>
                         {components}

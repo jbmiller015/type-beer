@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Dropdown from "./Dropdown";
+import Dropdown from "../Fields/Dropdown";
 
 const Phase = (props) => {
     const {

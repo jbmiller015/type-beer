@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useState} from 'react';
 import beerOverlay from '../../media/beerwwindow.png';
 
 const Beer = (props) => {
     const {name, style, image} = props.beerData;
+
+    const [focus, setFocus] = useState(false);
 
     const imageWrapper = {
         backgroundColor: !image ? '#DAA520' : '',
@@ -18,7 +20,12 @@ const Beer = (props) => {
 
 
     return (
-        <div className={"item"}>
+        <div className={"item"} onMouseEnter={() => {
+            setFocus(true)
+        }} onMouseLeave={setFocus(false)}>
+            !focus ? <div className={"ui segment"}>
+            <div className={"center aligned header"}>{name}</div>
+        </div>:
             <div className={"ui cards"} style={cardStyle}>
                 <div className="card">
                     <div className={"image"} style={imageWrapper}>
