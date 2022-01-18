@@ -42,17 +42,16 @@ class BrewFloor extends React.Component {
                 error: [...state.error, err.message]
             }))
         });
-
         await typeApi.get('/process').then(response => {
             response.data.map(el => {
                 this.setState(prevState => ({
                     processes: {
                         ...prevState.processes,
                         [el._id]: el
-                    },
-                    isLoaded: true,
+                    }
                 }))
             })
+            this.setState({isLoaded: true})
         }, err => {
             this.setState(state => ({
                 isLoaded: true,
@@ -142,9 +141,10 @@ class BrewFloor extends React.Component {
                 </div>
             );
         } else {
-            let components = Object.keys(tanks).map((tank, i) => {
+            let components = Object.values(tanks).map((tank, i) => {
+                console.log(tank)
                 return (
-                    <Tank tankData={tanks[tank]} key={i} contents={this.state.beers[tanks[tank].contents]}
+                    <Tank tankData={tank} key={i}
                           loadData={this.loadTankData}
                           detailButtonVisible={true}/>)
             })
