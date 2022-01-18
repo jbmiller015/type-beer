@@ -2,46 +2,50 @@ import React, {useState} from 'react';
 import beerOverlay from '../../media/beerwwindow.png';
 
 const Beer = (props) => {
-    const {name, style, image} = props.beerData;
+    const {name, style, desc} = props.beerData;
 
     const [focus, setFocus] = useState(false);
 
     const imageWrapper = {
-        backgroundColor: !image ? '#DAA520' : '',
-        backgroundImage: `url(${image ? image : ''})`,
+        backgroundColor: '#DAA520',
         backgroundSize: '70% 70%',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center bottom',
     };
 
     const cardStyle = {
-        marginBottom: "2%"
+        position: "absolute",
+        marginBottom: "2%",
+        overflow: "visible",
+        zIndex: 999,
+        maxWidth: "90%"
     };
 
 
     return (
-        <div className={"item"} onMouseEnter={() => {
+        <div className={"two wide column"} onMouseEnter={() => {
             setFocus(true)
-        }} onMouseLeave={setFocus(false)}>
-            !focus ? <div className={"ui segment"}>
-            <div className={"center aligned header"}>{name}</div>
-        </div>:
-            <div className={"ui cards"} style={cardStyle}>
-                <div className="card">
-                    <div className={"image"} style={imageWrapper}>
-                        <img alt="tankOverlay" src={beerOverlay}/>
+        }} onMouseLeave={() => setFocus(false)}>
+            {!focus ? <div className={"ui segment"} style={{textAlign: "center"}}>
+                    {name}
+                </div> :
+                <div className={"ui cards"}>
+                    <div className="card" style={cardStyle}>
+                        <div className={"image"} style={imageWrapper}>
+                            <img alt="tankOverlay" src={beerOverlay}/>
+                        </div>
+                        <div className={"content"}>
+                            <div className={"center aligned header"}>{name ? name : ""}</div>
+                            <div className={"center aligned meta"}>{style ? style : ""}</div>
+                        </div>
+                        {props.detailButtonVisible ?
+                            <button className="ui bottom attached button"
+                                    onClick={() => props.loadData(props.beerData)}>
+                                <i className="setting icon"/>
+                                Details
+                            </button> : null}
                     </div>
-                    <div className={"content"}>
-                        <div className={"center aligned header"}>{name ? name : ""}</div>
-                        <div className={"center aligned meta"}>{style ? style : ""}</div>
-                    </div>
-                    {props.detailButtonVisible ?
-                        <button className="ui bottom attached button" onClick={() => props.loadData(props.beerData)}>
-                            <i className="setting icon"/>
-                            Details
-                        </button> : null}
-                </div>
-            </div>
+                </div>}
         </div>
     );
 };
