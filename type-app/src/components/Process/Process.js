@@ -237,7 +237,8 @@ class CreateProcess extends React.Component {
     render() {
         return (
             <div>
-                {this.getActive()}
+                <NavComponent tanks={false}/>
+                Process
             </div>
         );
     }

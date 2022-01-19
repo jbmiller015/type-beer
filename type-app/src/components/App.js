@@ -8,6 +8,7 @@ import useToken from "../hooks/useToken";
 import CreateProcess from "./Process/CreateProcess";
 import Process from "./Process/Process";
 import Fridge from "./Beer/Fridge";
+import Calendar from "./Calendar/Calendar";
 
 const App = () => {
 
@@ -25,6 +26,7 @@ const App = () => {
                     <Route path="/create/beer" exact component={CreateBeer}/>
                     <Route path="/create/process" exact component={CreateProcess}/>
                     <Route path="/fridge" exact component={Fridge}/>
+                    <Route path="/calendar" exact component={Calendar}/>
                     <Route path="/processes" exact component={Process}/>
                 </div>
             </BrowserRouter>

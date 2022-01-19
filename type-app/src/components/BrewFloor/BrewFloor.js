@@ -42,8 +42,9 @@ class BrewFloor extends React.Component {
                 error: [...state.error, err.message]
             }))
         });
-        await typeApi.get('/process').then(response => {
+        await typeApi.get('/process/active').then(response => {
             response.data.map(el => {
+                console.log(el)
                 this.setState(prevState => ({
                     processes: {
                         ...prevState.processes,
@@ -87,7 +88,7 @@ class BrewFloor extends React.Component {
     }
 
 
-    loadTankData = (modalData) => {
+    loadTankData = (modalData, process = null) => {
         const beer = this.state.beers[modalData.contents]
         modalData.contents = beer;
         this.setState({
@@ -126,7 +127,7 @@ class BrewFloor extends React.Component {
 
     render() {
 
-        const {error, isLoaded, tanks, beers, modalData} = this.state;
+        const {error, isLoaded, tanks, processes, modalData} = this.state;
 
         let errMessage = error.map((err, i) => {
             return (
@@ -142,9 +143,15 @@ class BrewFloor extends React.Component {
             );
         } else {
             let components = Object.values(tanks).map((tank, i) => {
-                console.log(tank)
+                let process;
+                for (let el in processes) {
+                    if (processes[el].activePhase.startTank === tank._id) {
+                        process = processes[el];
+                        tank.fill = true;
+                    }
+                }
                 return (
-                    <Tank tankData={tank} key={i}
+                    <Tank tankData={tank} process={process} key={i}
                           loadData={this.loadTankData}
                           detailButtonVisible={true}/>)
             })

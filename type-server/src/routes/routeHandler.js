@@ -44,6 +44,7 @@ router.route('/:base/:sub').get(async (req, res) => {
         Object = mongoose.model(base);
         getRes = await Object.find({userId: req.user._id, _id: req.params.sub});
     } else if (req.params.sub === 'active') {
+        const today = new Date();
         Object = mongoose.model(base);
         if (startDate && endDate) {
             getRes = await Object.find({
@@ -79,9 +80,18 @@ router.route('/:base/:sub').get(async (req, res) => {
         } else {
             getRes = await Object.find({
                 userId: req.user._id,
-                startDate: {$lte: new Date()},
-                endDate: {$gte: new Date()}
+                startDate: {$lte: today},
+                endDate: {$gte: today}
             });
+        }
+        if (getRes.length > 0) {
+            for (let i = 0; i < getRes.length; i++) {
+                for (let le of getRes[i].phases) {
+                    if (le.startDate <= today && le.endDate >= today) {
+                        getRes[i].activePhase = le;
+                    }
+                }
+            }
         }
     } else {
         Object = mongoose.model(req.params.sub);

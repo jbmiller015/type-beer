@@ -7,16 +7,17 @@ const Tank = (props) => {
     const [className, setClassName] = useState("card");
     const {currPhase, currPhaseDate, fill, name} = props.tankData;
     const {contents} = props
+    const process = props.process;
 
     useEffect(() => {
-        if (currPhaseDate) {
-            moment().diff(currPhaseDate) > 0 ? setClassName("red card") : setClassName("green card")
+        if (process && process.endDate) {
+            moment().diff(process.endDate) > 0 ? setClassName("red card") : setClassName("green card")
         }
     })
 
 
     const imageWrapper = {
-        backgroundColor: (contents && fill) ? '#DAA520' : '',
+        backgroundColor: (process && fill) ? '#DAA520' : '',
         backgroundSize: '70% 100%',
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'center'
@@ -27,10 +28,16 @@ const Tank = (props) => {
     };
 
     const phase = () => {
-        if (contents) {
-            return currPhase ? currPhase : ""
+        if (process) {
+            return process.activePhase.phaseName ? process.activePhase.phaseName : ""
         } else {
             return "Empty"
+        }
+    }
+
+    const date = () => {
+        if (process) {
+            return moment(process.endDate).fromNow() ? moment(process.endDate).fromNow() : ""
         }
     }
 
@@ -46,13 +53,14 @@ const Tank = (props) => {
                     <div className={"content"}>
                         <div className={"center aligned header"}>{contents && contents.name ? contents.name : ""}</div>
                         <div
-                            className={"center aligned meta"}>{moment(currPhaseDate).fromNow() ? moment(currPhaseDate).fromNow() : ""}</div>
+                            className={"center aligned meta"}>{date()}</div>
                     </div>
                     <div className={"center aligned extra content"}>
                         <span style={{fontSize: "medium"}}>{phase()}</span>
                     </div>
                     {props.detailButtonVisible ?
-                        <button className="ui bottom attached button" onClick={() => props.loadData(props.tankData)}>
+                        <button className="ui bottom attached button"
+                                onClick={() => props.loadData(props.tankData, process)}>
                             <i className="setting icon"/>
                             Details
                         </button> : null}

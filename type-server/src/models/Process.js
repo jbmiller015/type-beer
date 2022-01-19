@@ -30,6 +30,10 @@ const processSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    contents: {
+        type: Schema.Types.ObjectId,
+        ref: 'Beer'
+    },
     phases: [{
         phaseName: String,
         startTank: {
@@ -43,7 +47,21 @@ const processSchema = new mongoose.Schema({
         startDate: Date,
         endDate: Date,
         complete: Boolean
-    }]
+    }],
+    activePhase: {
+        phaseName: String,
+        startTank: {
+            type: Schema.Types.ObjectId,
+            ref: 'Tank'
+        },
+        endTank: {
+            type: Schema.Types.ObjectId,
+            ref: 'Tank'
+        },
+        startDate: Date,
+        endDate: Date,
+        complete: Boolean
+    }
 });
 
 mongoose.model('Process', processSchema);
