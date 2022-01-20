@@ -1,6 +1,7 @@
 import React from "react";
 import NavComponent from "../NavComponent";
 import moment from 'moment'
+import Date from "./Date";
 
 class Calendar extends React.Component {
 
@@ -30,9 +31,8 @@ class Calendar extends React.Component {
         return this.state.weekdayshort.map(day => {
             return (
                 <div className={"column"} key={day}>
-                    <div className={"ui basic segment"}>
-                        <p>{day}</p>
-                    </div>
+                    <h2>{day}</h2>
+
                 </div>
             );
         });
@@ -52,11 +52,7 @@ class Calendar extends React.Component {
         let daysInMonth = [];
         for (let d = 1; d <= this.state.dateObject.daysInMonth(); d++) {
             daysInMonth.push(
-                <div className={"column"}>
-                    <div className={"ui basic segment"}>
-                        <p>{d}</p>
-                    </div>
-                </div>
+                <Date>{d}</Date>
             );
         }
 
@@ -76,9 +72,6 @@ class Calendar extends React.Component {
             }
         });
 
-        console.log("Rows: ", rows)
-        console.log("Cells: ", cells)
-
         let daysinmonth = rows.map((d, i) => {
             return <div className={"seven column row"}>{d}</div>
         });
@@ -86,7 +79,7 @@ class Calendar extends React.Component {
             <NavComponent tanks={false}/>
             <div className="ui horizontal divider"/>
             <div style={{paddingInline: "2%"}}>
-                <div className={"ui stackable celled seven column grid"}>
+                <div className={"ui stackable celled seven column grid container"}>
                     <div className={"seven column row"}>{this.weekdayShortName()}</div>
                     {daysinmonth}
                 </div>
