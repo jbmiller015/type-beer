@@ -83,12 +83,12 @@ router.route('/:base/:sub').get(async (req, res) => {
                 startDate: {$lte: today},
                 endDate: {$gte: today}
             });
-        }
-        if (getRes.length > 0) {
-            for (let i = 0; i < getRes.length; i++) {
-                for (let le of getRes[i].phases) {
-                    if (le.startDate <= today && le.endDate >= today) {
-                        getRes[i].activePhase = le;
+            if (getRes.length > 0) {
+                for (let i = 0; i < getRes.length; i++) {
+                    for (let le of getRes[i].phases) {
+                        if (le.startDate <= today && le.endDate >= today) {
+                            getRes[i].activePhase = le;
+                        }
                     }
                 }
             }
