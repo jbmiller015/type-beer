@@ -88,11 +88,9 @@ class BrewFloor extends React.Component {
     }
 
 
-    loadTankData = (modalData, process = null) => {
-        const beer = this.state.beers[modalData.contents]
-        modalData.contents = beer;
+    loadTankData = (tankData, process = null) => {
         this.setState({
-            modalData
+            modalData: {tankData: tankData, process: process}
         });
         this.setState({
             show: true,
@@ -128,6 +126,7 @@ class BrewFloor extends React.Component {
     render() {
 
         const {error, isLoaded, tanks, processes, modalData} = this.state;
+        console.log(modalData)
 
         let errMessage = error.map((err, i) => {
             return (

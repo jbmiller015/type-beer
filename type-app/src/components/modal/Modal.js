@@ -101,7 +101,7 @@ class Modal extends Component {
         }
     }
     content = () => {
-        return this.props.tankModal ? <TankContent data={this.state.data}/> :
+        return this.props.tankModal ? <TankContent data={this.props.data}/> :
             <BeerContent data={this.state.data}/>;
     };
 
