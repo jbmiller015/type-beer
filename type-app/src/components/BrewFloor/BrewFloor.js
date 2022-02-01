@@ -87,6 +87,17 @@ class BrewFloor extends React.Component {
         })
     }
 
+    getBeerById = async (beerId) => {
+        console.log(beerId)
+        return await typeApi.get(`/beer/${beerId}`).then((res) => {
+            return res.data[0];
+        }).catch(err => {
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
+        })
+    }
+
 
     loadTankData = (tankData, process = null) => {
         this.setState({
@@ -126,7 +137,6 @@ class BrewFloor extends React.Component {
     render() {
 
         const {error, isLoaded, tanks, processes, modalData} = this.state;
-        console.log(modalData)
 
         let errMessage = error.map((err, i) => {
             return (
@@ -167,6 +177,7 @@ class BrewFloor extends React.Component {
                     <Modal onClose={this.showModal}
                            deleteTank={this.deleteTank}
                            editTank={this.editTank}
+                           getBeerById={this.getBeerById}
                            show={this.state.show}
                            data={modalData}
                            tankModal={true}/>

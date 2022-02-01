@@ -2,7 +2,6 @@ import React from 'react';
 import Event from "./Event";
 
 const Date = (props) => {
-    //TODO: use date as child prop, not number. Only show day.
     const {events, date} = props;
     const mapEvents = () => {
         const mapped = events.map((event, i) => {
@@ -11,7 +10,8 @@ const Date = (props) => {
 
         if (mapped.length > 3) {
             return ([mapped[0], mapped[1],
-                <div className="ui grey fluid button" style={{padding: "5px"}}>{mapped.length - 2 + ' more'}</div>])
+                <div className="ui grey fluid button" style={{padding: "5px"}}
+                     key={100}>{mapped.length - 2 + ' more'}</div>])
         } else return mapped;
     }
     return (

@@ -20,36 +20,13 @@ class EditTank extends React.Component {
                         <input type="text" name="size" onChange={this.props.handleChange}/>
                     </div>
                     <div className="field">
-                        <Dropdown label="Select Tank Contents"
-                                  onSelectedChange={this.setContents}
-                                  url="beer"/>
-                    </div>
-                    <div className="field">
-                        <div className="ui checkbox">
-                            <input type="checkbox" name="fill" tabIndex="0"
-                                   onChange={this.props.handleChange}
-                                   defaultChecked={this.props.passed.fill}/>
-                            <label>Filled</label>
+                        <label>Tank Type: {this.props.passed.size}</label>
+                        <div className="ui action input">
+                            <select className="ui compact selection dropdown">
+                                <option selected="Fermenter" value="Fermenter">Fermenter</option>
+                                <option selected="" value="Brite">Brite</option>
+                            </select>
                         </div>
-                    </div>
-                    <div className="field">
-                        <label>Fill Date: {this.props.passed.fillDate}</label>
-                        <input type="datetime-local" name="fillDate"
-                               onChange={this.props.handleChange}/>
-                    </div>
-                    <div className="field">
-                        <label>Current Phase: {this.props.passed.currPhase}</label>
-                        <input type="text" name="currPhase"
-                               onChange={this.props.handleChange}/>
-                    </div>
-                    <div className="field">
-                        <label>Next Phase: {this.props.passed.nextPhase}</label>
-                        <input type="text" name="nextPhase" onChange={this.props.handleChange}/>
-                    </div>
-                    <div className="field">
-                        <label>Next Phase: {this.props.passed.currPhaseDate}</label>
-                        <input type="datetime-local" name="currPhaseDate"
-                               onChange={this.props.handleChange}/>
                     </div>
                 </form>
             </div>

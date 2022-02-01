@@ -9,31 +9,37 @@ class Calendar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dateObject: moment(),
             weekdayshort: moment.weekdaysShort(),
             processes: {},
             colors: ['#FFF897', '#EDCF5C', '#f6c101', '#EC9D00', '#DF8D03', '#C96E12', '#9C5511', '#6F3B10', '#42220F', '#14080E'],
-            maxDates: 42,
             prevMonth: -1,
             currMonth: 0,
-            nextMonth: 1
+            nextMonth: 1,
+            monthViewActive: true,
+            tasks: [],
+            count: 0
         }
 
     }
 
     async componentDidMount() {
         await typeApi.get('/process').then(response => {
-            response.data.map((el, i) => {
-                el.color = this.state.colors[(i % 10 + 10) % 10];
-                console.log(el)
-                this.setState(prevState => ({
-                    processes: {
-                        ...prevState.processes,
-                        [el._id]: el
+            const obj = response.data.reduce((a, v, i) => ({
+                ...a,
+                [v._id]: {...v, color: this.state.colors[(i % 10 + 10) % 10]}
+            }), {})
+
+            let tasks = {};
+            let date = moment();
+            for (let el in obj) {
+                for (let le of obj[el].phases) {
+                    let endDate = le.endDate.split("T", 1)[0];
+                    if (date.startOf('day').isBetween(endDate, moment(endDate).endOf('day'), 'date', "[]")) {
+                        tasks = {...tasks, [obj[el].name]: {...le, processId: obj[el]._id}}
                     }
-                }))
-            })
-            this.setState({isLoaded: true})
+                }
+            }
+            this.setState({tasks, isLoaded: true, processes: obj});
         }, err => {
             this.setState(state => ({
                 isLoaded: true,
@@ -42,18 +48,23 @@ class Calendar extends React.Component {
         });
     }
 
-    DayOfMonth = () => {
-        let dateObject = this.state.dateObject;
-        let firstDay = moment(dateObject)
-            .startOf("month")
-            .format("d");
 
-        let lastDay = moment(dateObject)
-            .endOf("month")
-            .format("d");
-
-        return {firstDay, lastDay};
-    };
+    setMonth = (direction) => {
+        if (direction === 'prev') {
+            this.setState((prev) => ({
+                prevMonth: prev.prevMonth - 1,
+                currMonth: prev.currMonth - 1,
+                nextMonth: prev.nextMonth - 1,
+            }))
+        } else {
+            this.setState((prev) => ({
+                prevMonth: prev.prevMonth + 1,
+                currMonth: prev.currMonth + 1,
+                nextMonth: prev.nextMonth + 1,
+            }))
+        }
+        console.log(this.state)
+    }
 
 
     weekdayShortName = () => {
@@ -61,25 +72,26 @@ class Calendar extends React.Component {
             return (
                 <div className={"column"} key={day}>
                     <h4>{day}</h4>
-
                 </div>
             );
         });
     }
 
-    getPhasesByDate(date) {
+    getPhasesByDate = (date) => {
         return Object.values(this.state.processes).filter(process => {
-            return date.isSameOrAfter(process.startDate) && date.isSameOrBefore(process.endDate)
+            let startDate = process.startDate.split("T", 1)[0];
+            let endDate = process.endDate.split("T", 1)[0];
+            return (date.startOf('date').isBetween(moment(startDate).startOf('date'), moment(endDate).startOf('date'), undefined, '[]'))
         });
     }
 
-    calendarControlButtons() {
+    calendarControlButtons = () => {
         return (
             <div className={"ui container"}>
                 <div className="ui borderless fluid three item menu"
                      style={{borderStyle: "none", boxShadow: "none"}}>
                     <div className="item">
-                        <button className="ui left floated labeled icon button">
+                        <button className="ui left floated labeled icon button" onClick={() => this.setMonth("prev")}>
                             <i className="left chevron icon"/>
                             {moment().add(this.state.prevMonth, 'months').format('MMMM')}
                         </button>
@@ -88,7 +100,8 @@ class Calendar extends React.Component {
                         <h2>{moment().add(this.state.currMonth, 'months').format('MMMM')}</h2>
                     </div>
                     <div className="item">
-                        <button className="ui right floated right labeled icon button">
+                        <button className="ui right floated right labeled icon button"
+                                onClick={() => this.setMonth("next")}>
                             {moment().add(this.state.nextMonth, 'months').format('MMMM')}
                             <i className="right chevron icon"/>
                         </button>
@@ -97,29 +110,93 @@ class Calendar extends React.Component {
             </div>)
     }
 
-    render() {
+
+    taskComponents = () => {
+        return Object.entries(this.state.tasks).map((entries, i) => {
+            const process = entries[0];
+            const task = entries[1];
+            return (<div className="ui checkbox" key={i}>
+                <input type="checkbox" name="fill" tabIndex="0"
+                       onChange={this.handleChange}
+                       defaultChecked={false}/>
+                <label>{process + ": " + task.phaseName}</label>
+            </div>)
+        })
+    }
+
+    sidebar = () => {
+        return (
+            <div className="ui side attached vertical menu" style={{margin: "1em"}}>
+                <div className={"item"}>
+                    <div className={"ui buttons"}>
+                        <div className={`ui ${this.state.monthViewActive ? "" : "active yellow"}  button`}>
+                            Week
+                        </div>
+                        <div className="or"/>
+                        <div className={`ui ${this.state.monthViewActive ? "active yellow" : ""} button`}>
+                            Month
+                        </div>
+                    </div>
+                </div>
+
+                <div className={"item"}>
+                    <div className="ui horizontal divider"/>
+                </div>
+                <div className={"item"}>
+                    <div className={`ui ${this.state.monthViewActive ? "active yellow" : ""} fluid button`}>
+                        Processes
+                    </div>
+                </div>
+                <div className={"item"}>
+                    <div className={`ui ${this.state.monthViewActive ? "" : "active yellow"} fluid button`}>
+                        Tanks
+                    </div>
+                </div>
+                <div className={"item"}>
+                    <div className="ui horizontal divider"/>
+                    <div className={"ui segment"}>
+                        <div className={"ui header"}>Today's Tasks</div>
+                        <div className={"content"}>
+                            {this.taskComponents()}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    calendarView = () => {
+        const daysInPrevMonth = moment().add(this.state.prevMonth, 'months').endOf('month').get('day');
+        const daysInCurrMonth = moment().add(this.state.currMonth, 'months').daysInMonth();
         let prevMonth = [];
-        for (let i = this.DayOfMonth().firstDay - 1; i > -1; i--) {
+        for (let i = daysInPrevMonth; i >= 0; i--) {
             let date = moment().add(this.state.prevMonth, 'months').endOf('month').subtract(i, 'days');
+            let phases = this.getPhasesByDate(date)
             prevMonth.push(
-                <Date date={date} events={this.getPhasesByDate(date)}/>
+                <Date date={date} events={phases} key={i + 100}/>
             );
         }
         let daysInMonth = [];
-        for (let i = 1; i <= this.state.dateObject.daysInMonth(); i++) {
+        for (let i = 1; i <= daysInCurrMonth; i++) {
             let date = moment().add(this.state.currMonth, 'months').date(i);
+            let phases = this.getPhasesByDate(date)
             daysInMonth.push(
-                <Date date={date} events={this.getPhasesByDate(date)}/>
+                <Date date={date} events={phases} key={i + 200}/>
             );
         }
 
         let totalSlots = [...prevMonth, ...daysInMonth];
         let nextMonth = [];
-        for (let i = 0; i < (this.state.maxDates - totalSlots.length); i++) {
+        let maxDates = totalSlots.length;
+        let i = 0;
+        while (maxDates % 7 !== 0) {
             let date = moment().add(this.state.nextMonth, 'months').startOf('month').add(i, 'days');
+            let phases = this.getPhasesByDate(date)
             nextMonth.push(
-                <Date date={date} events={this.getPhasesByDate(date)}/>
+                <Date date={date} events={phases} key={i + 300}/>
             )
+            i++;
+            maxDates++;
         }
         totalSlots = [...totalSlots, nextMonth];
         let rows = [];
@@ -138,23 +215,33 @@ class Calendar extends React.Component {
         });
 
         let daysinmonth = rows.map((d, i) => {
-            return <div className={"seven column row"} style={{minHeight: "133px"}}>{d}</div>
+            return <div key={i} className={"seven column row"} style={{minHeight: "133px"}}>{d}</div>
         });
         daysinmonth.shift();
-        return (<div>
-            <NavComponent tanks={false}/>
-            <div className="ui horizontal divider"/>
-            {this.calendarControlButtons()}
-            <div style={{paddingInline: "2%"}}>
-                <div className={"ui stackable celled seven column grid container"}>
+
+        return (
+            <div className={"ui side attached segment"} style={{padding: "0", borderStyle: "none"}}>
+                {this.calendarControlButtons()}
+                <div className={"ui stackable celled seven column grid fluid container"}
+                     style={{margin: "0", width: "100%"}}>
                     <div className={"seven column row"}>{this.weekdayShortName()}</div>
                     {daysinmonth}
                 </div>
             </div>
-        </div>)
+        )
     }
 
-
+    render() {
+        console.log("render")
+        return (<div>
+            <NavComponent tanks={false}/>
+            <div className="ui horizontal divider"/>
+            <div className="container" style={{display: "flex", flexDirection: "row"}}>
+                {this.sidebar()}
+                {this.calendarView()}
+            </div>
+        </div>)
+    }
 }
 
 export default Calendar;

@@ -48,6 +48,7 @@ class Modal extends Component {
         }));
     };
 
+
     buttons = () => {
         if (this.state.edit) {
             return (
@@ -101,7 +102,8 @@ class Modal extends Component {
         }
     }
     content = () => {
-        return this.props.tankModal ? <TankContent data={this.props.data}/> :
+        return this.props.tankModal ?
+            <TankContent data={this.props.data} getBeerById={async (beerId) => await this.props.getBeerById(beerId)}/> :
             <BeerContent data={this.state.data}/>;
     };
 
@@ -115,6 +117,10 @@ class Modal extends Component {
         )
     };
 
+    modalStyle = () => {
+        return window.innerHeight > 900 ? {height: "auto", width: "30%"} : {height: "65%", width: "95%"}
+    }
+
     render() {
         if (!this.props.show) {
             return null;
@@ -122,8 +128,10 @@ class Modal extends Component {
         const {data} = this.props;
 
         return (
-            <div style={this.state.edit ? {height: "60%"} : {height: "auto"}} className="modal" id="modal">
-                <h2>{data.name}</h2>
+            <div style={this.modalStyle()}
+                 className="modal"
+                 id="modal">
+                <h2>{data.tankData.name}</h2>
                 {this.state.edit ?
                     this.editContent()
                     :
