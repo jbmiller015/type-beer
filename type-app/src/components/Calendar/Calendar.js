@@ -14,6 +14,8 @@ class Calendar extends React.Component {
             processes: {},
             filteredProcesses: {},
             renderedProcesses: {},
+            tanks: {},
+            tasks: [],
             colors: ['#FFF897', '#EDCF5C', '#f6c101', '#EC9D00', '#DF8D03', '#C96E12', '#9C5511', '#6F3B10', '#42220F', '#14080E'],
             prevMonth: -1,
             currMonth: 0,
@@ -23,9 +25,6 @@ class Calendar extends React.Component {
             nextWeek: 1,
             monthViewActive: true,
             processViewActive: true,
-            tasks: [],
-            count: 0,
-            tanks: {},
             showModal: false,
             modalProcessId: null,
             modalTankId: null
@@ -129,7 +128,6 @@ class Calendar extends React.Component {
     }
 
     getPhasesByDate = (date) => {
-
         const rendered = Object.keys(this.state.renderedProcesses).length > 0 ? this.state.renderedProcesses : this.state.processes;
         console.log(rendered);
         return Object.values(rendered).filter(process => {
@@ -209,7 +207,6 @@ class Calendar extends React.Component {
         }
     }
 
-    //TODO:Implement Filter View
     tankFilterComponents = () => {
         return Object.entries(this.state.tanks).map((tank, i) => {
             return (
@@ -226,7 +223,7 @@ class Calendar extends React.Component {
         })
     }
 
-    //TODO: Create object where processes can be accessed by their tanks {tankId:[AssociatedProcesses]}
+    //Processes can be accessed by their tanks {tankId:[AssociatedProcesses]}
     //If tank filter is selected, add above array under tank id
     //Add to greater filtered list, no repeats: filteredList = each array from above tanks object
     //Remove by deleting tankId unselected from tanks object

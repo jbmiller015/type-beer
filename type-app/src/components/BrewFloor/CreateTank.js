@@ -1,7 +1,7 @@
 import React from 'react';
 import typeApi from '../../api/type-server'
 import Dropdown from "../Fields/Dropdown";
-import Phase from "../Process/Phase";
+import PhaseField from "../Process/PhaseField";
 import NavComponent from "../NavComponent";
 import Tank from "./Tank";
 
@@ -94,8 +94,8 @@ class CreateTank extends React.Component {
 
     phaseFields = () => {
         return this.state.phases.map((phase, i) => {
-            return <Phase phaseData={phase} key={i} index={i} handleChange={this.handleFieldChange}
-                          removePhase={this.removePhase}/>
+            return <PhaseField phaseData={phase} key={i} index={i} handleChange={this.handleFieldChange}
+                               removePhase={this.removePhase}/>
         });
     }
 

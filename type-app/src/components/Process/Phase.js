@@ -1,210 +1,75 @@
-import React, {useEffect, useState} from "react";
-import Dropdown from "../Fields/Dropdown";
+import React, {useEffect, useState} from 'react';
+import moment from "moment";
 
 const Phase = (props) => {
-    const {
+    let {
         index,
         removePhase,
-        handleFieldChange,
+        handlePhaseChange,
         phaseData,
-        validatePhase
+        validatePhase,
+        tanks
     } = props;
 
-    console.log(phaseData)
+    const [color, setColor] = useState("");
+    const [data, setData] = useState(phaseData);
 
-    const [fieldName, setFieldName] = useState("field");
-    const [transfer, setTransfer] = useState(false);
-    const [editPhase, setEditPhase] = useState(true);
-    const [phaseName, setPhaseName] = useState(phaseData.phase.phaseName);
-    const [startDate, setStartDate] = useState(phaseData.phase.startDate);
-    const [endDate, setEndDate] = useState(phaseData.phase.endDate);
-    const [startTank, setStartTank] = useState(phaseData.phase.startTank);
-    const [endTank, setEndTank] = useState(phaseData.phase.endTank);
+    const [percent, setPercent] = useState("")
 
     useEffect(() => {
-        if (transfer) {
-            phaseData.phaseName = "Transfer"
-            setEndDate(startDate);
-            handleFieldChange(
-                index, {
-                    target: {name: 'phaseName', value: "Transfer"}
-                })
+        console.log(data)
+        let startDate = phaseData.startDate.split("T", 1)[0];
+        let endDate = phaseData.endDate.split("T", 1)[0];
+        if (data.complete) {
+            setColor("green");
+            setPercent(100);
         } else {
-            phaseData.phaseName = ""
-        }
-    }, [transfer]);
-
-
-    const handleCheck = (e) => {
-        let {checked} = e.target;
-        checked ? setFieldName("disabled field") : setFieldName("field");
-    }
-
-    const handleTransferCheck = e => {
-        let {checked} = e.target;
-        if (checked) {
-            setTransfer(true)
-            setPhaseName("Transfer");
-        } else {
-            setTransfer(false);
-            setPhaseName("")
-        }
-    };
-
-    const endDateField = () => {
-
-        return index > 0 && transfer ?
-            <div className={fieldName} id={"startDate" || "endDate"}>
-                <label>Transfer Date:</label>
-                <input type="date" name="transferDate" value={startDate ? startDate : ""}
-                       pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
-                       onChange={(e) => {
-                           setEndDate(e.target.value)
-                           setStartDate(e.target.value)
-
-                       }}/>
-            </div> : <div>
-                <div className={fieldName} id={"startDate"}>
-                    <label>Start Date:</label>
-                    <input type="date" name="startDate" value={startDate ? startDate : ""}
-                           pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
-                           onChange={(e) => setStartDate(e.target.value)}/>
-                </div>
-                <div className={fieldName} id={"endDate"}>
-                    <label>End Date:</label>
-                    <input type="date" name="endDate" value={endDate ? endDate : ""}
-                           pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
-                           onChange={(e) => setEndDate(e.target.value)}/>
-                </div>
-            </div>
-    };
-
-    const endTankField = () => {
-
-        return (index > 0 && transfer ? <div>
-            <div className={fieldName} id={"startTank"}>
-                <Dropdown label="Select Start Tank" onSelectedChange={setStartTank} url="tank" index={index}
-                          target={'startTank'} defaultTerm={startTank ? startTank.name : ""}/>
-            </div>
-            <div className={fieldName} id={"endTank"}>
-                <Dropdown label="Select End Tank" defaultTerm={endTank ? endTank.name : ""}
-                          onSelectedChange={setEndTank} url="tank"
-                          index={index}
-                          target={'endTank'}/>
-            </div>
-        </div> : null)
-    };
-
-    const startTankField = () => {
-        return phaseData.previousPhase === null ? <div>
-            <div className={fieldName} id={"startTank"}>
-                {endDate ? <Dropdown label="Select Start Tank" defaultTerm={startTank ? startTank.name : ""}
-                                     onSelectedChange={(tank) => {
-                                         setStartTank(tank);
-                                         setEndTank(tank);
-                                     }}
-                                     url="tank"
-                                     index={index}
-                                     startDate={startDate}
-                                     endDate={endDate}
-                                     target={'startTank'}/> : null}
-            </div>
-            <div className={fieldName} id={"endTank"}>
-            </div>
-        </div> : null
-    }
-
-    function submitPhase() {
-        const phase = {phaseName, startDate, endDate, startTank, endTank}
-        const {valid, error} = validatePhase(phase);
-        if (valid) {
-            if (phaseName && startDate && endDate && startTank && endTank) {
-                setEditPhase(false);
-                setFieldName("field");
-                handleFieldChange(index, {
-                    target: {
-                        name: 'submit',
-                        value: {phaseName, startDate, endDate, startTank, endTank}
-                    }
-                })
-            }
-        } else {
-            console.log(error.fields.length)
-            for (let field of error.fields) {
-                console.log(field)
-                document.getElementById(field).className = "required field error"
-            }
-            for (let message of error.messages) {
-                console.log(message)
+            if (moment(startDate).isAfter(moment())) {
+                setColor("");
+                setPercent(0);
+            } else if (moment().isBetween(startDate, endDate)) {
+                let total = (moment(endDate).diff(startDate, "days"));
+                let remaining = moment(endDate).diff(moment(), "days");
+                setColor("yellow");
+                setPercent((remaining / total) * 100);
+            } else {
+                setColor("grey");
+                setPercent(100);
             }
         }
+    }, [data])
+
+    const formatDate = (date) => {
+        return moment(date).format("M/D/YY")
     }
 
-    return (
-
-        !editPhase ?
-            <div className="ui clearing segment">
-                <h3>{phaseName}</h3>
-                <h4>{startDate} - {endDate}</h4>
-                <div className="ui left floated basic yellow icon button" onClick={(e) => setEditPhase(true)}>
-                    <i className="edit icon"/>
-                </div>
-                <div className="ui right floated basic red icon button" onClick={(e) => removePhase(index, e)}>
-                    <i className="trash alternate outline icon"/>
-                </div>
+    return (<div className="ui centered card">
+        <div className="content">
+            <div className="ui medium header">{index + 1}</div>
+        </div>
+        <div className="content">
+            <div className="ui small header">{phaseData.phaseName}</div>
+            <div className="description">
+                <p>Start Tank: {tanks.startTank.name}</p>
+                <p>End Tank: {tanks.endTank ? tanks.endTank.name : tanks.startTank.name}</p>
+                <p>Start Date: {formatDate(phaseData.startDate)}</p>
+                <p>End Date: {formatDate(phaseData.endDate)}</p>
             </div>
-            :
-            <div className="grouped fields"
-                 style={{border: '1px solid #ccc', borderRadius: '10px', padding: '10px'}}>
-                <div className={fieldName} id={"phaseName"}>
-                    <label className="label">Phase {index + 1}: </label>
-                    {index > 0 ? <div className="field">
-                        <div className="ui checkbox">
-                            <input type="checkbox" name="transfer" tabIndex="0"
-                                   value={phaseName === "Transfer" ? phaseName : ""}
-                                   defaultChecked={phaseName === "Transfer"}
-                                   onChange={(e) => {
-                                       handleTransferCheck(e)
-                                   }}/>
-                            <label>Transfer?</label>
-                        </div>
-                    </div> : null}
-                    <input type="text" name="phaseName" value={phaseName ? phaseName : ""}
-                           onChange={(e) => setPhaseName(e.target.value)}/>
-                </div>
-                {endDateField()}
-                {startTankField()}
-                {endTankField()}
-                <div className="field">
-                    <div className="ui checkbox">
-                        <input type="checkbox" name="complete" tabIndex="0"
-                               value={phaseData.complete ? phaseData.complete : false}
-                               defaultChecked={phaseData.complete ? phaseData.complete : false}
-                               onChange={(e) => {
-                                   handleCheck(e)
-                                   handleFieldChange(index, e)
-                               }}/>
-                        <label>Complete</label>
-                    </div>
-                </div>
-                <div className={'inline fields'}>
-                    <div className={'field'}>
-                        <div className="ui left floated basic green icon button" onClick={(e) => {
-                            submitPhase()
-                        }}>
-                            <i className="check icon"/>
-                        </div>
-                    </div>
-                    <div className={'field'}>
-                        <div className="ui right floated basic red icon button"
-                             onClick={(e) => removePhase(index, e)}>
-                            <i className="trash alternate outline icon"/>
-                        </div>
-                    </div>
-                </div>
+        </div>
+        <div className="extra content" style={{padding: "2%"}}>
+            <div className="ui checkbox">
+                <input type="checkbox" name="complete" tabIndex="0" onChange={async (e) => {
+                    await handlePhaseChange(e, index);
+                    setData({...data, [e.target.name]: e.target.checked});
+                }} value={data.complete ? data.complete : false}
+                       defaultChecked={data.complete ? data.complete : false}/>
+                <label>Complete</label>
             </div>
-
-    );
+        </div>
+        <div className={`ui ${color} bottom attached progress`} data-percent="100">
+            <div className="bar" style={{width: `${percent}%`}}>
+            </div>
+        </div>
+    </div>);
 }
-
 export default Phase;

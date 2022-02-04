@@ -1,7 +1,7 @@
 import React from 'react';
 import typeApi from '../../api/type-server'
 import Dropdown from "../Fields/Dropdown";
-import Phase from "./Phase";
+import PhaseField from "./PhaseField";
 import Tank from "../BrewFloor/Tank";
 import NavComponent from "../NavComponent";
 
@@ -14,7 +14,7 @@ class CreateProcess extends React.Component {
 
         this.state = {
             name: "",
-            exceptedYield: "",
+            expectedYield: "",
             actualYield: "",
             contents: null,
             startDate: null,
@@ -175,7 +175,7 @@ class CreateProcess extends React.Component {
     phaseFields = () => {
         console.log(this.state.phases)
         return this.state.phases.map((phase, i) => {
-            return <Phase
+            return <PhaseField
                 phaseData={{
                     phase,
                     previousPhase: i > 0 ? this.state.phases[i - 1] : null,

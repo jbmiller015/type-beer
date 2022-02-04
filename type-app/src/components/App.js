@@ -6,7 +6,7 @@ import CreateBeer from "./Beer/CreateBeer";
 import AuthForm from "./Account/AuthForm";
 import useToken from "../hooks/useToken";
 import CreateProcess from "./Process/CreateProcess";
-import Process from "./Process/Process";
+import Process from "./Process/Processes";
 import Fridge from "./Beer/Fridge";
 import Calendar from "./Calendar/Calendar";
 
