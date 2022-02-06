@@ -110,7 +110,7 @@ class CreateProcess extends React.Component {
                 beers: {...state.beers, [beerId]: beer}
             }))
         }
-        return beer
+        return beer;
     }
 
 
