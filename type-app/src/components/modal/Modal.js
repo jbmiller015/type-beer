@@ -104,7 +104,7 @@ class Modal extends Component {
     content = () => {
         return this.props.tankModal ?
             <TankContent data={this.props.data} getBeerById={async (beerId) => await this.props.getBeerById(beerId)}/> :
-            <BeerContent data={this.state.data}/>;
+            <BeerContent data={this.props.data}/>;
     };
 
     editContent = () => {
@@ -126,12 +126,13 @@ class Modal extends Component {
             return null;
         }
         const {data} = this.props;
+        console.log(data)
 
         return (
             <div style={this.modalStyle()}
                  className="modal"
                  id="modal">
-                <h2>{data.tankData.name}</h2>
+                <h2>{data.tankData ? data.tankData.name : data.name}</h2>
                 {this.state.edit ?
                     this.editContent()
                     :

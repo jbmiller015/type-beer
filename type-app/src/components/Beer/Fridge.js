@@ -4,6 +4,7 @@ import Tank from "../BrewFloor/Tank";
 import Message from "../Messages/Message";
 import NavComponent from "../NavComponent";
 import Beer from "./Beer";
+import Modal from "../modal/Modal";
 
 class Fridge extends React.Component {
     constructor(props) {
@@ -83,6 +84,31 @@ class Fridge extends React.Component {
             })
         }
     }
+
+    loadBeerData = (modalData) => {
+        this.setState({
+            modalData
+        });
+        this.setState({
+            show: true,
+        });
+    };
+
+    /**
+     * Sets modal visibility.
+     */
+    showModal = () => {
+        if (this.state.modalData) {
+            this.setState({
+                show: false,
+                modalData: null
+            });
+        } else {
+            this.setState({
+                show: true,
+            });
+        }
+    };
 
     filterEntries = (query, filter = null) => {
         let [key, queryString] = query.split(' ', 2)
@@ -228,6 +254,13 @@ class Fridge extends React.Component {
                     {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
                                                        onClose={() => this.setState({infoMessage: null})}/> : null}
                     {this.filterButtons()}
+                    <Modal onClose={this.showModal}
+                           deleteBeer={this.deleteTank}
+                           editBeer={this.editTank}
+                           getBeerById={this.getBeerById}
+                           show={this.state.show}
+                           data={this.state.modalData}
+                           tankModal={false}/>
                     <div className={"ui padded equal height equal width centered stackable grid"}
                          style={{paddingInline: "5%"}}>
                         {components}

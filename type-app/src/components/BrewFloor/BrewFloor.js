@@ -108,15 +108,6 @@ class BrewFloor extends React.Component {
         });
     };
 
-    loadBeerData = (modalData) => {
-        this.setState({
-            modalData
-        });
-        this.setState({
-            show: true,
-        });
-    };
-
     /**
      * Sets modal visibility.
      */

@@ -18,11 +18,6 @@ class EditBeer extends React.Component {
                                onChange={this.props.handleChange}/>
                     </div>
                     <div className="field">
-                        <label>Image:</label>
-                        <input type="file" id="avatar" name="image" accept="image/png, image/jpeg"
-                               onChange={this.props.handleChange}/>
-                    </div>
-                    <div className="field">
                         <label>Description: </label>
                         <textarea name="desc" placeholder={this.props.passed.desc ? this.props.passed.desc : ""}
                                   onChange={this.props.handleChange}/>

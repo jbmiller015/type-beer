@@ -70,12 +70,7 @@ class CreateBeer extends React.Component {
                                 <input type="text" name="style" placeholder={this.props.style ? this.props.style : ""}
                                        onChange={this.handleChange}/>
                             </div>
-                            <div className="field">
-                                <label>Image:</label>
-                                <input type="file" id="avatar" name="image" accept="image/png, image/jpeg"
-                                       placeholder={this.props.image ? this.props.image : null}
-                                       onChange={this.handleChange}/>
-                            </div>
+
                             <div className="field">
                                 <label>Description:</label>
                                 <textarea name="desc" placeholder={this.props.desc ? this.props.desc : ""}

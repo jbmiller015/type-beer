@@ -30,8 +30,9 @@ const Phase = (props) => {
             } else if (moment().isBetween(startDate, endDate)) {
                 let total = (moment(endDate).diff(startDate, "days"));
                 let remaining = moment(endDate).diff(moment(), "days");
+                let perc = (100 - ((remaining / total) * 100));
                 setColor("yellow");
-                setPercent((remaining / total) * 100);
+                setPercent(perc);
             } else {
                 setColor("grey");
                 setPercent(100);

@@ -6,21 +6,36 @@ const Date = (props) => {
     const {events, date, week, processesActive, getTankDetails, calModalData} = props;
     const isSameWeek = date.isSame(moment(), "week", []);
     const isSameDay = date.isSame(moment(), "day");
+    const [showExtended, setShowExtended] = useState(false);
+
+    useEffect(() => {
+    }, [showExtended]);
 
     const style = () => {
         let style;
         if (isSameWeek && !isSameDay) {
             style = {
                 padding: "5px",
-                backgroundColor: "#EBF1FF"
+                backgroundColor: "#EBF1FF",
+                overflow: showExtended ? "visible" : "hidden",
+                zIndex: showExtended ? "2" : "",
+                position: showExtended ? "relative" : ""
             }
         } else if (isSameDay) {
             style = {
                 padding: "5px",
-                backgroundColor: "#D6E2FF"
+                backgroundColor: "#D6E2FF",
+                overflow: showExtended ? "visible" : "hidden",
+                zIndex: showExtended ? "2" : "",
+                position: showExtended ? "relative" : ""
             }
         } else {
-            style = {padding: "5px"}
+            style = {
+                padding: "5px",
+                overflow: showExtended ? "visible" : "hidden",
+                zIndex: showExtended ? "2" : "",
+                position: showExtended ? "relative" : ""
+            }
         }
         return style
     }
@@ -43,14 +58,25 @@ const Date = (props) => {
                 const tank = getTankDetails(tankId)
                 return <Event event={event} color={event.color} key={i} processesActive={processesActive}
                               date={date} tank={tank}
-                              calModalData={(processId, tankId) => calModalData(processId, tankId)}/>
+                              calModalData={(processId, tankId) => calModalData(processId, tankId, date)}/>
             }
         })
 
-        if (mapped.length > 3 && !week) {
+        if (mapped.length > 3 && !week && !showExtended) {
             return ([mapped[0], mapped[1],
                 <div className="ui grey fluid button" style={{padding: "5px"}}
-                     key={100}>{mapped.length - 2 + ' more'}</div>])
+                     key={100} onClick={() => {
+                    setShowExtended(true)
+                }}>{mapped.length - 2 + ' more'}</div>])
+        }
+        if (showExtended) {
+            return ([...mapped,
+                <div className="ui grey fluid icon button" style={{padding: "5px"}}
+                     key={101} onClick={() => {
+                    setShowExtended(false)
+                }}>
+                    <i className={"angle up icon"}/>
+                </div>])
         } else return mapped;
     }
     return (

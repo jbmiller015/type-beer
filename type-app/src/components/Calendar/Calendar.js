@@ -15,6 +15,7 @@ class Calendar extends React.Component {
             filteredProcesses: {},
             renderedProcesses: {},
             tanks: {},
+            beers: {},
             tasks: [],
             colors: ['#FFF897', '#EDCF5C', '#f6c101', '#EC9D00', '#DF8D03', '#C96E12', '#9C5511', '#6F3B10', '#42220F', '#14080E'],
             prevMonth: -1,
@@ -27,18 +28,20 @@ class Calendar extends React.Component {
             processViewActive: true,
             showModal: false,
             modalProcessId: null,
-            modalTankId: null
+            modalTankId: null,
+            modalDate: null,
+            modalBeerData: null
         }
     }
 
 
-    calModalData = (processId, tankId) => {
-        console.log(tankId)
-        this.setState({showModal: true, modalProcessId: processId, modalTankId: tankId})
+    calModalData = async (processId, tankId, modalDate) => {
+        const beer = await this.getBeerById(this.state.processes[processId].contents);
+        this.setState({showModal: true, modalProcessId: processId, modalTankId: tankId, modalDate, modalBeerData: beer})
     }
 
     closeModal = () => {
-        this.setState({showModal: false, modalProcessId: null, modalTankId: null})
+        this.setState({showModal: false, modalProcessId: null, modalTankId: null, modalDate: null})
     }
 
     async componentDidMount() {
@@ -77,6 +80,22 @@ class Calendar extends React.Component {
             }))
         })
         this.setState({tasks: procResults.tasks, processes: procResults.procObj, tanks: tanksResults, isLoaded: true})
+    }
+
+    getBeerById = async (beerId) => {
+        const beer = this.state.beers[beerId] || await typeApi.get(`/beer/${beerId}`).then((res) => {
+            return res.data[0];
+        }).catch(err => {
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
+        })
+        if (!this.state.beers[beerId]) {
+            this.setState(state => ({
+                beers: {...state.beers, [beerId]: beer}
+            }))
+        }
+        return beer;
     }
 
     getTankDetails = (tankId) => {
@@ -129,9 +148,7 @@ class Calendar extends React.Component {
 
     getPhasesByDate = (date) => {
         const rendered = Object.keys(this.state.renderedProcesses).length > 0 ? this.state.renderedProcesses : this.state.processes;
-        console.log(rendered);
         return Object.values(rendered).filter(process => {
-            console.log(process)
             let startDate = process.startDate.split("T", 1)[0];
             let endDate = process.endDate.split("T", 1)[0];
             return (date.startOf('date').isBetween(moment(startDate).startOf('date'), moment(endDate).startOf('date'), undefined, '[]'))
@@ -354,7 +371,7 @@ class Calendar extends React.Component {
             prevMonth.push(
                 <Date date={date} events={phases} key={i + 100} processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
-                      calModalData={(processId, tankId) => this.calModalData(processId, tankId)}/>
+                      calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             );
         }
         let daysInMonth = [];
@@ -364,7 +381,7 @@ class Calendar extends React.Component {
             daysInMonth.push(
                 <Date date={date} events={phases} key={i + 200} processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
-                      calModalData={(processId, tankId) => this.calModalData(processId, tankId)}/>
+                      calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             );
         }
 
@@ -378,7 +395,7 @@ class Calendar extends React.Component {
             nextMonth.push(
                 <Date date={date} events={phases} key={i + 300} processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
-                      calModalData={(processId, tankId) => this.calModalData(processId, tankId)}/>
+                      calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             )
             i++;
             maxDates++;
@@ -442,6 +459,7 @@ class Calendar extends React.Component {
         )
     }
 
+
     render() {
         console.log("render")
 
@@ -457,8 +475,11 @@ class Calendar extends React.Component {
                     }}
                     modalData={{
                         process: this.state.processes[this.state.modalProcessId],
-                        tank: this.state.tanks[this.state.modalTankId]
-                    }}/>
+                        tank: this.state.tanks[this.state.modalTankId],
+                        date: this.state.modalDate,
+                        beer: this.state.modalBeerData
+                    }}
+                />
                 {this.state.monthViewActive ? this.calendarView() : this.weekView()}
             </div>
         </div>)
