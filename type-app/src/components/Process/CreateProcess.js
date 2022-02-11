@@ -4,6 +4,9 @@ import Dropdown from "../Fields/Dropdown";
 import PhaseField from "./PhaseField";
 import Tank from "../BrewFloor/Tank";
 import NavComponent from "../NavComponent";
+import moment from "moment";
+import CreateDuplicateProcess from "./CreateDuplicateProcess";
+import CreateBasicProcess from "./CreateBasicProcess";
 
 
 class CreateProcess extends React.Component {
@@ -23,7 +26,9 @@ class CreateProcess extends React.Component {
             selectedBeer: "",
             showExample: false,
             typeDropDown: false,
-            showDefault: false
+            showDefault: false,
+            showCopyProcess: false,
+            copyProcess: null
         }
 
     }
@@ -43,6 +48,10 @@ class CreateProcess extends React.Component {
 
     setContents = async content => {
         this.setState({contents: content._id, selectedBeer: content.name});
+    }
+
+    setDuplicateProcess = process => {
+        this.setState({copyProcess: process, showCopyProcess: true});
     }
 
     handleDropdownChange = data => {
@@ -76,6 +85,23 @@ class CreateProcess extends React.Component {
             phases[index][name] = value;
             if (name === 'startTank')
                 phases[index].endTank = value;
+        } else if (name === "submit" && value.phaseName === "Transfer") {
+            phases[index] = value;
+            for (let i = index; i < phases.length; i++) {
+                phases[i].startTank = value.endTank
+                phases[i].endTank = value.endTank
+            }
+        } else if (name === "submit" && this.state.showCopyProcess && index === 0) {
+            phases[index] = value;
+            //{phaseName, startDate, endDate, startTank, endTank}
+            phases.forEach((phase) => {
+                console.log(phase)
+                //TODO:FIX - transfer phases showing up as {Transfer:""}
+                if (phase.phaseName !== "Transfer") {
+                    phase.startTank = value.startTank
+                    phase.endTank = value.startTank
+                }
+            })
         } else {
             phases[index] = value;
         }
@@ -143,22 +169,10 @@ class CreateProcess extends React.Component {
 
     startDateField = () => {
         return (
-            <div className="field">
+            <div className="required field">
                 <label>Start Date:</label>
                 <input type="date" name="startDate"
                        onChange={(e) => this.setState({startDate: e.target.value})}/>
-            </div>
-        );
-    }
-    endDateField = () => {
-        return (
-            <div className="field">
-                <label>End Date:</label>
-                <input type="date" name="endDate"
-                       onChange={(e) => {
-                           this.setState({endDate: e.target.value});
-                           this.handleFieldChange(0, {target: {name: 'endDate', value: e.target.value}})
-                       }}/>
             </div>
         );
     }
@@ -172,42 +186,19 @@ class CreateProcess extends React.Component {
         );
     }
 
-    phaseFields = () => {
-        console.log(this.state.phases)
-        return this.state.phases.map((phase, i) => {
-            return <PhaseField
-                phaseData={{
-                    phase,
-                    previousPhase: i > 0 ? this.state.phases[i - 1] : null,
-                    startDate: i > 0 ? null : this.state.startDate
-                }}
-                key={i} index={i}
-                handleFieldChange={this.handleFieldChange}
-                removePhase={this.removePhase}
-                validatePhase={this.validatePhase}
-            />
-        });
-    }
 
     phaseButton = () => {
-        if (this.state.phases.length > 0 && !this.state.endDate) {
-            return (<div className="field">
-                <div className="phase button" style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
-                    <div className="ui primary button" onClick={this.addPhase}>
-                        Add Phase
-                    </div>
-                </div>
-            </div>);
-        } else if (!this.state.contents || !this.state.startDate) {
-            return null
-        } else if (this.state.phases.length === 0 && !this.state.showDefault) {
+        if (!this.state.contents || !this.state.startDate) {
+            return null;
+        } else if (this.state.phases.length === 0 && !this.state.showDefault && !this.state.showCopyProcess) {
             return (<div className="choice">
                 <div className="field">
                     <div className="basic phase button"
                          style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
-                        <div className="ui primary button" onClick={(e => {
-                            this.setState({showDefault: true})
-                        })}>
+                        <div className="ui primary button" style={{maxWidth: "142px", minWidth: "142px"}}
+                             onClick={(e => {
+                                 this.setState({showDefault: true})
+                             })}>
                             Basic Brew
                         </div>
                     </div>
@@ -218,9 +209,20 @@ class CreateProcess extends React.Component {
                 <div className="field">
                     <div className="phase button"
                          style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
-                        <div className="ui primary button" onClick={this.addPhase}>
-                            Add Phase
+                        <div className="ui primary button" style={{maxWidth: "143px", minWidth: "142px"}}
+                             onClick={this.addPhase}>
+                            Custom Process
                         </div>
+                    </div>
+                </div>
+                <div className="ui horizontal divider">
+                    Or
+                </div>
+                <div className="field">
+                    <div className="field">
+                        <Dropdown label="Select Process to Copy" onSelectedChange={this.setDuplicateProcess}
+                                  url="process"
+                                  target={'process'}/>
                     </div>
                 </div>
             </div>)
@@ -229,77 +231,9 @@ class CreateProcess extends React.Component {
 
     }
 
-    addPhase = (e) => {
-        e.preventDefault()
-        const size = this.state.phases.length;
-        console.log(this.state.phases.length)
-        if (this.state.phases.length >= 1) {
-            console.log(this.state.phases[size - 1])
-            const newPhase = {
-                startDate: this.state.phases[size - 1].endDate,
-                startTank: this.state.phases[size - 1].endTank,
-                endTank: this.state.phases[size - 1].endTank
-            }
-            this.setState({
-                phases: [...this.state.phases, newPhase]
-            })
-        } else {
-            this.setState({phases: [...this.state.phases, {startDate: this.state.startDate}]})
-        }
-    }
 
-    removePhase = (index, e) => {
-        e.preventDefault();
-        let phases = [...this.state.phases];
-        phases.splice(index, 1);
-        this.setState({phases});
-    }
 
-    defaultPhase = () => {
-        if (this.state.showDefault) {
-            if (this.state.phases.length < 1) {
-                this.state.phases.push({
-                    phaseName: `Standard Brew: ${this.state.selectedBeer}`,
-                    startDate: this.state.startDate
-                })
-            }
-            console.log(this.state.phases)
-            return (
-                <div>
-                    {this.endDateField()}
-                    <div className={"field"}>
-                        {this.state.endDate ? <Dropdown label="Select Start Tank" defaultTerm={""}
-                                                        onSelectedChange={(tank) => {
-                                                            this.handleFieldChange(0, {
-                                                                target: {
-                                                                    name: 'startTank',
-                                                                    value: tank._id
-                                                                }
-                                                            })
-                                                        }}
-                                                        url="tank"
-                                                        index={0}
-                                                        startDate={this.state.startDate}
-                                                        endDate={this.state.endDate}
-                                                        target={'startTank'}/> : null}
-                    </div>
-                </div>
-            )
-        } else return null
-    }
-
-    phaseCollection = () => {
-        return this.state.phases.length >= 1 && !this.state.showDefault ?
-            <div className={"phases"} style={{padding: "1%", minWidth: this.screenSize()}}>
-                <div className="form" style={{padding: "2%"}}>
-                    <form className="ui form">
-                        {this.phaseFields()}
-                        {this.state.phases.length > 0 && !this.state.endDate ? this.phaseButton() : null}
-                    </form>
-                </div>
-            </div> : null
-    }
-
+    //TODO:Add estimated end date field
     render() {
         return (
             <div>
@@ -309,6 +243,8 @@ class CreateProcess extends React.Component {
                      style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
                     <div className="form" style={{padding: "1%", minWidth: this.screenSize()}}>
                         <form className="ui form" onSubmit={this.onFormSubmit}>
+                            <button className="ui button" type="submit" style={{color: "limegreen"}}>Submit</button>
+                            <div className={"ui horizontal divider"}/>
                             <div className="required field">
                                 <label>Process Name:</label>
                                 <input type="text" name="name" onChange={this.handleChange}/>
@@ -323,12 +259,15 @@ class CreateProcess extends React.Component {
                             </div>
                             {this.contentField()}
                             {this.startDateField()}
-                            {!this.state.endDate && this.state.phases.length < 1 ? this.phaseButton() : null}
-                            {this.defaultPhase()}
-                            <button className="ui button" type="submit">Submit</button>
+                            {this.state.phases.length < 1 ? this.phaseButton() : null}
+                            {this.state.showDefault ? <CreateBasicProcess contents={this.state.contents}
+                                                                          startDate={this.state.startDate}/> : null}
                         </form>
                     </div>
-                    {this.phaseCollection()}
+                    {this.state.showCopyProcess ?
+                        <CreateDuplicateProcess process={this.state.copyProcess}
+                                                startDate={this.state.startDate}/> : null}
+                    {!this.state.showCopyProcess ? this.phaseCollection() : null}
                 </div>
             </div>
         );

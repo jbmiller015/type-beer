@@ -44,7 +44,7 @@ const Dropdown = ({onSelectedChange, label, url, target, defaultTerm, startDate,
                 name: debouncedTerm,
             }
         }
-        if (target === 'startTank') {
+        if (target === 'startTank' || target === 'endTank') {
             config.params.fill = false;
             config.params.startDate = startDate;
             config.params.endDate = endDate;
@@ -53,6 +53,7 @@ const Dropdown = ({onSelectedChange, label, url, target, defaultTerm, startDate,
 
         const search = async () => {
             const {data} = await typeApi.get(`/${url}`, config);
+            console.log(data)
             setResults(data);
         };
         if (debouncedTerm) {

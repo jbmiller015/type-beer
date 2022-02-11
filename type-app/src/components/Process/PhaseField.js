@@ -13,7 +13,7 @@ const PhaseField = (props) => {
     console.log(phaseData)
 
     const [fieldName, setFieldName] = useState("field");
-    const [transfer, setTransfer] = useState(false);
+    const [transfer, setTransfer] = useState(phaseData.phase.phaseName === "Transfer");
     const [editPhase, setEditPhase] = useState(true);
     const [phaseName, setPhaseName] = useState(phaseData.phase.phaseName);
     const [startDate, setStartDate] = useState(phaseData.phase.startDate);
@@ -79,36 +79,27 @@ const PhaseField = (props) => {
             </div>
     };
 
-    const endTankField = () => {
 
+    const endTankField = () => {
         return (index > 0 && transfer ? <div>
             <div className={fieldName} id={"startTank"}>
-                <Dropdown label="Select Start Tank" onSelectedChange={setStartTank} url="tank" index={index}
-                          target={'startTank'} defaultTerm={startTank ? startTank.name : ""}/>
+                <Dropdown label="Select Start Tank" onSelectedChange={setStartTank} url="tank"
+                          target={'startTank'} defaultTerm={startTank ? startTank.name : ""} startDate={startDate}
+                          endDate={endDate}/>
             </div>
             <div className={fieldName} id={"endTank"}>
                 <Dropdown label="Select End Tank" defaultTerm={endTank ? endTank.name : ""}
                           onSelectedChange={setEndTank} url="tank"
-                          index={index}
-                          target={'endTank'}/>
+                          target={'endTank'} startDate={startDate}
+                          endDate={endDate}/>
             </div>
         </div> : null)
     };
 
+    //TODO:Set tanks for all existing phases (error when including transfer)
     const startTankField = () => {
         return phaseData.previousPhase === null ? <div>
-            <div className={fieldName} id={"startTank"}>
-                {endDate ? <Dropdown label="Select Start Tank" defaultTerm={startTank ? startTank.name : ""}
-                                     onSelectedChange={(tank) => {
-                                         setStartTank(tank);
-                                         setEndTank(tank);
-                                     }}
-                                     url="tank"
-                                     index={index}
-                                     startDate={startDate}
-                                     endDate={endDate}
-                                     target={'startTank'}/> : null}
-            </div>
+
             <div className={fieldName} id={"endTank"}>
             </div>
         </div> : null

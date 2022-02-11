@@ -71,13 +71,13 @@ const Process = (props) => {
                             </div>
                         </div>
                     </div>
-                    <div className="ui icon right floated button" onClick={() => {
+                    <div className="ui basic right floated icon button" onClick={() => {
                         deleteProcess(processData._id)
-                    }}><i className={"ui trash icon"}/></div>
+                    }}><i className={"ui red trash icon"}/></div>
+
                 </div>
             </div>
-    )
-        ;
+    );
 }
 
 export default Process;

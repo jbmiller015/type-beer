@@ -52,13 +52,14 @@ router.route('/:base/:sub').get(async (req, res) => {
                 startDate: {$lte: new Date(startDate)},
                 endDate: {$lte: new Date(endDate), $gte: new Date(startDate)}
             });
-            for (let el of await Object.find({
+            const right = await Object.find({
                 userId: req.user._id,
                 startDate: {$gte: new Date(startDate), $lte: new Date(endDate)},
                 endDate: {$gte: new Date(endDate)}
-            })) {
-                getRes.push(el);
-            }
+            })
+
+            getRes.push(...right);
+
             let tankList = [];
             for (let el of getRes) {
                 for (let le of el.phases) {
