@@ -3,10 +3,35 @@ import PhaseField from "./PhaseField";
 
 const CreateCustomProcess = (props) => {
 
-    const {contents, startDate} = props;
+    const {contents, startDate, validatePhase} = props;
     const [phases, setPhases] = useState([]);
     const [endDate, setEndDate] = useState(null);
 
+
+    const handleFieldChange = (index, e) => {
+        let {name, value, checked} = e.target;
+        if (name === "complete") {
+            value = checked
+        }
+        let tempPhases = [phases];
+        if (name === "submit" && value.phaseName === "Transfer") {
+            tempPhases[index] = value;
+            for (let i = index; i < phases.length; i++) {
+                tempPhases[i].startTank = value.endTank
+                tempPhases[i].endTank = value.endTank
+            }
+        } else if (name === "submit" && value.phaseName !== "Transfer") {
+            tempPhases[index] = value;
+            //{phaseName, startDate, endDate, startTank, endTank}
+            tempPhases.forEach((phase) => {
+                    phase.startTank = value.startTank
+                    phase.endTank = value.startTank
+            })
+        } else {
+            tempPhases[index] = value;
+        }
+        setPhases([...tempPhases])
+    }
 
     const addPhaseButton = () => {
         return (<div className="field">
@@ -20,18 +45,17 @@ const CreateCustomProcess = (props) => {
 
 
     const phaseFields = () => {
-        console.log(this.state.phases)
-        return this.state.phases.map((phase, i) => {
+        return phases.map((phase, i) => {
             return <PhaseField
                 phaseData={{
                     phase,
-                    previousPhase: i > 0 ? this.state.phases[i - 1] : null,
-                    startDate: i > 0 ? null : this.state.startDate
+                    previousPhase: i > 0 ? phases[i - 1] : null,
+                    startDate: i > 0 ? null : startDate
                 }}
+                handleFieldChange={(index,e)=>handleFieldChange(index,e)}
                 key={i} index={i}
-                handleFieldChange={this.handleFieldChange}
-                removePhase={this.removePhase}
-                validatePhase={this.validatePhase}
+                removePhase={removePhase}
+                validatePhase={validatePhase}
             />
         });
     }
@@ -39,11 +63,11 @@ const CreateCustomProcess = (props) => {
     const addPhase = (e) => {
         e.preventDefault()
         const size = phases.length;
-        if (this.state.phases.length > 0) {
+        if (phases.length > 0) {
             const newPhase = {
-                startDate: this.state.phases[size - 1].endDate,
-                startTank: this.state.phases[size - 1].endTank,
-                endTank: this.state.phases[size - 1].endTank
+                startDate: phases[size - 1].endDate,
+                startTank: phases[size - 1].endTank,
+                endTank: phases[size - 1].endTank
             }
             setPhases([...phases, newPhase]);
         } else {
@@ -55,26 +79,27 @@ const CreateCustomProcess = (props) => {
         e.preventDefault();
         let tempPhases = [...phases];
         phases.splice(index, 1);
-        this.setState({phases});
+        setPhases([...tempPhases]);
     }
 
 
     const phaseCollection = () => {
         console.log("phasecollection")
-        return (this.state.phases.length >= 1 && !this.state.showDefault && !this.state.showCopyProcess) ?
-            <div className={"phases"} style={{padding: "1%", minWidth: this.screenSize()}}>
+        return (phases.length >= 1) ?
+            <div className={"phases"} style={{padding: "1%"/**, minWidth: screenSize()*/}}>
                 <div className="form" style={{padding: "2%"}}>
                     <form className="ui form">
-                        {this.phaseFields()}
-                        {this.state.phases.length > 0 ? this.phaseButton() : null}
+                        {phaseFields()}
                     </form>
                 </div>
             </div> : null
     }
 
     return (<div>
+        <div className={"ui form"}>
         {phaseCollection()}
         {addPhaseButton()}
+        </div>
     </div>);
 }
 export default CreateCustomProcess;

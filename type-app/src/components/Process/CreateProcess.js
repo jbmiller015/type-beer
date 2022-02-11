@@ -7,6 +7,7 @@ import NavComponent from "../NavComponent";
 import moment from "moment";
 import CreateDuplicateProcess from "./CreateDuplicateProcess";
 import CreateBasicProcess from "./CreateBasicProcess";
+import CreateCustomProcess from "./CreateCustomProcess";
 
 
 class CreateProcess extends React.Component {
@@ -26,6 +27,7 @@ class CreateProcess extends React.Component {
             selectedBeer: "",
             showExample: false,
             typeDropDown: false,
+            showCustomProcess:false,
             showDefault: false,
             showCopyProcess: false,
             copyProcess: null
@@ -190,7 +192,7 @@ class CreateProcess extends React.Component {
     phaseButton = () => {
         if (!this.state.contents || !this.state.startDate) {
             return null;
-        } else if (this.state.phases.length === 0 && !this.state.showDefault && !this.state.showCopyProcess) {
+        } else if (!this.state.showCustomProcess && !this.state.showDefault && !this.state.showCopyProcess) {
             return (<div className="choice">
                 <div className="field">
                     <div className="basic phase button"
@@ -210,7 +212,7 @@ class CreateProcess extends React.Component {
                     <div className="phase button"
                          style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
                         <div className="ui primary button" style={{maxWidth: "143px", minWidth: "142px"}}
-                             onClick={this.addPhase}>
+                             onClick={()=>{this.setState({showCustomProcess:true})}}>
                             Custom Process
                         </div>
                     </div>
@@ -234,6 +236,7 @@ class CreateProcess extends React.Component {
 
 
     //TODO:Add estimated end date field
+
     render() {
         return (
             <div>
@@ -266,8 +269,9 @@ class CreateProcess extends React.Component {
                     </div>
                     {this.state.showCopyProcess ?
                         <CreateDuplicateProcess process={this.state.copyProcess}
-                                                startDate={this.state.startDate}/> : null}
-                    {!this.state.showCopyProcess ? this.phaseCollection() : null}
+                                                startDate={this.state.startDate} /> : null}
+                    {this.state.showCustomProcess ? <CreateCustomProcess contents={this.state.contents}
+                                                                         startDate={this.state.startDate} validatePhase={this.validatePhase}/>:null}
                 </div>
             </div>
         );

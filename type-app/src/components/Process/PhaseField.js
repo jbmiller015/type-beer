@@ -52,7 +52,6 @@ const PhaseField = (props) => {
     };
 
     const endDateField = () => {
-
         return index > 0 && transfer ?
             <div className={fieldName} id={"startDate" || "endDate"}>
                 <label>Transfer Date:</label>
@@ -96,11 +95,21 @@ const PhaseField = (props) => {
         </div> : null)
     };
 
-    //TODO:Set tanks for all existing phases (error when including transfer)
+    //TODO: Get phases w/out tanks first, then set tanks as needed (see create duplicate process flow)
     const startTankField = () => {
-        return phaseData.previousPhase === null ? <div>
-
+        return phaseData.previousPhase === null  &&  endDate ? <div>
             <div className={fieldName} id={"endTank"}>
+                <div className={"field"}>
+                        <Dropdown label="Select Start Tank" defaultTerm={""}
+                                  onSelectedChange={(tank) => {
+                                      setStartTank(tank._id, 0)
+                                  }}
+                                  url="tank"
+                                  index={0}
+                                  startDate={startDate}
+                                  endDate={endDate}
+                                  target={'startTank'}/> : null}
+                </div>
             </div>
         </div> : null
     }
@@ -109,7 +118,7 @@ const PhaseField = (props) => {
         const phase = {phaseName, startDate, endDate, startTank, endTank}
         const {valid, error} = validatePhase(phase);
         if (valid) {
-            if (phaseName && startDate && endDate && startTank && endTank) {
+            if (phaseName && startDate && endDate) {
                 setEditPhase(false);
                 setFieldName("field");
                 handleFieldChange(index, {
@@ -132,7 +141,6 @@ const PhaseField = (props) => {
     }
 
     return (
-
         !editPhase ?
             <div className="ui clearing segment">
                 <h3>{phaseName}</h3>
@@ -164,8 +172,6 @@ const PhaseField = (props) => {
                            onChange={(e) => setPhaseName(e.target.value)}/>
                 </div>
                 {endDateField()}
-                {startTankField()}
-                {endTankField()}
                 <div className="field">
                     <div className="ui checkbox">
                         <input type="checkbox" name="complete" tabIndex="0"
@@ -173,7 +179,6 @@ const PhaseField = (props) => {
                                defaultChecked={phaseData.complete ? phaseData.complete : false}
                                onChange={(e) => {
                                    handleCheck(e)
-                                   handleFieldChange(index, e)
                                }}/>
                         <label>Complete</label>
                     </div>

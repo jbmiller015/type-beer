@@ -98,7 +98,6 @@ const CreateDuplicateProcess = (props) => {
     }
 
     return (<div>
-        <div className={"ui divider"}/>
         <h5 className={"header"}>{`Copying ${process.name}...`}</h5>
         <div className={"ui form"}>
             {startTank()}
