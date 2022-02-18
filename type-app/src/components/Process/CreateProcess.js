@@ -24,10 +24,10 @@ class CreateProcess extends React.Component {
             startDate: null,
             endDate: null,
             phases: [],
-            selectedBeer: "",
+            selectedContents: "",
             showExample: false,
             typeDropDown: false,
-            showCustomProcess:false,
+            showCustomProcess: false,
             showDefault: false,
             showCopyProcess: false,
             copyProcess: null
@@ -49,10 +49,12 @@ class CreateProcess extends React.Component {
 
 
     setContents = async content => {
-        this.setState({contents: content._id, selectedBeer: content.name});
+        console.log(content)
+        this.setState({contents: content._id, selectedContents: content.name});
     }
 
     setDuplicateProcess = process => {
+        console.log(process)
         this.setState({copyProcess: process, showCopyProcess: true});
     }
 
@@ -97,7 +99,6 @@ class CreateProcess extends React.Component {
             phases[index] = value;
             //{phaseName, startDate, endDate, startTank, endTank}
             phases.forEach((phase) => {
-                console.log(phase)
                 //TODO:FIX - transfer phases showing up as {Transfer:""}
                 if (phase.phaseName !== "Transfer") {
                     phase.startTank = value.startTank
@@ -139,34 +140,28 @@ class CreateProcess extends React.Component {
             }
         }
 
-        checkObjs();
+        //checkObjs();
         checkDates();
         return result;
     }
 
-    onFormSubmit = async (e) => {
-        e.preventDefault();
-
-        console.log(this.state);
+    onFormSubmit = async (phases, endDate) => {
         const formData = {
             name: this.state.name,
-            exceptedYield: this.state.exceptedYield,
+            expectedYield: this.state.expectedYield,
             actualYield: this.state.actualYield,
             startDate: this.state.startDate,
-            endDate: this.state.endDate ? this.state.endDate : this.state.phases[this.state.phases.length - 1].endDate,
+            endDate,
             contents: this.state.contents,
-            phases: this.state.phases
+            phases: phases
         }
-
 
         await typeApi.post('/process', formData)
             .then(res =>
-                this.props.history.push('/'))
+                this.props.history.push('/processes'))
             .catch(err => {
                 console.error(err)
             });
-
-
     };
 
     startDateField = () => {
@@ -212,7 +207,9 @@ class CreateProcess extends React.Component {
                     <div className="phase button"
                          style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
                         <div className="ui primary button" style={{maxWidth: "143px", minWidth: "142px"}}
-                             onClick={()=>{this.setState({showCustomProcess:true})}}>
+                             onClick={() => {
+                                 this.setState({showCustomProcess: true})
+                             }}>
                             Custom Process
                         </div>
                     </div>
@@ -234,7 +231,6 @@ class CreateProcess extends React.Component {
     }
 
 
-
     //TODO:Add estimated end date field
 
     render() {
@@ -246,7 +242,6 @@ class CreateProcess extends React.Component {
                      style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
                     <div className="form" style={{padding: "1%", minWidth: this.screenSize()}}>
                         <form className="ui form" onSubmit={this.onFormSubmit}>
-                            <button className="ui button" type="submit" style={{color: "limegreen"}}>Submit</button>
                             <div className={"ui horizontal divider"}/>
                             <div className="required field">
                                 <label>Process Name:</label>
@@ -263,15 +258,19 @@ class CreateProcess extends React.Component {
                             {this.contentField()}
                             {this.startDateField()}
                             {this.state.phases.length < 1 ? this.phaseButton() : null}
-                            {this.state.showDefault ? <CreateBasicProcess contents={this.state.contents}
-                                                                          startDate={this.state.startDate}/> : null}
+                            {this.state.showDefault ? <CreateBasicProcess selectedContents={this.state.selectedContents}
+                                                                          startDate={this.state.startDate}
+                                                                          onSubmit={(phases, endDate) => this.onFormSubmit(phases, endDate)}/> : null}
                         </form>
                     </div>
                     {this.state.showCopyProcess ?
                         <CreateDuplicateProcess process={this.state.copyProcess}
-                                                startDate={this.state.startDate} /> : null}
+                                                startDate={this.state.startDate}
+                                                onSubmit={(phases, endDate) => this.onFormSubmit(phases, endDate)}/> : null}
                     {this.state.showCustomProcess ? <CreateCustomProcess contents={this.state.contents}
-                                                                         startDate={this.state.startDate} validatePhase={this.validatePhase}/>:null}
+                                                                         startDate={this.state.startDate}
+                                                                         validatePhase={this.validatePhase}
+                                                                         onSubmit={(phases, endDate) => this.onFormSubmit(phases, endDate)}/> : null}
                 </div>
             </div>
         );

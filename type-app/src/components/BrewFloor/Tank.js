@@ -1,19 +1,26 @@
 import React, {useEffect, useState} from 'react';
 import tankOverlay from '../../media/tankwwindow.png';
+import bTankOverlay from '../../media/britetankwwindow.png'
+import kTankOverlay from '../../media/kettletankwwindow.png'
+import barrelOverlay from '../../media/barreltankwwindow.png'
 import moment from "moment";
-//TODO: Combine Process data and Tank
+
 const Tank = (props) => {
 
     const [className, setClassName] = useState("card");
-    const {currPhase, currPhaseDate, fill, name} = props.tankData;
-    const {contents} = props
+    const [contents, setContents] = useState(null);
+    const {currPhase, currPhaseDate, fill, name, tankType} = props.tankData;
     const process = props.process;
+    const {getContents} = props;
 
-    useEffect(() => {
-        if (process && process.endDate) {
+
+    useEffect(async () => {
+        if (process) {
             moment().diff(process.endDate) > 0 ? setClassName("red card") : setClassName("green card")
+            const contents = await getContents(process.contents)
+            setContents(contents);
         }
-    })
+    }, [])
 
 
     const imageWrapper = {
@@ -37,10 +44,35 @@ const Tank = (props) => {
 
     const date = () => {
         if (process) {
-            return moment(process.endDate).fromNow() ? moment(process.endDate).fromNow() : ""
+            return moment(process.activePhase.endDate).fromNow(true) || ""
+        }
+    }
+    const nextPhase = () => {
+        if (process) {
+            const len = process.phases.length - 1;
+            for (let i = 0; i < len; i++) {
+                if (phase._id === process.activePhase._id)
+                    return i === len ? "finished" : "Next Phase: " + process.phases[i + 1].phaseName
+            }
+        } else {
+            return "---"
         }
     }
 
+    const overlay = () => {
+        switch (tankType) {
+            case "brite":
+                return bTankOverlay
+            case "fermenter":
+                return tankOverlay
+            case "kettle" :
+                return kTankOverlay
+            case "barrel":
+                return barrelOverlay
+            default:
+                return tankOverlay
+        }
+    }
 
     return (
         <div className={"item"}>
@@ -48,15 +80,16 @@ const Tank = (props) => {
                 <div className={className}>
                     <div className="ui basic big top center aligned attached label" style={{zIndex: "1"}}>{name}</div>
                     <div className={"image"} style={imageWrapper}>
-                        <img alt="tankOverlay" src={tankOverlay}/>
+                        <img alt="tankOverlay" src={overlay()}/>
                     </div>
                     <div className={"content"}>
-                        <div className={"center aligned header"}>{contents && contents.name ? contents.name : ""}</div>
                         <div
-                            className={"center aligned meta"}>{date()}</div>
+                            className={"center aligned header"}>{contents && contents.name ? contents.name : "¯\\_(ツ)_/¯"}</div>
+                        <div
+                            className={"center aligned meta"}>{process ? phase() + ": " + date() + " remaining" : "Empty"}</div>
                     </div>
                     <div className={"center aligned extra content"}>
-                        <span style={{fontSize: "medium"}}>{phase()}</span>
+                        <span style={{fontSize: "medium"}}>{nextPhase()}</span>
                     </div>
                     {props.detailButtonVisible ?
                         <button className="ui bottom attached button"

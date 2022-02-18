@@ -16,43 +16,18 @@ class CreateTank extends React.Component {
             name: "",
             size: "",
             tankType: "",
-            contents: null,
-            fill: false,
-            fillDate: "",
-            phases: [],
-            selectedBeer: "",
-            showExample: false,
-            typeDropDown: false
+            showExample: false
         }
     }
 
-
-    setContents = async content => {
-        this.setState({contents: content._id, selectedBeer: content.name});
-    }
 
     handleChange = e => {
-        let {name, value, checked} = e.target;
-        if (name === "fill") {
-            value = checked
-        }
+        let {name, value} = e.target;
         this.setState({
             [name]: value,
             showExample: true
         })
     };
-
-    handleFieldChange = (index, e) => {
-        let {name, value, checked} = e.target;
-        if (name === "complete") {
-            value = checked
-        }
-        let phases = [...this.state.phases];
-        let phase = phases[index];
-        phase[name] = value
-        phases[index] = phase;
-        this.setState({phases})
-    }
 
     onFormSubmit = async (e) => {
         e.preventDefault();
@@ -60,10 +35,7 @@ class CreateTank extends React.Component {
         const formData = {
             name: this.state.name,
             size: this.state.size,
-            contents: this.state.contents,
-            fill: this.state.fill,
-            fillDate: this.state.fillDate,
-            phases: this.state.phases
+            tankType: this.state.tankType
         }
 
 
@@ -77,48 +49,6 @@ class CreateTank extends React.Component {
 
     };
 
-    fillDateField = () => {
-        return this.state.fill ?
-            <div className="field">
-                <label>Fill Date:</label>
-                <input type="datetime-local" name="fillDate" onChange={this.handleChange}/>
-            </div> : null
-    }
-
-    contentField = () => {
-        return this.state.fill ?
-            <div className="field">
-                <Dropdown label="Select Tank Contents" onSelectedChange={this.setContents} url="beer"/>
-            </div> : null
-    }
-
-    phaseFields = () => {
-        return this.state.phases.map((phase, i) => {
-            return <PhaseField phaseData={phase} key={i} index={i} handleChange={this.handleFieldChange}
-                               removePhase={this.removePhase}/>
-        });
-    }
-
-    phaseButton = () => {
-        return this.state.contents && this.state.fill ?
-            <div className="phase button" style={{alignItems: 'center', justifyContent: "center", display: 'flex'}}>
-                <button className="ui primary button" onClick={this.addPhase}>
-                    Add Phase
-                </button>
-            </div> : null
-    }
-
-    addPhase = (e) => {
-        e.preventDefault()
-        this.setState({phases: [...this.state.phases, {}]})
-    }
-
-    removePhase = (index, e) => {
-        e.preventDefault();
-        let phases = [...this.state.phases];
-        phases.splice(index, 1);
-        this.setState({phases});
-    }
 
     render() {
         return (
@@ -139,32 +69,23 @@ class CreateTank extends React.Component {
                             </div>
                             <div className="required field">
                                 <label>Tank Type:</label>
-                                <select className="ui dropdown" onChange={this.handleChange}>
+                                <select className="ui dropdown" name="tankType" onChange={this.handleChange}>
                                     <option defaultValue="" hidden>Choose Type</option>
-                                    <option value="brite">Brite</option>
-                                    <option value="fermenter">Fermenter</option>
-                                    <option value="kettle">Kettle</option>
+                                    <option name="tankType" value="brite">Brite</option>
+                                    <option name="tankType" value="fermenter">Fermenter</option>
+                                    <option name="tankType" value="kettle">Kettle</option>
+                                    <option name="tankType" value="barrel">Barrel</option>
                                 </select>
                             </div>
-                            <div className="field">
-                                <div className="ui checkbox">
-                                    <input type="checkbox" name="fill" tabIndex="0"
-                                           onChange={this.handleChange}
-                                           defaultChecked={this.state.fill}/>
-                                    <label>Filled</label>
-                                </div>
-                            </div>
-                            {this.fillDateField()}
-                            {this.contentField()}
-                            {this.phaseFields()}
-                            {this.phaseButton()}
                             <button className="ui button" type="submit">Submit</button>
                         </form>
                     </div>
                     <div className={"example"} style={{paddingInline: "2%", paddingTop: "2%"}}>
-                        {this.state.fill || this.state.showExample ?
-                            <Tank tankData={{name: this.state.name, contents: {name: this.state.selectedBeer}}}
-                                  detailButtonVisible={false}/>
+                        {this.state.showExample ?
+                            <Tank tankData={{
+                                name: this.state.name,
+                                tankType: this.state.tankType
+                            }} detailButtonVisible={false}/>
                             : null}
                     </div>
                 </div>

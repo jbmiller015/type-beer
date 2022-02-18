@@ -21,7 +21,8 @@ class BrewFloor extends React.Component {
             processes: {},
             show: false,
             modalData: null,
-            tanksActive: this.props.tanks
+            tanksActive: this.props.tanks,
+            beers: {}
         };
         this.showModal = this.showModal.bind(this);
     }
@@ -61,6 +62,22 @@ class BrewFloor extends React.Component {
         });
     }
 
+    getBeerById = async (beerId) => {
+        const beer = this.state.beers[beerId] || await typeApi.get(`/beer/${beerId}`).then((res) => {
+            return res.data[0];
+        }).catch(err => {
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
+        })
+        if (!this.state.beers[beerId]) {
+            this.setState(state => ({
+                beers: {...state.beers, [beerId]: beer}
+            }))
+        }
+        return beer;
+    }
+
     deleteTank = (tankId) => {
         typeApi.delete(`/tank/${tankId}`).then((res) => {
             let newState = {...this.state};
@@ -80,17 +97,6 @@ class BrewFloor extends React.Component {
             let newState = {...this.state};
             newState.tanks[tankId] = res.data;
             this.setState(newState);
-        }).catch(err => {
-            this.setState(state => ({
-                error: [...state.error, err.message]
-            }))
-        })
-    }
-
-    getBeerById = async (beerId) => {
-        console.log(beerId)
-        return await typeApi.get(`/beer/${beerId}`).then((res) => {
-            return res.data[0];
         }).catch(err => {
             this.setState(state => ({
                 error: [...state.error, err.message]
@@ -150,10 +156,14 @@ class BrewFloor extends React.Component {
                         tank.fill = true;
                     }
                 }
+                console.log(process)
                 return (
                     <Tank tankData={tank} process={process} key={i}
                           loadData={this.loadTankData}
-                          detailButtonVisible={true}/>)
+                          detailButtonVisible={true}
+                          getContents={async (beerId) => {
+                              return this.getBeerById(beerId)
+                          }}/>)
             })
             return (
                 <div>

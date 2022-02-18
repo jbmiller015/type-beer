@@ -1,35 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import moment from "moment";
 import Dropdown from "../Fields/Dropdown";
+import {mapDates, setPhaseTanks} from "./ProcessFunctions";
 
 const CreateDuplicateProcess = (props) => {
-    const {process, startDate} = props;
+    const {process, startDate, onSubmit} = props;
     const [phases, setPhases] = useState([]);
     const [endDate, setEndDate] = useState(null);
     const [dateRanges, setDateRanges] = useState([]);
     const [startTankSet, setStartTankSet] = useState(false);
 
     useEffect(() => {
-        let nextDate = startDate;
-        let rangeStartDate = startDate;
-        let dateRanges = [];
-        const dateMappedPhases = process.phases.map((phase, index) => {
-            let endDate = phase.endDate.split("T", 1)[0];
-            let startDate = phase.startDate.split("T", 1)[0];
-            let diff = moment(endDate).diff(startDate, "days");
-            endDate = moment(nextDate).add(diff, "days").format("YYYY-MM-DD");
-            phase.startDate = nextDate;
-            phase.endDate = endDate;
-
-            if (phase.phaseName === "Transfer") {
-                setDateRanges([...dateRanges, {rangeStartDate, endDate, index}]);
-                rangeStartDate = endDate;
-            }
-            nextDate = endDate;
-            return (phase)
-        })
+        const {phaseDateRanges, dateMappedPhases} = mapDates(startDate, process.phases);
+        console.log("dateRanges:", phaseDateRanges)
+        console.log("dateMappedPhases:", dateMappedPhases)
+        setDateRanges([...phaseDateRanges])
         setEndDate(dateMappedPhases[dateMappedPhases.length - 1].endDate);
-        setPhases([...dateMappedPhases]);
+        setPhases(dateMappedPhases);
     }, [])
 
 
@@ -38,7 +25,8 @@ const CreateDuplicateProcess = (props) => {
             {endDate ?
                 <Dropdown label="Select Start Tank" defaultTerm={""}
                           onSelectedChange={(tank) => {
-                              setTanks(tank._id, 0)
+                              setTanksInPhases(tank._id, 0)
+                              setStartTankSet(true)
                           }}
                           url="tank"
                           index={0}
@@ -54,7 +42,7 @@ const CreateDuplicateProcess = (props) => {
                 {dateRanges.map((range, i) => {
                     return (<Dropdown label={`Select Transfer Tank ${i + 1}`} defaultTerm={""}
                                       onSelectedChange={(tank) => {
-                                          setTanks(tank._id, dateRanges[i].index)
+                                          setTanksInPhases(tank._id, dateRanges[i].index)
                                       }}
                                       url="tank"
                                       index={0}
@@ -67,41 +55,23 @@ const CreateDuplicateProcess = (props) => {
     }
 
     //set tanks for starting index to next transfer
-    const setTanks = (tank, index) => {
-        let tempPhases = phases
-        if (dateRanges.length > 0) {
-            let transferIndex = 0;
-
-            while (index > dateRanges[transferIndex].index) {
-                transferIndex++
-            }
-            let endIndex = dateRanges[transferIndex].index;
-            if (index === endIndex) {
-                endIndex = tempPhases.length
-            }
-            for (let i = index; i < endIndex; i++) {
-                if (i > 0) {
-                    tempPhases[i].startTank = tempPhases[i - 1].endTank
-                } else {
-                    tempPhases[i].startTank = tank
-                }
-                tempPhases[i].endTank = tank
-            }
-        } else {
-            tempPhases.forEach((phase) => {
-                phase.startTank = tank;
-                phase.endTank = tank;
-            })
-        }
-        console.log(tempPhases)
+    const setTanksInPhases = (tank, index) => {
+        const tempPhases = setPhaseTanks(tank, index, dateRanges, phases);
         setPhases([...tempPhases]);
+    }
+
+    const submitButton = () => {
+        return (dateRanges.length > 0 && startTankSet) || (dateRanges.length < 1 && startTankSet) ?
+            <button className="ui button" type="Submit"
+                    onClick={() => onSubmit(phases, endDate)}>Submit</button> : null
     }
 
     return (<div>
         <h5 className={"header"}>{`Copying ${process.name}...`}</h5>
-        <div className={"ui form"}>
+        <div className={"ui form"} onSubmit={() => onSubmit}>
             {startTank()}
-            {dateRanges.length > 0 && !startTankSet ? transferTanks() : null}
+            {dateRanges.length > 0 && startTankSet ? transferTanks() : null}
+            {submitButton()}
         </div>
     </div>);
 }

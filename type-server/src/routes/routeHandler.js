@@ -52,6 +52,7 @@ router.route('/:base/:sub').get(async (req, res) => {
                 startDate: {$lte: new Date(startDate)},
                 endDate: {$lte: new Date(endDate), $gte: new Date(startDate)}
             });
+         
             const right = await Object.find({
                 userId: req.user._id,
                 startDate: {$gte: new Date(startDate), $lte: new Date(endDate)},

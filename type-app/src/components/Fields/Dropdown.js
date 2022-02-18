@@ -53,7 +53,6 @@ const Dropdown = ({onSelectedChange, label, url, target, defaultTerm, startDate,
 
         const search = async () => {
             const {data} = await typeApi.get(`/${url}`, config);
-            console.log(data)
             setResults(data);
         };
         if (debouncedTerm) {
