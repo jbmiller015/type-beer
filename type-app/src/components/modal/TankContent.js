@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import moment from "moment";
+import {formatDate} from "../Process/ProcessFunctions";
 
 const TankContent = ({data, getBeerById}) => {
 
@@ -49,7 +50,7 @@ const TankContent = ({data, getBeerById}) => {
                 <div className="ui divided list">
                     <div className="item">
                         <div className="header">
-                            Beer:
+                            Contents:
                         </div>
                         <div className="content">
                             {process && beer ? beer.name : null}
@@ -57,35 +58,51 @@ const TankContent = ({data, getBeerById}) => {
                     </div>
                     <div className="item">
                         <div className="header">
-                            Current Phase:
-                        </div>
-                        <div className="content">
-                            {process && process.activePhase ? process.activePhase.phaseName : null}
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="header">
-                            Start Date:
-                        </div>
-                        <div className="content">
-                            {process && process.activePhase ? new Date(process.activePhase.startDate).toLocaleDateString() : null}
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="header">
-                            End Date:
-                        </div>
-                        <div className="content">
-                            {process && process.activePhase ? new Date(process.activePhase.endDate).toLocaleDateString() : null}
-                        </div>
-                    </div>
-                    <div className="item">
-                        <div className="header">
                             Process Overview:
                         </div>
                         <div className="content">
-                            <div className="ui breadcrumb">
-                                {breadcrumbs()}
+                            <div className="header">
+                                Name:
+                            </div>
+                            <div className="content">
+                                {process ? process.name : ""}
+                            </div>
+                            <div className="header">
+                                Phases:
+                            </div>
+                            <div className="content">
+                                <div className="ui breadcrumb">
+                                    {breadcrumbs()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="item">
+                        <div className="header">
+                            Current Phase:
+                        </div>
+                        <div className="content">
+                            <div className="header">
+                                Name:
+                            </div>
+                            <div className="content">
+                                {process && process.activePhase ? process.activePhase.phaseName : null}
+                            </div>
+                            <div className="item">
+                                <div className="header">
+                                    Start Date:
+                                </div>
+                                <div className="content">
+                                    {process && process.activePhase ? formatDate(process.activePhase.startDate) : null}
+                                </div>
+                            </div>
+                            <div className="item">
+                                <div className="header">
+                                    End Date:
+                                </div>
+                                <div className="content">
+                                    {process && process.activePhase ? formatDate(process.activePhase.endDate) : null}
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -6,6 +6,8 @@ import Tank from "../BrewFloor/Tank";
 import NavComponent from "../NavComponent";
 import moment from "moment";
 import Process from "./Process";
+import SearchFilter from "../Fields/SearchFilter";
+import {formatDate} from "./ProcessFunctions";
 
 
 class CreateProcess extends React.Component {
@@ -30,7 +32,11 @@ class CreateProcess extends React.Component {
             selectedBeer: "",
             showExample: false,
             typeDropDown: false,
-            showDefault: false
+            showDefault: false,
+            showActive: true,
+            showUpcoming: false,
+            showOverdue: false,
+            showAll: false
         }
     }
 
@@ -46,7 +52,7 @@ class CreateProcess extends React.Component {
             for (let el in procObj) {
                 for (let le of procObj[el].phases) {
                     let endDate = le.endDate.split("T", 1)[0];
-                    if (date.startOf('day').isBetween(endDate, moment(endDate).endOf('day'), 'date', "[]")) {
+                    if (date.startOf('date').isBetween(endDate, moment(endDate).endOf('date'), 'date', "[]")) {
                         tasks = {...tasks, [procObj[el].name]: {...le, processId: procObj[el]._id}}
                     }
                 }
@@ -157,6 +163,51 @@ class CreateProcess extends React.Component {
                 marginLeft: "auto",
                 marginRight: "auto"
             }}>Nothing going on ¯\_(ツ)_/¯</div>
+    }
+
+    upcomingProcesses = () => {
+        return Object.values(this.state.processes).filter((process) => {
+            let endDate = formatDate(process.startDate)
+            return moment(endDate).isAfter(moment().startOf('date'));
+        }).map((process) => {
+            return <Process processData={process}
+                            getTankDetails={(tankId) => this.getTankDetails(tankId)}
+                            handleProcessChange={async (e, processId, phaseIndex) => {
+                                await this.handleProcessChange(e, processId, phaseIndex)
+                            }}
+                            deleteProcess={(processId) => {
+                                this.deleteProcess(processId)
+                            }}
+                            getBeerById={(beerId) => {
+                                return this.getBeerById(beerId)
+                            }}/>
+        })
+    }
+
+    overdueProcesses = () => {
+        return Object.values(this.state.processes).filter((process) => {
+            let endDate = formatDate(process.endDate)
+            if (moment(endDate).isBefore(moment().startOf('date'))) {
+                for (let el of process.phases) {
+                    if (!el.complete) {
+                        return true
+                    }
+                }
+            }
+            return false
+        }).map((process) => {
+            return <Process processData={process}
+                            getTankDetails={(tankId) => this.getTankDetails(tankId)}
+                            handleProcessChange={async (e, processId, phaseIndex) => {
+                                await this.handleProcessChange(e, processId, phaseIndex)
+                            }}
+                            deleteProcess={(processId) => {
+                                this.deleteProcess(processId)
+                            }}
+                            getBeerById={(beerId) => {
+                                return this.getBeerById(beerId)
+                            }}/>
+        })
     }
 
 
@@ -330,51 +381,84 @@ class CreateProcess extends React.Component {
             </div> : null
     }
 
+    processCollection = (processes, color, header) => {
+        return (<div style={{
+            maxWidth: "50%",
+            left: "0",
+            right: "0",
+            marginLeft: "auto",
+            marginRight: "auto"
+        }}>
+            <div className={"ui horizontal divider"}/>
+            <div className={"ui large header"}>{header}</div>
+            <div className="ui relaxed divided items" style={{
+                borderStyle: "solid",
+                borderRadius: "1%",
+                borderWidth: "1px",
+                borderColor: color,
+                padding: "2%"
+            }}>
+                {!this.state.isLoaded ?
+                    <div className="ui active centered inline inverted dimmer">
+                        <div className="ui big text loader">Loading</div>
+                    </div> : processes}
+            </div>
+        </div>)
+    }
+
+
+    showCollection = () => {
+        let arr = [];
+        if (this.state.showActive) {
+            arr.push(this.processCollection(this.activeProcesses(), "goldenrod", "Active Processes"));
+        }
+        if (this.state.showUpcoming) {
+            arr.push(this.processCollection(this.upcomingProcesses(), "green", "Upcoming Processes"));
+        }
+        if (this.state.showOverdue) {
+            arr.push(this.processCollection(this.overdueProcesses(), "palevioletred", "Overdue Processes"));
+        }
+        if (this.state.showAll) {
+            arr.push(this.processCollection(this.allProcesses(), "lightgrey", "All Processes"));
+        }
+        return arr
+    }
+
+    setFilter = (e) => {
+        switch (e.target.name) {
+            case 'filterActive':
+                this.setState({
+                    showActive: !this.state.showActive
+                })
+                break
+            case 'filterUpcoming':
+                this.setState({
+                    showUpcoming: !this.state.showUpcoming
+                })
+                break
+            case 'filterOverdue':
+                this.setState({
+                    showOverdue: !this.state.showOverdue
+                })
+                break
+            case 'filterAll':
+                this.setState({
+                    showAll: !this.state.showAll
+                })
+                break
+            default:
+                break
+        }
+    }
+
     render() {
         return (
             <div>
                 <NavComponent tanks={false}/>
                 <div className={"ui horizontal divider"}/>
-                <div style={{
-                    maxWidth: "50%",
-                    left: "0",
-                    right: "0",
-                    marginLeft: "auto",
-                    marginRight: "auto"
-                }}>
-                    <div className={"ui large header"}>Active Processes</div>
-                    <div className="ui relaxed divided items" style={{
-                        borderStyle: "solid",
-                        borderRadius: "2%",
-                        borderWidth: "1px",
-                        borderColor: "goldenrod",
-                        padding: "2%"
-                    }}>
-                        {!this.state.isLoaded ?
-                            <div className="ui active centered inline inverted dimmer">
-                                <div className="ui big text loader">Loading</div>
-                            </div> : this.activeProcesses()}
-                    </div>
-                </div>
-                <div className={"ui horizontal divider"}/>
-                <div style={{
-                    maxWidth: "50%",
-                    left: "0",
-                    right: "0",
-                    marginLeft: "auto",
-                    marginRight: "auto"
-                }}>
-                    <div className={"ui large header"}>All Processes</div>
-                    <div className="ui relaxed divided items" style={{
-                        borderStyle: "solid",
-                        borderRadius: "1%",
-                        borderWidth: "1px",
-                        borderColor: "lightgrey",
-                        padding: "1%"
-                    }}>
-                        {this.allProcesses()}
-                    </div>
-                </div>
+                <SearchFilter page={"processes"} filterList={['Active', 'Upcoming', 'Overdue', 'All']}
+                              setFilter={this.setFilter}/>
+                {this.showCollection()}
             </div>
         );
     }

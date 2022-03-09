@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import moment from "moment";
+import {formatDate} from "./ProcessFunctions"
 
 const Phase = (props) => {
     let {
@@ -39,10 +40,7 @@ const Phase = (props) => {
             }
         }
     }, [data])
-
-    const formatDate = (date) => {
-        return moment(date).format("M/D/YY")
-    }
+    
 
     return (<div className="ui centered card">
         <div className="content">

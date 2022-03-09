@@ -3,16 +3,13 @@ import moment from "moment";
 import PhaseField from "./PhaseField";
 import Phase from "./Phase";
 import ProcessDetail from "./ProcessDetail";
+import {formatDate} from "./ProcessFunctions"
 
 const Process = (props) => {
     const {processData, getTankDetails, handleProcessChange, deleteProcess, getBeerById} = props;
     const [active, setActive] = useState(false);
     const [beerData, setBeerData] = useState({});
 
-
-    const formatDate = (date) => {
-        return moment(date).format("M/D/YY")
-    }
 
     const handlePhaseChange = async (e, processId, phaseIndex) => {
         await handleProcessChange(e, processId, phaseIndex)

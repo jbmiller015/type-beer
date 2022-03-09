@@ -6,6 +6,7 @@ import Modal from "../modal/Modal";
 import modal from "../modal/Modal.css"
 import Beer from "../Beer/Beer";
 import Message from "../Messages/Message";
+import Processes from "../Process/Processes";
 
 //TODO:Break off beers to new component
 //TODO:Get list of active beers from server by ids
@@ -45,7 +46,6 @@ class BrewFloor extends React.Component {
         });
         await typeApi.get('/process/active').then(response => {
             response.data.map(el => {
-                console.log(el)
                 this.setState(prevState => ({
                     processes: {
                         ...prevState.processes,
@@ -86,14 +86,20 @@ class BrewFloor extends React.Component {
             this.setState({infoMessage: "Deleted Tank:" + tankId})
         }).catch(err => {
             this.setState(state => ({
-                error: [...state.error, err.message]
+                error: [...state.error, err.response.data]
             }))
         })
     }
 
 
     editTank = async (tankId, data) => {
-        await typeApi.put(`/tank/${tankId}`, data).then((res) => {
+
+        let tankData = this.state.tanks[tankId];
+        Object.entries(data).forEach((el) => {
+            tankData[el[0]] = el[1];
+        })
+        console.log(tankData)
+        await typeApi.put(`/tank/${tankId}`, tankData).then((res) => {
             let newState = {...this.state};
             newState.tanks[tankId] = res.data;
             this.setState(newState);
@@ -151,12 +157,12 @@ class BrewFloor extends React.Component {
             let components = Object.values(tanks).map((tank, i) => {
                 let process;
                 for (let el in processes) {
+                    console.log(processes)
                     if (processes[el].activePhase.startTank === tank._id) {
                         process = processes[el];
                         tank.fill = true;
                     }
                 }
-                console.log(process)
                 return (
                     <Tank tankData={tank} process={process} key={i}
                           loadData={this.loadTankData}

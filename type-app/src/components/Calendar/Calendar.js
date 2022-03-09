@@ -16,7 +16,7 @@ class Calendar extends React.Component {
             renderedProcesses: {},
             tanks: {},
             beers: {},
-            tasks: [],
+            tasks: {},
             colors: ['#FFF897', '#EDCF5C', '#f6c101', '#EC9D00', '#DF8D03', '#C96E12', '#9C5511', '#6F3B10', '#42220F', '#14080E'],
             prevMonth: -1,
             currMonth: 0,
@@ -56,7 +56,7 @@ class Calendar extends React.Component {
             for (let el in procObj) {
                 for (let le of procObj[el].phases) {
                     let endDate = le.endDate.split("T", 1)[0];
-                    if (date.startOf('day').isBetween(endDate, moment(endDate).endOf('day'), 'date', "[]")) {
+                    if (date.startOf('date').isBetween(endDate, moment(endDate).endOf('date'), 'date', "[]")) {
                         tasks = {...tasks, [procObj[el].name]: {...le, processId: procObj[el]._id}}
                     }
                 }
@@ -208,7 +208,7 @@ class Calendar extends React.Component {
 
     //TODO: Implement Edit Process (mark complete)
     taskComponents = () => {
-        if (this.state.tasks.length > 0) {
+        if (Object.keys(this.state.tasks).length > 0) {
             return Object.entries(this.state.tasks).map((entries, i) => {
                 const process = entries[0];
                 const task = entries[1];

@@ -48,7 +48,7 @@ const NavComponent = (props) => {
                                      onClick={() => history.push('/processes')}>
                                     <div className={"visible content"}>Processes</div>
                                     <div className={"hidden content"}>
-                                        <i className={"beer icon"}/>
+                                        <i className={"clipboard icon"}/>
                                     </div>
                                 </div>
                             </div>

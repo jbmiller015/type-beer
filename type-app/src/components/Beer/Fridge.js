@@ -42,16 +42,12 @@ class Fridge extends React.Component {
 
 
     editBeer = async (beerId, data) => {
-        for (let el in this.state.tanks) {
-            if (this.state.tanks[el].contents === beerId) {
-                let tank = this.state.tanks[el];
-                tank.contents = data._id;
-                await this.editTank(tank._id, tank);
-                break;
-            }
-        }
 
-        await typeApi.put(`/beer/${beerId}`, data).then((res) => {
+        let beerData = this.state.beers[beerId];
+        Object.entries(data).forEach((el) => {
+            beerData[el[0]] = el[1];
+        })
+        await typeApi.put(`/beer/${beerId}`, beerData).then(async (res) => {
             let newState = {...this.state};
             newState.beers[beerId] = res.data;
             this.setState(newState);
@@ -63,13 +59,6 @@ class Fridge extends React.Component {
     }
 
     deleteBeer = async (beerId) => {
-        for (let el in this.state.tanks) {
-            if (this.state.beers[this.state.tanks[el].contents]) {
-                this.setState(state => ({
-                    error: [...state.error, `Cannot Delete Beer. This beer is currently in the tank, ${el.name}. Remove the beer from the tank before removing the beer from your fridge.`]
-                }))
-            }
-        }
 
         if (this.state.error.length === 0) {
             await typeApi.delete(`/beer/${beerId}`).then((res) => {
@@ -79,7 +68,7 @@ class Fridge extends React.Component {
                 this.setState({infoMessage: "Deleted Beer:" + beerId})
             }).catch(err => {
                 this.setState(state => ({
-                    error: [...state.error, err.message]
+                    error: [...state.error, err.response.data]
                 }))
             })
         }
@@ -111,11 +100,7 @@ class Fridge extends React.Component {
     };
 
     filterEntries = (query, filter = null) => {
-        let [key, queryString] = query.split(' ', 2)
-        if (query.charAt(0) === ':' && !this.state.infoMessage) {
-            console.log(': detected')
-            this.setState({infoMessage: "Use ':<type> <value>' to search based on filter type. Example: ':name saftig' or ':style ipa'"})
-        }
+        let [key, queryString] = query.split(' ', 2);
         if (query.charAt(0) === ':' && queryString) {
             key = key.substring(1);
             console.log();
@@ -165,7 +150,9 @@ class Fridge extends React.Component {
         return (<div style={{paddingInline: "1%"}}>
             <div className={"ui centered grid"}
                  style={{paddingTop: "1%", paddingBottom: "2%"}}>
-                <div style={{textAlign: "center"}} className={"ui icon input"}>
+                <div style={{textAlign: "center"}} className={"ui icon input"} onClick={() => {
+                    this.setState({infoMessage: "Use ':<type> <value>' to search based on filter type. Example: \":name saftig\" or \":style ipa\" or \":desc tons of fruit\""})
+                }}>
                     <input value={this.state.term} onChange={e => this.setState({term: e.target.value})}
                            className="input"/>
                     <i className={"search icon"} style={{marginRight: "5%"}}/>
@@ -222,7 +209,7 @@ class Fridge extends React.Component {
             );
         } else {
             let components;
-            if (this.state.term.length > 0 && error.length < 1) {
+            if (this.state.term.length) {
                 try {
                     components = this.filterEntries(this.state.term).map((beer, i) => {
                         return (
@@ -231,12 +218,12 @@ class Fridge extends React.Component {
                 } catch (err) {
                     return null;
                 }
-            } else if (this.state.sorted && error.length < 1) {
+            } else if (this.state.sorted) {
                 components = this.sortEntries(this.state.sorted[0], this.state.sorted[1]).map((beer, i) => {
                     return (
                         <Beer beerData={beer} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
                 })
-            } else if (error.length < 1) {
+            } else {
                 components = Object.keys(beers).map((beer, i) => {
                     return (
                         <Beer beerData={beers[beer]} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
@@ -255,8 +242,8 @@ class Fridge extends React.Component {
                                                        onClose={() => this.setState({infoMessage: null})}/> : null}
                     {this.filterButtons()}
                     <Modal onClose={this.showModal}
-                           deleteBeer={this.deleteTank}
-                           editBeer={this.editTank}
+                           deleteBeer={this.deleteBeer}
+                           editBeer={this.editBeer}
                            getBeerById={this.getBeerById}
                            show={this.state.show}
                            data={this.state.modalData}

@@ -58,7 +58,7 @@ class Modal extends Component {
                     </button>
                     <button className="ui right floated green button"
                             onClick={async (e) => {
-                                this.props.tankModal ? await this.props.editTank(this.props.data._id, this.state.editData) : await this.props.editBeer(this.props.data._id, this.state.editData);
+                                this.props.tankModal ? await this.props.editTank(this.props.data.tankData._id, this.state.editData) : await this.props.editBeer(this.props.data._id, this.state.editData);
                                 this.setState({edit: false});
                                 this.onClose(e);
                             }}>
@@ -70,7 +70,7 @@ class Modal extends Component {
             return (
                 <div className="actions"><h4>Are You Sure?</h4>
                     <button className="ui red button" onClick={async (e) => {
-                        this.props.tankModal ? await this.props.deleteTank(this.props.data._id) : await this.props.deleteBeer(this.props.data._id);
+                        this.props.tankModal ? await this.props.deleteTank(this.props.data.tankData._id) : await this.props.deleteBeer(this.props.data._id);
                         this.setState({verify: false})
                         this.onClose(e);
                     }}>
@@ -126,7 +126,6 @@ class Modal extends Component {
             return null;
         }
         const {data} = this.props;
-        console.log(data)
 
         return (
             <div style={this.modalStyle()}

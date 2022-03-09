@@ -22,9 +22,12 @@ class EditTank extends React.Component {
                     <div className="field">
                         <label>Tank Type: {this.props.passed.size}</label>
                         <div className="ui action input">
-                            <select className="ui compact selection dropdown">
-                                <option selected="Fermenter" value="Fermenter">Fermenter</option>
-                                <option selected="" value="Brite">Brite</option>
+                            <select className="ui dropdown" name="tankType" onChange={this.props.handleChange}>
+                                <option defaultValue="" hidden>Choose Type</option>
+                                <option name="tankType" value="brite">Brite</option>
+                                <option name="tankType" value="fermenter">Fermenter</option>
+                                <option name="tankType" value="kettle">Kettle</option>
+                                <option name="tankType" value="barrel">Barrel</option>
                             </select>
                         </div>
                     </div>

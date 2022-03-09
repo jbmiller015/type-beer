@@ -23,14 +23,21 @@ const Beer = (props) => {
 
 
     return (
-        <div className={"two wide column"} onMouseEnter={() => {
-            setFocus(true)
-        }} onMouseLeave={() => setFocus(false)}>
-            {!focus ? <div className={"ui segment"} style={{textAlign: "center"}}>
+        <div className={"two wide column"}>
+            {!focus ? <div className={"ui segment"} style={{textAlign: "center"}} onClick={() => {
+                    setFocus(!focus)
+                }}>
                     {name}
                 </div> :
                 <div className={"ui cards"}>
                     <div className="card" style={cardStyle}>
+                        <div className={"ui animated fade basic red top attached icon button"} onClick={() => {
+                            setFocus(!focus)
+                        }}>
+                            <div className={"visible content"}><i className={"close icon"}/></div>
+                            <div className={"hidden content"}>Close</div>
+
+                        </div>
                         <div className={"image"} style={imageWrapper}>
                             <img alt="tankOverlay" src={beerOverlay}/>
                         </div>

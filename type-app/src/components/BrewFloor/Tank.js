@@ -5,6 +5,8 @@ import kTankOverlay from '../../media/kettletankwwindow.png'
 import barrelOverlay from '../../media/barreltankwwindow.png'
 import moment from "moment";
 
+//const moment = moment.utcOffset(-360)
+
 const Tank = (props) => {
 
     const [className, setClassName] = useState("card");
@@ -44,15 +46,22 @@ const Tank = (props) => {
 
     const date = () => {
         if (process) {
-            return moment(process.activePhase.endDate).fromNow(true) || ""
+            let endDate = process.activePhase.endDate.split("T", 1)[0];
+            let startDate = process.activePhase.startDate.split("T", 1)[0];
+            return moment(endDate).startOf("day").fromNow(true) || ""
         }
     }
     const nextPhase = () => {
         if (process) {
-            const len = process.phases.length - 1;
+            const len = (process.phases.length);
             for (let i = 0; i < len; i++) {
-                if (phase._id === process.activePhase._id)
-                    return i === len ? "finished" : "Next Phase: " + process.phases[i + 1].phaseName
+                if (len === 1) {
+                    return "Next Phase: Done"
+                }
+                if (process.phases[i].phaseName === process.activePhase.phaseName && process.phases[i].startDate === process.activePhase.startDate) {
+                    return (`Next Phase: ${i + 1 < len ? process.phases[i + 1].phaseName : "Done"}`)
+
+                }
             }
         } else {
             return "---"
@@ -86,7 +95,12 @@ const Tank = (props) => {
                         <div
                             className={"center aligned header"}>{contents && contents.name ? contents.name : "¯\\_(ツ)_/¯"}</div>
                         <div
-                            className={"center aligned meta"}>{process ? phase() + ": " + date() + " remaining" : "Empty"}</div>
+                            className={"center aligned meta"}
+                            style={{
+                                overflow: "hidden",
+                                whiteSpace: "nowrap",
+                                textOverflow: "ellipsis"
+                            }}>{process ? phase() + ": " + date() + " remaining" : "Empty"}</div>
                     </div>
                     <div className={"center aligned extra content"}>
                         <span style={{fontSize: "medium"}}>{nextPhase()}</span>

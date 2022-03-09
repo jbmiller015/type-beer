@@ -54,3 +54,7 @@ export const setPhaseTanks = (tank, index, dateRanges, phases) => {
     }
     return tempPhases;
 }
+
+export const formatDate = (date) => {
+    return moment(date.split("T", 1)[0]).format("M/D/YY")
+}

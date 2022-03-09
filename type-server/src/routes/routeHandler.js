@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const requireAuth = require('../middlewares/requireAuth');
 const collectParam = require('../middlewares/collectParam');
+const moment = require("moment");
 const createModel = collectParam.createModel;
 
 const router = express.Router();
@@ -44,7 +45,7 @@ router.route('/:base/:sub').get(async (req, res) => {
         Object = mongoose.model(base);
         getRes = await Object.find({userId: req.user._id, _id: req.params.sub});
     } else if (req.params.sub === 'active') {
-        const today = new Date();
+        const today = moment(0, "HH").utcOffset(0).startOf('date').toISOString(true);
         Object = mongoose.model(base);
         if (startDate && endDate) {
             getRes = await Object.find({
@@ -52,7 +53,7 @@ router.route('/:base/:sub').get(async (req, res) => {
                 startDate: {$lte: new Date(startDate)},
                 endDate: {$lte: new Date(endDate), $gte: new Date(startDate)}
             });
-         
+
             const right = await Object.find({
                 userId: req.user._id,
                 startDate: {$gte: new Date(startDate), $lte: new Date(endDate)},
@@ -88,7 +89,7 @@ router.route('/:base/:sub').get(async (req, res) => {
             if (getRes.length > 0) {
                 for (let i = 0; i < getRes.length; i++) {
                     for (let le of getRes[i].phases) {
-                        if (le.startDate <= today && le.endDate >= today) {
+                        if (moment(le.startDate).isSameOrBefore(today) && moment(le.endDate).isSameOrAfter(today)) {
                             getRes[i].activePhase = le;
                         }
                     }
@@ -124,9 +125,35 @@ router.route('/:base/:sub').get(async (req, res) => {
     const base = toUpper(req.params.base);
     const _id = req.params.sub;
     const Object = mongoose.model(base);
+    let processes;
+    let processList = []
+    processes = await mongoose.model("Process").find({
+        userId: req.user._id,
+    });
+    if (base === "Tank" && processes.length > 0) {
+        for (let i = 0; i < processes.length; i++) {
+            for (let le of processes[i].phases) {
+                if (le.startTank.toString().localeCompare(_id) === 0 || le.endTank.toString().localeCompare(_id) === 0) {
+                    if (!processList.includes(processes[i].name))
+                        processList.push(processes[i].name)
+                }
+            }
+        }
+
+    } else if (base === "Beer" && processes.length > 0) {
+        for (let i = 0; i < processes.length; i++) {
+            if (processes[i].contents.toString().localeCompare(_id) === 0) {
+                processList.push(processes[i].name)
+            }
+        }
+    }
     try {
-        await Object.findOneAndDelete({_id}, {useFindAndModify: false});
-        res.send({deleted: _id});
+        if (processList.length > 0) {
+            res.status(422).send(`Cannot Delete ${base}. ${base} in use by the following processes: ${processList.toString().replace(/,/g, ', ')}`)
+        } else {
+            await Object.findOneAndDelete({_id}, {useFindAndModify: false});
+            res.send({deleted: _id});
+        }
     } catch (e) {
         res.status(422).send(e.message);
     }
