@@ -6,7 +6,7 @@ import ProcessDetail from "./ProcessDetail";
 import {formatDate} from "./ProcessFunctions"
 
 const Process = (props) => {
-    const {processData, getTankDetails, handleProcessChange, deleteProcess, getBeerById} = props;
+    const {processData, getTankDetails, handleProcessChange, deleteProcess, getBeerById, closeOnComplete} = props;
     const [active, setActive] = useState(false);
     const [beerData, setBeerData] = useState({});
 
@@ -21,6 +21,15 @@ const Process = (props) => {
             let endTank = phase.startTank === phase.endTank ? null : getTankDetails(phase.endTank);
             return <Phase phaseData={phase} style={{maxWidth: "100px", maxHeight: "100px"}} key={i} index={i}
                           tanks={{startTank, endTank}} handlePhaseChange={async (e, phaseIndex) => {
+                if (closeOnComplete && e.target.name === "complete") {
+                    let count = 0;
+                    for (let el of processData.phases) {
+                        count += el.complete ? 1 : 0;
+                    }
+                    if (count === processData.phases.length - 1 && e.target.checked) {
+                        setActive(false)
+                    }
+                }
                 await handlePhaseChange(e, processData._id, phaseIndex)
             }}/>
         })
@@ -50,7 +59,7 @@ const Process = (props) => {
                     <div className={"description"}>
                         <div className={"ui horizontal divider"}/>
                         <div className={"ui three stackable cards"}>
-                            <ProcessDetail data={beerData.name} icon={"beer"} header={"Contents"}/>
+                            <ProcessDetail data={beerData.name} icon={"beer"} header={"Contents"} />
                             <ProcessDetail data={formatDate(processData.startDate)} icon={"calendar alternate outline"}
                                            header={"Process Start Date"}/>
                             <ProcessDetail data={formatDate(processData.endDate)} icon={"calendar alternate"}

@@ -5,6 +5,7 @@ import Message from "../Messages/Message";
 import NavComponent from "../NavComponent";
 import Beer from "./Beer";
 import Modal from "../modal/Modal";
+import {filterEntries, sortEntries} from "../Process/ProcessFunctions";
 
 class Fridge extends React.Component {
     constructor(props) {
@@ -211,7 +212,11 @@ class Fridge extends React.Component {
             let components;
             if (this.state.term.length) {
                 try {
-                    components = this.filterEntries(this.state.term).map((beer, i) => {
+                    components = filterEntries(this.state.term, null, Object.values(this.state.beers), (err) => {
+                        this.setState(state => ({
+                            error: [...state.error, err]
+                        }))
+                    }).map((beer, i) => {
                         return (
                             <Beer beerData={beer} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
                     })
@@ -219,7 +224,7 @@ class Fridge extends React.Component {
                     return null;
                 }
             } else if (this.state.sorted) {
-                components = this.sortEntries(this.state.sorted[0], this.state.sorted[1]).map((beer, i) => {
+                components = sortEntries(this.state.sorted[0], this.state.sorted[1], Object.values(this.state.beers)).map((beer, i) => {
                     return (
                         <Beer beerData={beer} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
                 })
@@ -239,7 +244,9 @@ class Fridge extends React.Component {
                     <div className="ui horizontal divider"/>
                     {error.length > 0 ? errMessage : null}
                     {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
-                                                       onClose={() => this.setState({infoMessage: null})}/> : null}
+                                                       onClose={() => this.setState({infoMessage: null})}/> :
+                        <div style={{marginTop: "3.55%"}} className="ui horizontal divider"/>}
+                    <div className="ui horizontal divider"/>
                     {this.filterButtons()}
                     <Modal onClose={this.showModal}
                            deleteBeer={this.deleteBeer}

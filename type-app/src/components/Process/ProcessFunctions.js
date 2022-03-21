@@ -55,6 +55,50 @@ export const setPhaseTanks = (tank, index, dateRanges, phases) => {
     return tempPhases;
 }
 
+export const filterEntries = (query, filter = null, entries, setError) => {
+    console.log(query)
+    console.log(filter)
+    console.log(entries)
+    let [key, queryString] = query.split(' ', 2);
+    if (query.charAt(0) === ':' && queryString) {
+        key = key.substring(1);
+        console.log();
+
+        const matcher = new RegExp(queryString, 'ig');
+        let result;
+        try {
+            result = entries.filter((entry) => {
+                console.log(entry)
+                return entry[key].match(matcher)
+            })
+        } catch (err) {
+            if (err instanceof TypeError) {
+                setError(`Unrecognized Type '${key}'`)
+            } else {
+                setError(err.message)
+            }
+        }
+
+        return result
+
+    } else {
+        const matcher = new RegExp(query, 'ig')
+        const result = entries.filter((entry) => {
+            return entry.name.match(matcher)
+        })
+        console.log(result)
+        return result
+    }
+
+}
+
+export const sortEntries = (key, direction, entries) => {
+    const sorted = entries.sort((a, b) => {
+        return (a[key].toLowerCase() > b[key].toLowerCase() ? 1 : ((b[key].toLowerCase() > a[key].toLowerCase()) ? -1 : 0))
+    })
+    return direction === 'desc' ? sorted : sorted.reverse();
+}
+
 export const formatDate = (date) => {
     return moment(date.split("T", 1)[0]).format("M/D/YY")
 }

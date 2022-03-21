@@ -2,10 +2,23 @@ import React from "react";
 
 const Message = (props) => {
     return (
-        <div className={`ui ${props.messageType} message`}>
-            <i className="close icon" onClick={props.onClose}/>
-            <div className={"header"}>
-                {props.message}
+        <div className={"messageContainer"} style={{
+            display: "flex",
+            justifyContent: "center"
+        }}>
+            <div style={{
+                marginInline: "6%",
+                paddingInline: "2%",
+                width: "auto",
+                display: "inline-flex",
+                justifyContent: "center",
+                flexDirection: "row"
+            }}
+                 className={`ui ${props.messageType} message`}>
+                <i className="close icon" onClick={props.onClose}/>
+                <div className={"header"}>
+                    {props.message}
+                </div>
             </div>
         </div>
     );

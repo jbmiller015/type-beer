@@ -3,68 +3,78 @@ import React from 'react';
 const SearchFilter = (props) => {
     const {setSorted, page, setMessage, handleChange, setFilter, term, filterList} = props;
     const menuItems = () => {
-
         switch (page) {
             case "beer":
                 return (
-                    <div style={{textAlign: "center"}} className={"ui simple icon dropdown button"}>
-                        <div className={"menu"}>
-                            <div className={"item"} onClick={() => {
-                                setSorted({sorted: ['name', 'desc']})
-                            }}>
-                                <i className={"sort alphabet down icon"}/>
-                                <label>Name</label>
-                            </div>
-                            <div className={"item"} onClick={() => {
-                                setSorted({sorted: ['name', 'asc']})
-                            }}>
-                                <i className={"sort alphabet up icon"}/>
-                                <label>Name</label>
-                            </div>
-                            <div className={"item"} onClick={() => {
-                                setSorted({sorted: ['style', 'desc']})
-                            }}>
-                                <i className={"sort alphabet down icon"}/>
-                                <label>Style</label>
-                            </div>
-                            <div className={"item"} onClick={() => {
-                                setSorted({sorted: ['style', 'asc']})
-                            }}>
-                                <i className={"sort alphabet up icon"}/>
-                                <label>Style</label>
-                            </div>
+
+                    <div className={"menu"}>
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['name', 'desc']})
+                        }}>
+                            <i className={"sort alphabet down icon"}/>
+                            <label>Name</label>
                         </div>
-                    </div>)
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['name', 'asc']})
+                        }}>
+                            <i className={"sort alphabet up icon"}/>
+                            <label>Name</label>
+                        </div>
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['style', 'desc']})
+                        }}>
+                            <i className={"sort alphabet down icon"}/>
+                            <label>Style</label>
+                        </div>
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['style', 'asc']})
+                        }}>
+                            <i className={"sort alphabet up icon"}/>
+                            <label>Style</label>
+                        </div>
+                    </div>
+                )
             case "processes":
                 return (
-                    <div style={{textAlign: "center"}} className={"ui simple icon dropdown button"}>
-                        <div className={"menu"}>
-                            <div className={"item"} onClick={() => {
-                                setSorted({sorted: ['name', 'desc']})
-                            }}>
-                                <i className={"sort alphabet down icon"}/>
-                                <label>Name</label>
-                            </div>
-                            <div className={"item"} onClick={() => {
-                                setSorted({sorted: ['name', 'asc']})
-                            }}>
-                                <i className={"sort alphabet up icon"}/>
-                                <label>Name</label>
-                            </div>
-                            <div className={"item"} onClick={() => {
-                                setSorted({sorted: ['date', 'desc']})
-                            }}>
-                                <i className={"sort down icon"}/>
-                                <label>Date</label>
-                            </div>
-                            <div className={"item"} onClick={() => {
-                                setSorted({sorted: ['date', 'asc']})
-                            }}>
-                                <i className={"sort  up icon"}/>
-                                <label>Style</label>
-                            </div>
+                    <div className={"menu"}>
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['name', 'desc']})
+                        }}>
+                            <i className={"sort alphabet down icon"}/>
+                            <label>Name</label>
                         </div>
-                    </div>)
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['name', 'asc']})
+                        }}>
+                            <i className={"sort alphabet up icon"}/>
+                            <label>Name</label>
+                        </div>
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['startDate', 'desc']})
+                        }}>
+                            <i className={"sort down icon"}/>
+                            <label>Start Date</label>
+                        </div>
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['startDate', 'asc']})
+                        }}>
+                            <i className={"sort  up icon"}/>
+                            <label>Start Date</label>
+                        </div>
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['endDate', 'desc']})
+                        }}>
+                            <i className={"sort down icon"}/>
+                            <label>End Date</label>
+                        </div>
+                        <div className={"item"} onClick={() => {
+                            setSorted({sorted: ['endDate', 'asc']})
+                        }}>
+                            <i className={"sort  up icon"}/>
+                            <label>End Date</label>
+                        </div>
+                    </div>
+                )
         }
 
     }
@@ -91,7 +101,7 @@ const SearchFilter = (props) => {
                  style={{paddingTop: "1%", paddingBottom: "2%"}}>
                 <div className={"row"}>
                     <div style={{textAlign: "center"}} className={"ui icon input"} onClick={() => {
-                        setMessage({infoMessage: "Use ':<type> <value>' to search based on filter type. Example: \":name saftig\" or \":style ipa\" or \":desc tons of fruit\""})
+                        page === "processes" ? setMessage({infoMessage: "Use ':<type> <value>' to search based on filter type. Example: \":name process\" or \":endDate YYYY-MM-DD\""}) : setMessage({infoMessage: "Use ':<type> <value>' to search based on filter type. Example: \":name saftig\" or \":style ipa\" or \":desc tons of fruit\""});
                     }}>
                         <input value={term} onChange={handleChange}
                                className="input"/>
@@ -100,7 +110,7 @@ const SearchFilter = (props) => {
                     <div style={{textAlign: "center"}} className={"ui simple icon dropdown button"}>
                         <i className={"filter icon"}/>
                         <i className="dropdown icon"/>
-                        {menuItems}
+                        {menuItems()}
                     </div>
                 </div>
                 <div className={"row"}>{

@@ -7,7 +7,9 @@ import NavComponent from "../NavComponent";
 import moment from "moment";
 import Process from "./Process";
 import SearchFilter from "../Fields/SearchFilter";
-import {formatDate} from "./ProcessFunctions";
+import {filterEntries, formatDate, sortEntries} from "./ProcessFunctions";
+import Message from "../Messages/Message";
+import Beer from "../Beer/Beer";
 
 
 class CreateProcess extends React.Component {
@@ -36,7 +38,10 @@ class CreateProcess extends React.Component {
             showActive: true,
             showUpcoming: false,
             showOverdue: false,
-            showAll: false
+            showAll: false,
+            infoMessage: null,
+            error: [],
+            term: ''
         }
     }
 
@@ -124,38 +129,76 @@ class CreateProcess extends React.Component {
         return this.state.tanks[tankId];
     }
 
-    allProcesses = () => {
-        return Object.values(this.state.processes).map((process) => {
-            return <Process processData={process}
-                            getTankDetails={(tankId) => this.getTankDetails(tankId)}
-                            handleProcessChange={async (e, processId, phaseIndex) => {
-                                await this.handleProcessChange(e, processId, phaseIndex)
-                            }}
-                            deleteProcess={(processId) => {
-                                this.deleteProcess(processId)
-                            }}
-                            getBeerById={(beerId) => {
-                                return this.getBeerById(beerId)
-                            }}/>
-        })
+    filterSort = (components) => {
+        if (this.state.term.length) {
+            console.log(this.state.term)
+            try {
+                components = filterEntries(this.state.term, null, components, (err) => {
+                    if (!this.state.error.includes(err)) {
+                        this.setState(state => ({
+                            error: [...state.error, err]
+                        }))
+                    }
+                }).map((process, i) => {
+                    console.log(process)
+                    let beer = this.getBeerById(process.contents)
+                    return this.createProcess(process, beer)
+                })
+            } catch (err) {
+                return null;
+            }
+        } else if (this.state.sorted) {
+            console.log(this.state.sorted)
+            console.log(this.state.sorted[0])
+            console.log(this.state.sorted[1])
+            components = sortEntries(this.state.sorted[0], this.state.sorted[1], components).map((process, i) => {
+                let beer = this.getBeerById(process.contents)
+                return this.createProcess(process, beer)
+            })
+        } else {
+            return components.map((process) => {
+                let beer = this.getBeerById(process.contents)
+                return this.createProcess(process, beer)
+            })
+        }
+        return components
     }
 
+    createProcess = (process, beer) => {
+        return <Process processData={process} beerData={beer}
+                        getTankDetails={(tankId) => this.getTankDetails(tankId)}
+                        handleProcessChange={async (e, processId, phaseIndex) => {
+                            await this.handleProcessChange(e, processId, phaseIndex)
+                        }}
+                        deleteProcess={(processId) => {
+                            this.deleteProcess(processId)
+                        }}
+                        getBeerById={(beerId) => {
+                            return this.getBeerById(beerId)
+                        }}/>
+    }
+
+    allProcesses = () => {
+        let all = this.filterSort(Object.values(this.state.processes));
+
+        if (all.length > 0) {
+            return all
+        } else return (<div style={{
+            left: "0",
+            right: "0",
+            marginLeft: "auto",
+            marginRight: "auto"
+        }}>Nothing Planned ¯\_(ツ)_/¯</div>)
+    }
+
+
     activeProcesses = () => {
-        if (this.state.activeProcesses.length > 0) {
-            return this.state.activeProcesses.map((process) => {
-                let beer = this.getBeerById(process.contents)
-                return <Process processData={process} beerData={beer}
-                                getTankDetails={(tankId) => this.getTankDetails(tankId)}
-                                handleProcessChange={async (e, processId, phaseIndex) => {
-                                    await this.handleProcessChange(e, processId, phaseIndex)
-                                }}
-                                deleteProcess={(processId) => {
-                                    this.deleteProcess(processId)
-                                }}
-                                getBeerById={(beerId) => {
-                                    return this.getBeerById(beerId)
-                                }}/>
-            })
+        let active = this.state.activeProcesses
+        active = this.filterSort(active)
+
+        if (active && active.length > 0) {
+            console.log(active)
+            return active
         } else
             return <div style={{
                 left: "0",
@@ -165,27 +208,25 @@ class CreateProcess extends React.Component {
             }}>Nothing going on ¯\_(ツ)_/¯</div>
     }
 
+
     upcomingProcesses = () => {
-        return Object.values(this.state.processes).filter((process) => {
+        let upcoming = Object.values(this.state.processes).filter((process) => {
             let endDate = formatDate(process.startDate)
             return moment(endDate).isAfter(moment().startOf('date'));
-        }).map((process) => {
-            return <Process processData={process}
-                            getTankDetails={(tankId) => this.getTankDetails(tankId)}
-                            handleProcessChange={async (e, processId, phaseIndex) => {
-                                await this.handleProcessChange(e, processId, phaseIndex)
-                            }}
-                            deleteProcess={(processId) => {
-                                this.deleteProcess(processId)
-                            }}
-                            getBeerById={(beerId) => {
-                                return this.getBeerById(beerId)
-                            }}/>
         })
+        upcoming = this.filterSort(upcoming)
+        if (upcoming.length > 0) {
+            return upcoming
+        } else return (<div style={{
+            left: "0",
+            right: "0",
+            marginLeft: "auto",
+            marginRight: "auto"
+        }}>Nothing coming up ¯\_(ツ)_/¯</div>)
     }
 
     overdueProcesses = () => {
-        return Object.values(this.state.processes).filter((process) => {
+        let overdue = Object.values(this.state.processes).filter((process) => {
             let endDate = formatDate(process.endDate)
             if (moment(endDate).isBefore(moment().startOf('date'))) {
                 for (let el of process.phases) {
@@ -195,19 +236,16 @@ class CreateProcess extends React.Component {
                 }
             }
             return false
-        }).map((process) => {
-            return <Process processData={process}
-                            getTankDetails={(tankId) => this.getTankDetails(tankId)}
-                            handleProcessChange={async (e, processId, phaseIndex) => {
-                                await this.handleProcessChange(e, processId, phaseIndex)
-                            }}
-                            deleteProcess={(processId) => {
-                                this.deleteProcess(processId)
-                            }}
-                            getBeerById={(beerId) => {
-                                return this.getBeerById(beerId)
-                            }}/>
         })
+        overdue = this.filterSort(overdue)
+        if (overdue.length > 0) {
+            return overdue
+        } else return (<div style={{
+            left: "0",
+            right: "0",
+            marginLeft: "auto",
+            marginRight: "auto"
+        }}>Nothing left to do ¯\_(ツ)_/¯</div>)
     }
 
 
@@ -408,6 +446,8 @@ class CreateProcess extends React.Component {
 
 
     showCollection = () => {
+        const {processes, isLoaded, error} = this.state
+
         let arr = [];
         if (this.state.showActive) {
             arr.push(this.processCollection(this.activeProcesses(), "goldenrod", "Active Processes"));
@@ -421,7 +461,19 @@ class CreateProcess extends React.Component {
         if (this.state.showAll) {
             arr.push(this.processCollection(this.allProcesses(), "lightgrey", "All Processes"));
         }
-        return arr
+
+
+        if (!isLoaded) {
+            return (
+                <div className="ui active centered inline inverted dimmer">
+                    <div className="ui big text loader">Loading</div>
+                </div>
+            );
+        } else {
+            let components;
+
+            return arr
+        }
     }
 
     setFilter = (e) => {
@@ -451,13 +503,36 @@ class CreateProcess extends React.Component {
         }
     }
 
+    setInfoMessage = (message) => {
+        this.setState({infoMessage: message.infoMessage})
+    }
+
+    setErrorMessage = (message) => {
+        this.setState(state => ({
+            error: [...state.error, message.errorMessage]
+        }))
+    }
+
     render() {
+        let errMessage = this.state.error.map((err, i) => {
+            return (
+                <Message key={i} messageType={'error'} onClose={() => this.setState({error: [], term: ''})}
+                         message={err}/>
+            )
+        })
         return (
             <div>
                 <NavComponent tanks={false}/>
                 <div className={"ui horizontal divider"}/>
+                {this.state.error.length > 0 ? errMessage : null}
+                {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
+                                                   onClose={() => this.setState({infoMessage: null})}/> :
+                    <div style={{marginTop: "3.55%"}} className="ui horizontal divider"/>}
                 <SearchFilter page={"processes"} filterList={['Active', 'Upcoming', 'Overdue', 'All']}
-                              setFilter={this.setFilter}/>
+                              setFilter={this.setFilter}
+                              setMessage={(message) => this.setInfoMessage(message)}
+                              handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
+                              setSorted={sorted => this.setState({sorted: sorted.sorted})}/>
                 {this.showCollection()}
             </div>
         );
