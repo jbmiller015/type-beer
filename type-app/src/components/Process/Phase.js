@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import moment from "moment";
 import {formatDate} from "./ProcessFunctions"
+import useComponentVisible from "../Hooks/useComponentVisible";
 
 const Phase = (props) => {
     let {
@@ -14,6 +15,7 @@ const Phase = (props) => {
 
     const [color, setColor] = useState("");
     const [data, setData] = useState(phaseData);
+    const [activeDateField, setActiveDateField] = useState("")
 
     const [percent, setPercent] = useState("")
 
@@ -40,7 +42,8 @@ const Phase = (props) => {
             }
         }
     }, [data])
-    
+
+    const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
 
     return (<div className="ui centered card">
         <div className="content">
@@ -50,10 +53,40 @@ const Phase = (props) => {
             <div className="ui small header">{phaseData.phaseName}</div>
             <div className="description">
                 <p>Start Tank: {tanks.startTank.name}</p>
+
                 <p>End Tank: {tanks.endTank ? tanks.endTank.name : tanks.startTank.name}</p>
-                <p>Start Date: {formatDate(phaseData.startDate)}</p>
-                <p>End Date: {formatDate(phaseData.endDate)}</p>
+
+                <p className="content" ref={ref} onClick={() => {
+                    setIsComponentVisible(true)
+                    setActiveDateField("start")
+                }}>
+                    Start Date: {isComponentVisible && activeDateField === "start" ?
+                    <div className="ui fluid icon input">
+                        <input name={"startDate"} type={"date"}
+                               onChange={async (e) => {
+                                   await handlePhaseChange(e, index);
+                                   setData({...data, [e.target.name]: e.target.value});
+                               }}/>
+                        <i id="icon" className="check green icon"/>
+                    </div> : formatDate(phaseData.startDate)}
+                </p>
+
+                <p className="content" ref={ref} onClick={() => {
+                    setIsComponentVisible(true)
+                    setActiveDateField("end")
+                }}>
+                    End Date: {isComponentVisible && activeDateField === "end" ?
+                    <div className="ui fluid icon input">
+                        <input name={"endDate"} type={"date"}
+                               onChange={async (e) => {
+                                   await handlePhaseChange(e, index);
+                                   setData({...data, [e.target.name]: e.target.value});
+                               }}/>
+                        <i id="icon" className="check green icon"/>
+                    </div> : formatDate(phaseData.endDate)}
+                </p>
             </div>
+
         </div>
         <div className="extra content" style={{padding: "2%"}}>
             <div className="ui checkbox">

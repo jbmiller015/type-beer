@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import useComponentVisible from "../Hooks/useComponentVisible";
 
-const ProcessDetail = ({icon, header, data}) => {
+const ProcessDetail = ({icon, header, data, type, editable}) => {
     const [showEdit, setShowEdit] = useState(false)
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
 
@@ -17,8 +17,8 @@ const ProcessDetail = ({icon, header, data}) => {
                 setIsComponentVisible(true)
             }}>
                 <div className={"ui center aligned description"}>
-                    {isComponentVisible ? <div className="ui fluid icon input">
-                        <input type="text" placeholder="Search..."/>
+                    {isComponentVisible && editable ? <div className="ui fluid icon input">
+                        <input type={type} placeholder={data}/>
                         <i id="icon" className="check green icon"/>
                     </div> : data}
                 </div>

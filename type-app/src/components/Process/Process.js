@@ -59,15 +59,15 @@ const Process = (props) => {
                     <div className={"description"}>
                         <div className={"ui horizontal divider"}/>
                         <div className={"ui three stackable cards"}>
-                            <ProcessDetail data={beerData.name} icon={"beer"} header={"Contents"} />
+                            <ProcessDetail data={beerData.name} icon={"beer"} header={"Contents"} editable={false}/>
                             <ProcessDetail data={formatDate(processData.startDate)} icon={"calendar alternate outline"}
-                                           header={"Process Start Date"}/>
+                                           header={"Process Start Date"} type={"date"} editable={true}/>
                             <ProcessDetail data={formatDate(processData.endDate)} icon={"calendar alternate"}
-                                           header={"Process End Date"}/>
+                                           header={"Process End Date"} type={"date"} editable={true}/>
                             <ProcessDetail data={processData.expectedYield} icon={"paper plane outline"}
-                                           header={"Expected Yield"}/>
+                                           header={"Expected Yield"} type={"text"} editable={false}/>
                             <ProcessDetail data={processData.actualYield} icon={"paper plane"}
-                                           header={"Actual Yield"}/>
+                                           header={"Actual Yield"} type={"text"} editable={true}/>
                         </div>
                         <div className={"ui divider"}/>
                         <div className="ui small header">Phases:</div>
