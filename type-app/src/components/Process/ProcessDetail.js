@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import useComponentVisible from "../Hooks/useComponentVisible";
 
-const ProcessDetail = ({icon, header, data, type, editable}) => {
+
+//TODO:handle state change starting here
+const ProcessDetail = ({icon, header, data, type, editable, handleProcessChange}) => {
     const [showEdit, setShowEdit] = useState(false)
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
 
@@ -18,7 +20,7 @@ const ProcessDetail = ({icon, header, data, type, editable}) => {
             }}>
                 <div className={"ui center aligned description"}>
                     {isComponentVisible && editable ? <div className="ui fluid icon input">
-                        <input type={type} placeholder={data}/>
+                        <input type={type} placeholder={data} onChange={(e) => handleProcessChange(e)}/>
                         <i id="icon" className="check green icon"/>
                     </div> : data}
                 </div>
