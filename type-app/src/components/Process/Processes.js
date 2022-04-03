@@ -41,7 +41,9 @@ class CreateProcess extends React.Component {
             showAll: false,
             infoMessage: null,
             error: [],
-            term: ''
+            term: '',
+            showModal: false,
+            newDateData: null
         }
     }
 
@@ -271,16 +273,72 @@ class CreateProcess extends React.Component {
     }
 
     handleProcessChange = async (e, processId, phaseIndex = null) => {
+        e.preventDefault();
         let {name, value, checked} = e.target;
         if (name === "complete") {
             value = checked
         }
         let process = this.state.processes[processId]
+        if (name.toLowerCase().includes('date')) {
+            this.setState({showModal: true, newDateData: {name, value, phaseIndex, processId}})
+        } else {
+            if (phaseIndex !== null) {
+                process.phases[phaseIndex][name] = value
+            } else {
+                process[name] = value;
+            }
+        }
+        await this.putProcess(processId, process)
+    }
+
+    simpleDateChange = async () => {
+        const {name, value, phaseIndex, processId} = this.state.newDateData;
+        let process = this.state.processes[processId]
+        console.log(process)
         if (phaseIndex !== null) {
+            if(name.toLowerCase.includes('end') && phaseIndex === process.phases.length-1){
+                process[name] = value;
+            }
             process.phases[phaseIndex][name] = value
         } else {
             process[name] = value;
         }
+        if (name.toLowerCase().includes('start') && phaseIndex === null) {
+            process.phases[0] = value;
+        } else if (name.toLowerCase().includes('end') && phaseIndex === null) {
+            process.phases[process.phases.length - 1] = value;
+        }
+        console.log(process )
+        await this.putProcess(processId, process);
+    }
+
+    complexDateChange = async () => {
+        const {name, value, phaseIndex, processId} = this.state.newDateData;
+        let process = this.state.processes[processId]
+        console.log(process)
+        let oldDate = process[name];
+        const diff = moment(formatDate(value)).diff(formatDate(oldDate))
+        if (name.toLowerCase().includes('start') && phaseIndex === null) {
+            process[name] = value;
+            for (let i = 0; i < process.phases.length - 1; i++) {
+                process.phases[i] = process.phases[i] + diff;
+            }
+        } else if (name.toLowerCase().includes('end') && phaseIndex === null) {
+            process[name] = value;
+            process.phases[process.phases.length - 1] = value;
+        } else if (phaseIndex !== null) {
+            if(name.toLowerCase.includes('end') && phaseIndex === process.phases.length-1){
+                process[name] = value;
+            }
+            for (let i = phaseIndex || 0; i < process.phases.length - 1; i++) {
+                process.phases[i] = process.phases[i] + diff;
+            }
+        }
+        console.log(process)
+        await this.putProcess(processId, process);
+    }
+
+    putProcess = async (processId, process) => {
         await typeApi.put(`/process/${processId}`, process).then((res) => {
             console.log(res.data)
             let newState = {...this.state};
@@ -513,6 +571,27 @@ class CreateProcess extends React.Component {
         }))
     }
 
+    chooseEditType = () => {
+        return (
+            <div className={`ui ${this.state.showModal ? 'active' : ''} modal`}>
+                <div className="ui center aligned basic segment">
+                    <div className="ui button" onClick={async () => {
+                        await this.simpleDateChange()
+                    }}>
+                        Only Edit This Date
+                    </div>
+                    <div className="ui horizontal divider">
+                        Or
+                    </div>
+                    <div className="ui button" onClick={async ()=>{
+                        await this.complexDateChange()
+                    }}>
+                        Edit This and All Subsequent Dates
+                    </div>
+                </div>
+            </div>)
+    }
+
     render() {
         let errMessage = this.state.error.map((err, i) => {
             return (
@@ -524,6 +603,7 @@ class CreateProcess extends React.Component {
             <div>
                 <NavComponent tanks={false}/>
                 <div className={"ui horizontal divider"}/>
+                {this.chooseEditType()}
                 {this.state.error.length > 0 ? errMessage : null}
                 {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
                                                    onClose={() => this.setState({infoMessage: null})}/> :

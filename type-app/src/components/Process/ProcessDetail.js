@@ -7,6 +7,7 @@ const ProcessDetail = ({icon, header, data, type, editable, handleProcessChange}
     const [showEdit, setShowEdit] = useState(false)
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
 
+
     return (
         <div className={"ui centered card"}>
             <div className="content">
@@ -19,10 +20,10 @@ const ProcessDetail = ({icon, header, data, type, editable, handleProcessChange}
                 setIsComponentVisible(true)
             }}>
                 <div className={"ui center aligned description"}>
-                    {isComponentVisible && editable ? <div className="ui fluid icon input">
-                        <input type={type} placeholder={data} onChange={(e) => handleProcessChange(e)}/>
-                        <i id="icon" className="check green icon"/>
-                    </div> : data}
+                    {isComponentVisible && editable ?
+                        <div className="ui fluid input">
+                            <input type={type} placeholder={data} onChange={(e) => handleProcessChange(e)}/>
+                    </div>: data}
                 </div>
             </div>
         </div>);

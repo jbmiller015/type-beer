@@ -88,7 +88,6 @@ const PhaseField = (props) => {
             </div>
     };
 
-
     const endTankField = () => {
         return (index > 0 && transfer ? <div>
             <div className={fieldName} id={"startTank"}>
@@ -147,7 +146,6 @@ const PhaseField = (props) => {
     const formatDate = (date) => {
         return moment(date).format("M/D/YY")
     }
-
 
     return (
         !editPhase ?
