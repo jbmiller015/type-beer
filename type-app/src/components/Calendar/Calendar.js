@@ -4,6 +4,7 @@ import CalendarModal from "./CalendarModal";
 import moment from 'moment'
 import Date from "./Date";
 import typeApi from "../../api/type-server";
+import {formatDate, putProcess} from "../Process/ProcessFunctions";
 
 class Calendar extends React.Component {
 
@@ -52,12 +53,19 @@ class Calendar extends React.Component {
             }), {})
 
             let tasks = {};
-            let date = moment();
             for (let el in procObj) {
-                for (let le of procObj[el].phases) {
-                    let endDate = le.endDate.split("T", 1)[0];
-                    if (date.startOf('date').isBetween(endDate, moment(endDate).endOf('date'), 'date', "[]")) {
-                        tasks = {...tasks, [procObj[el].name]: {...le, processId: procObj[el]._id}}
+                for (let i = 0; i < procObj[el].phases.length; i++) {
+                    let endDate = formatDate(procObj[el].phases[i].endDate)
+                    if (moment().startOf('date').isBetween(moment(endDate).startOf('date'), moment(endDate).endOf('date'), 'date', "[]")) {
+                        tasks = {
+                            ...tasks,
+                            [procObj[el].name]:
+                                {
+                                    ...procObj[el].phases[i],
+                                    processId: procObj[el]._id,
+                                    index: i
+                                }
+                        }
                     }
                 }
             }
@@ -80,6 +88,37 @@ class Calendar extends React.Component {
             }))
         })
         this.setState({tasks: procResults.tasks, processes: procResults.procObj, tanks: tanksResults, isLoaded: true})
+    }
+
+    handleProcessChange = async (e, processId, phaseIndex) => {
+        let {name, value, checked} = e.target;
+        console.log("name: ", name)
+        if (name === "complete") {
+            value = checked
+        }
+
+        let process = this.state.processes[processId]
+        if (phaseIndex !== null) {
+            process.phases[phaseIndex][name] = value
+        } else {
+            process[name] = value;
+        }
+        await this.putProcess(processId, process)
+
+    }
+
+    putProcess = async (processId, process) => {
+        await typeApi.put(`/process/${processId}`, process).then((res) => {
+            console.log(res.data)
+            let newState = {...this.state};
+            newState.processes[processId] = res.data;
+            newState.showModal = false;
+            this.setState(newState);
+        }).catch(err => {
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
+        })
     }
 
     getBeerById = async (beerId) => {
@@ -205,17 +244,15 @@ class Calendar extends React.Component {
             </div>)
     }
 
-
-    //TODO: Implement Edit Process (mark complete)
     taskComponents = () => {
         if (Object.keys(this.state.tasks).length > 0) {
             return Object.entries(this.state.tasks).map((entries, i) => {
                 const process = entries[0];
                 const task = entries[1];
                 return (<div className="ui checkbox" key={i}>
-                    <input type="checkbox" name="fill" tabIndex="0"
-                           onChange={this.handleChange}
-                           defaultChecked={false}/>
+                    <input type="checkbox" name="complete" tabIndex="0"
+                           onChange={(e) => this.handleProcessChange(e, task.processId, task.index)}
+                           defaultChecked={task.complete}/>
                     <label>{process + ": " + task.phaseName}</label>
                 </div>)
             })

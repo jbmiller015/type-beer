@@ -1,4 +1,5 @@
 import moment from "moment";
+import typeApi from "../../api/type-server";
 
 export const mapDates = (startDate, phases) => {
     let nextDate = startDate;
@@ -55,20 +56,14 @@ export const setPhaseTanks = (tank, index, dateRanges, phases) => {
     return tempPhases;
 }
 
-export const filterEntries = (query, filter = null, entries, setError) => {
-    console.log(query)
-    console.log(filter)
-    console.log(entries)
+export const filterEntries = (query, entries, setError) => {
     let [key, queryString] = query.split(' ', 2);
     if (query.charAt(0) === ':' && queryString) {
         key = key.substring(1);
-        console.log();
-
         const matcher = new RegExp(queryString, 'ig');
         let result;
         try {
             result = entries.filter((entry) => {
-                console.log(entry)
                 return entry[key].match(matcher)
             })
         } catch (err) {
@@ -102,3 +97,5 @@ export const sortEntries = (key, direction, entries) => {
 export const formatDate = (date) => {
     return moment(date.split("T", 1)[0]).format("M/D/YY")
 }
+
+

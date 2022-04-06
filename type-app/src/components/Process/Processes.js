@@ -2,17 +2,17 @@ import React from 'react';
 import typeApi from '../../api/type-server'
 import Dropdown from "../Fields/Dropdown";
 import PhaseField from "./PhaseField";
-import Tank from "../BrewFloor/Tank";
 import NavComponent from "../NavComponent";
 import moment from "moment";
 import Process from "./Process";
 import SearchFilter from "../Fields/SearchFilter";
 import {filterEntries, formatDate, sortEntries} from "./ProcessFunctions";
 import Message from "../Messages/Message";
-import Beer from "../Beer/Beer";
+import ProcessCollection from "./ProcessCollection";
+import Shrugger from "../Messages/Shrugger";
 
 
-class CreateProcess extends React.Component {
+class Processes extends React.Component {
 
 
     constructor(props) {
@@ -42,8 +42,10 @@ class CreateProcess extends React.Component {
             infoMessage: null,
             error: [],
             term: '',
+            sorted: null,
             showModal: false,
-            newDateData: null
+            newDateData: null,
+            dateType: null
         }
     }
 
@@ -131,125 +133,6 @@ class CreateProcess extends React.Component {
         return this.state.tanks[tankId];
     }
 
-    filterSort = (components) => {
-        if (this.state.term.length) {
-            console.log(this.state.term)
-            try {
-                components = filterEntries(this.state.term, null, components, (err) => {
-                    if (!this.state.error.includes(err)) {
-                        this.setState(state => ({
-                            error: [...state.error, err]
-                        }))
-                    }
-                }).map((process, i) => {
-                    console.log(process)
-                    let beer = this.getBeerById(process.contents)
-                    return this.createProcess(process, beer)
-                })
-            } catch (err) {
-                return null;
-            }
-        } else if (this.state.sorted) {
-            console.log(this.state.sorted)
-            console.log(this.state.sorted[0])
-            console.log(this.state.sorted[1])
-            components = sortEntries(this.state.sorted[0], this.state.sorted[1], components).map((process, i) => {
-                let beer = this.getBeerById(process.contents)
-                return this.createProcess(process, beer)
-            })
-        } else {
-            return components.map((process) => {
-                let beer = this.getBeerById(process.contents)
-                return this.createProcess(process, beer)
-            })
-        }
-        return components
-    }
-
-    createProcess = (process, beer) => {
-        return <Process processData={process} beerData={beer}
-                        getTankDetails={(tankId) => this.getTankDetails(tankId)}
-                        handleProcessChange={async (e, processId, phaseIndex) => {
-                            await this.handleProcessChange(e, processId, phaseIndex)
-                        }}
-                        deleteProcess={(processId) => {
-                            this.deleteProcess(processId)
-                        }}
-                        getBeerById={(beerId) => {
-                            return this.getBeerById(beerId)
-                        }}/>
-    }
-
-    allProcesses = () => {
-        let all = this.filterSort(Object.values(this.state.processes));
-
-        if (all.length > 0) {
-            return all
-        } else return (<div style={{
-            left: "0",
-            right: "0",
-            marginLeft: "auto",
-            marginRight: "auto"
-        }}>Nothing Planned ¯\_(ツ)_/¯</div>)
-    }
-
-
-    activeProcesses = () => {
-        let active = this.state.activeProcesses
-        active = this.filterSort(active)
-
-        if (active && active.length > 0) {
-            console.log(active)
-            return active
-        } else
-            return <div style={{
-                left: "0",
-                right: "0",
-                marginLeft: "auto",
-                marginRight: "auto"
-            }}>Nothing going on ¯\_(ツ)_/¯</div>
-    }
-
-
-    upcomingProcesses = () => {
-        let upcoming = Object.values(this.state.processes).filter((process) => {
-            let endDate = formatDate(process.startDate)
-            return moment(endDate).isAfter(moment().startOf('date'));
-        })
-        upcoming = this.filterSort(upcoming)
-        if (upcoming.length > 0) {
-            return upcoming
-        } else return (<div style={{
-            left: "0",
-            right: "0",
-            marginLeft: "auto",
-            marginRight: "auto"
-        }}>Nothing coming up ¯\_(ツ)_/¯</div>)
-    }
-
-    overdueProcesses = () => {
-        let overdue = Object.values(this.state.processes).filter((process) => {
-            let endDate = formatDate(process.endDate)
-            if (moment(endDate).isBefore(moment().startOf('date'))) {
-                for (let el of process.phases) {
-                    if (!el.complete) {
-                        return true
-                    }
-                }
-            }
-            return false
-        })
-        overdue = this.filterSort(overdue)
-        if (overdue.length > 0) {
-            return overdue
-        } else return (<div style={{
-            left: "0",
-            right: "0",
-            marginLeft: "auto",
-            marginRight: "auto"
-        }}>Nothing left to do ¯\_(ツ)_/¯</div>)
-    }
-
 
     screenSize = () => {
         if (window.innerWidth < 500) {
@@ -272,84 +155,140 @@ class CreateProcess extends React.Component {
 
     }
 
-    handleProcessChange = async (e, processId, phaseIndex = null) => {
-        e.preventDefault();
+    handleProcessChange = async (e, processId, phaseIndex = null, dateChange = null) => {
+        console.log(e)
         let {name, value, checked} = e.target;
+        console.log("name: ", name)
         if (name === "complete") {
             value = checked
         }
-        let process = this.state.processes[processId]
-        if (name.toLowerCase().includes('date')) {
-            this.setState({showModal: true, newDateData: {name, value, phaseIndex, processId}})
+        if (dateChange !== null) {
+            let data;
+            if (dateChange === "complex") {
+                data = await this.complexDateChange(name, value, phaseIndex, processId).then(data => {
+                    return data
+                });
+            } else {
+                data = await this.simpleDateChange(name, value, phaseIndex, processId).then(data => {
+                    return data
+                });
+            }
+            console.log(data)
+            return data
         } else {
+            let process = this.state.processes[processId]
             if (phaseIndex !== null) {
                 process.phases[phaseIndex][name] = value
             } else {
                 process[name] = value;
             }
+            return await this.putProcess(processId, process).then(data => {
+                return data
+            });
         }
-        await this.putProcess(processId, process)
+
     }
 
-    simpleDateChange = async () => {
-        const {name, value, phaseIndex, processId} = this.state.newDateData;
+    simpleDateChange = async (name, value, phaseIndex, processId) => {
         let process = this.state.processes[processId]
         console.log(process)
         if (phaseIndex !== null) {
-            if(name.toLowerCase.includes('end') && phaseIndex === process.phases.length-1){
+            if (name === 'endDate' && phaseIndex === process.phases.length - 1) {
                 process[name] = value;
             }
             process.phases[phaseIndex][name] = value
         } else {
             process[name] = value;
+            if (name === 'startDate') {
+                process.phases[0].startDate = value;
+            } else if (name === 'endDate') {
+                process.phases[process.phases.length - 1].endDate = value;
+            }
         }
-        if (name.toLowerCase().includes('start') && phaseIndex === null) {
-            process.phases[0] = value;
-        } else if (name.toLowerCase().includes('end') && phaseIndex === null) {
-            process.phases[process.phases.length - 1] = value;
-        }
-        console.log(process )
-        await this.putProcess(processId, process);
+        return await this.putProcess(processId, process).then((data) => {
+            return data
+        });
     }
 
-    complexDateChange = async () => {
-        const {name, value, phaseIndex, processId} = this.state.newDateData;
+    complexDateChange = async (name, value, phaseIndex, processId) => {
+        console.log(name)
+        console.log(phaseIndex)
         let process = this.state.processes[processId]
         console.log(process)
-        let oldDate = process[name];
-        const diff = moment(formatDate(value)).diff(formatDate(oldDate))
-        if (name.toLowerCase().includes('start') && phaseIndex === null) {
-            process[name] = value;
-            for (let i = 0; i < process.phases.length - 1; i++) {
-                process.phases[i] = process.phases[i] + diff;
+        let oldDate = phaseIndex === null ? process[name] : process.phases[phaseIndex][name];
+        const diff = moment(formatDate(value)).diff(formatDate(oldDate), 'days')
+        if (name === 'startDate' && phaseIndex === null) {
+            process.startDate = value;
+            for (let i = 0; i < process.phases.length; i++) {
+                process = this.shiftStartDate(process, diff, i)
+                if (i === process.phases.length - 1) {
+                    process.endDate = process.phases[process.phases.length - 1].endDate
+                }
+
             }
-        } else if (name.toLowerCase().includes('end') && phaseIndex === null) {
-            process[name] = value;
-            process.phases[process.phases.length - 1] = value;
+        } else if (name === 'endDate' && phaseIndex === null) {
+            process.endDate = value;
+            process.phases[process.phases.length - 1].endDate = value;
         } else if (phaseIndex !== null) {
-            if(name.toLowerCase.includes('end') && phaseIndex === process.phases.length-1){
-                process[name] = value;
+            if (name === 'endDate' && phaseIndex === process.phases.length - 1) {
+                process.endDate = value;
             }
-            for (let i = phaseIndex || 0; i < process.phases.length - 1; i++) {
-                process.phases[i] = process.phases[i] + diff;
+            for (let i = phaseIndex; i < process.phases.length; i++) {
+                process = this.shiftEndDate(process, diff, i)
+                if (name === 'startDate' && i === 0) {
+                    process.startDate = value;
+                }
+                if (i === process.phases.length - 1) {
+                    process.endDate = process.phases[process.phases.length - 1].endDate;
+                }
             }
         }
-        console.log(process)
-        await this.putProcess(processId, process);
+        return await this.putProcess(processId, process).then((data) => {
+            return data
+        });
+    }
+
+    shiftStartDate = (process, diff, index) => {
+        let tempStartDate = new Date(process.phases[index].startDate)
+        let tempEndDate = new Date(process.phases[index].endDate)
+        let startResult = tempStartDate.setDate(tempStartDate.getDate() + diff);
+        let endResult = tempEndDate.setDate(tempEndDate.getDate() + diff);
+        process.phases[index].startDate = new Date(startResult).toISOString()
+        process.phases[index].endDate = new Date(endResult).toISOString()
+        return process
+    }
+    shiftEndDate = (process, diff, index) => {
+        if (index + 1 < process.phases.length) {
+            let tempStartDate = new Date(process.phases[index + 1].startDate)
+            let tempEndDate = new Date(process.phases[index].endDate)
+            let startResult = tempStartDate.setDate(tempStartDate.getDate() + diff);
+            let endResult = tempEndDate.setDate(tempEndDate.getDate() + diff);
+            process.phases[index + 1].startDate = new Date(startResult).toISOString()
+            process.phases[index].endDate = new Date(endResult).toISOString()
+        } else {
+            let tempEndDate = new Date(process.phases[index].endDate)
+            let endResult = tempEndDate.setDate(tempEndDate.getDate() + diff);
+            process.phases[index].endDate = new Date(endResult).toISOString()
+        }
+        return process
     }
 
     putProcess = async (processId, process) => {
-        await typeApi.put(`/process/${processId}`, process).then((res) => {
-            console.log(res.data)
-            let newState = {...this.state};
-            newState.processes[processId] = res.data;
-            this.setState(newState);
+        const data = await typeApi.put(`/process/${processId}`, process).then((res) => {
+            return res.data
         }).catch(err => {
             this.setState(state => ({
                 error: [...state.error, err.message]
             }))
         })
+        console.log(data)
+        let newState = {...this.state};
+        newState.processes[processId] = data;
+        newState.showModal = false;
+        this.setState(newState);
+        return data;
     }
+
 
     validatePhase = (phase) => {
         let result = {
@@ -432,7 +371,6 @@ class CreateProcess extends React.Component {
         });
     }
 
-
     removePhase = (index, e) => {
         e.preventDefault();
         let phases = [...this.state.phases];
@@ -440,98 +378,66 @@ class CreateProcess extends React.Component {
         this.setState({phases});
     }
 
-    defaultPhase = () => {
-        if (this.state.showDefault) {
-            this.state.phases.push({
-                phaseName: `Standard Brew: ${this.state.selectedBeer}`,
-                startDate: this.state.startDate,
-                endDate: this.state.endDate
-            })
-            return (
-                <div>
-                    {this.endDateField()}
-                    <div className={"field"}>
-                        <Dropdown label="Select Start Tank" defaultTerm={""}
-                                  onSelectedChange={(tank) => {
-                                      this.handleFieldChange(0, {target: {name: 'startTank', value: tank}})
+    renderCollection = (processes, color, header, shruggerMessage) => {
+        return <ProcessCollection processes={processes} color={color} header={header} shruggerMessage={shruggerMessage}
+                                  filter={this.state.term !== "" ? {query: this.state.term} : null}
+                                  sort={this.state.sorted !== null ? {
+                                      key: this.state.sorted[0],
+                                      direction: this.state.sorted[1]
+                                  } : null}
+                                  setError={this.setErrorMessage}
+                                  getBeerById={(id) => this.getBeerById(id)}
+                                  getTankDetails={(id) => this.getTankDetails(id)}
+                                  deleteProcess={(id) => this.deleteProcess(id)}
+                                  handleProcessChange={async (e, processId, phaseIndex, choice) => {
+                                      return await this.handleProcessChange(e, processId, phaseIndex, choice).then(data => {
+                                          return data
+                                      })
                                   }}
-                                  url="tank"
-                                  index={0}
-                                  target={'startTank'}/>
-                    </div>
-                </div>
-
-            )
-        } else return null
+        />
     }
 
-    phaseCollection = () => {
-        return this.state.phases.length >= 1 && !this.state.showDefault ?
-            <div className={"phases"} style={{padding: "1%", minWidth: this.screenSize()}}>
-                <div className="form" style={{padding: "2%"}}>
-                    <form className="ui form">
-                        {this.phaseFields()}
-                        {this.state.phases.length > 0 && !this.state.endDate ? this.phaseButton() : null}
-                    </form>
-                </div>
-            </div> : null
-    }
-
-    processCollection = (processes, color, header) => {
-        return (<div style={{
-            maxWidth: "50%",
-            left: "0",
-            right: "0",
-            marginLeft: "auto",
-            marginRight: "auto"
-        }}>
-            <div className={"ui horizontal divider"}/>
-            <div className={"ui large header"}>{header}</div>
-            <div className="ui relaxed divided items" style={{
-                borderStyle: "solid",
-                borderRadius: "1%",
-                borderWidth: "1px",
-                borderColor: color,
-                padding: "2%"
-            }}>
-                {!this.state.isLoaded ?
-                    <div className="ui active centered inline inverted dimmer">
-                        <div className="ui big text loader">Loading</div>
-                    </div> : processes}
-            </div>
-        </div>)
-    }
-
-
-    showCollection = () => {
-        const {processes, isLoaded, error} = this.state
-
-        let arr = [];
-        if (this.state.showActive) {
-            arr.push(this.processCollection(this.activeProcesses(), "goldenrod", "Active Processes"));
-        }
-        if (this.state.showUpcoming) {
-            arr.push(this.processCollection(this.upcomingProcesses(), "green", "Upcoming Processes"));
-        }
-        if (this.state.showOverdue) {
-            arr.push(this.processCollection(this.overdueProcesses(), "palevioletred", "Overdue Processes"));
-        }
-        if (this.state.showAll) {
-            arr.push(this.processCollection(this.allProcesses(), "lightgrey", "All Processes"));
-        }
-
-
-        if (!isLoaded) {
+    showActiveCollection = () => {
+        let active = this.state.activeProcesses;
+        if (!this.state.isLoaded) {
             return (
                 <div className="ui active centered inline inverted dimmer">
                     <div className="ui big text loader">Loading</div>
                 </div>
             );
         } else {
-            let components;
-
-            return arr
+            return this.renderCollection(active, "goldenrod", "Active Processes", "Nothing going on")
         }
+    }
+    showAllCollection = () => {
+        let all = Object.values(this.state.processes);
+        return this.renderCollection(all, "lightgrey", "All Processes", "Nothing Planned")
+    }
+    showOverDueCollection = () => {
+        let overdue = Object.values(this.state.processes).filter((process) => {
+            let endDate = formatDate(process.endDate)
+            if (moment(endDate).isBefore(moment().startOf('date'))) {
+                for (let el of process.phases) {
+                    if (!el.complete) {
+                        return true
+                    }
+                }
+            }
+            return false
+        })
+
+        return this.renderCollection(overdue, "palevioletred", "Overdue Processes", "Nothing left to do")
+
+    }
+
+    showUpcomingCollection = () => {
+        let upcoming = Object.values(this.state.processes).filter((process) => {
+            let endDate = formatDate(process.startDate)
+            return moment(endDate).isAfter(moment().startOf('date'));
+        })
+
+        return this.renderCollection(upcoming, "green", "Upcoming Processes", "Nothing coming up")
+
     }
 
     setFilter = (e) => {
@@ -571,28 +477,9 @@ class CreateProcess extends React.Component {
         }))
     }
 
-    chooseEditType = () => {
-        return (
-            <div className={`ui ${this.state.showModal ? 'active' : ''} modal`}>
-                <div className="ui center aligned basic segment">
-                    <div className="ui button" onClick={async () => {
-                        await this.simpleDateChange()
-                    }}>
-                        Only Edit This Date
-                    </div>
-                    <div className="ui horizontal divider">
-                        Or
-                    </div>
-                    <div className="ui button" onClick={async ()=>{
-                        await this.complexDateChange()
-                    }}>
-                        Edit This and All Subsequent Dates
-                    </div>
-                </div>
-            </div>)
-    }
-
+    //TODO: Add Reset button to filterSort that sets term to '' and sort to null
     render() {
+        console.log("render")
         let errMessage = this.state.error.map((err, i) => {
             return (
                 <Message key={i} messageType={'error'} onClose={() => this.setState({error: [], term: ''})}
@@ -603,7 +490,7 @@ class CreateProcess extends React.Component {
             <div>
                 <NavComponent tanks={false}/>
                 <div className={"ui horizontal divider"}/>
-                {this.chooseEditType()}
+
                 {this.state.error.length > 0 ? errMessage : null}
                 {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
                                                    onClose={() => this.setState({infoMessage: null})}/> :
@@ -612,12 +499,18 @@ class CreateProcess extends React.Component {
                               setFilter={this.setFilter}
                               setMessage={(message) => this.setInfoMessage(message)}
                               handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
-                              setSorted={sorted => this.setState({sorted: sorted.sorted})}/>
-                {this.showCollection()}
+                              setSorted={sorted => this.setState({sorted: sorted.sorted})}
+                              reset={() => {
+                                  this.setState({term: '', sorted: null})
+                              }}/>
+                {this.state.showActive ? this.showActiveCollection() : null}
+                {this.state.showUpcoming ? this.showUpcomingCollection() : null}
+                {this.state.showOverdue ? this.showOverDueCollection() : null}
+                {this.state.showAll ? this.showAllCollection() : null}
             </div>
         );
     }
 
 }
 
-export default CreateProcess;
+export default Processes;

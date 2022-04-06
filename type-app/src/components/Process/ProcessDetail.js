@@ -3,7 +3,7 @@ import useComponentVisible from "../Hooks/useComponentVisible";
 
 
 //TODO:handle state change starting here
-const ProcessDetail = ({icon, header, data, type, editable, handleProcessChange}) => {
+const ProcessDetail = ({icon, header, data, type, editable, handleProcessChange, name}) => {
     const [showEdit, setShowEdit] = useState(false)
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
 
@@ -22,8 +22,8 @@ const ProcessDetail = ({icon, header, data, type, editable, handleProcessChange}
                 <div className={"ui center aligned description"}>
                     {isComponentVisible && editable ?
                         <div className="ui fluid input">
-                            <input type={type} placeholder={data} onChange={(e) => handleProcessChange(e)}/>
-                    </div>: data}
+                            <input type={type} name={name} placeholder={data} onChange={(e) => handleProcessChange(e)}/>
+                        </div> : data}
                 </div>
             </div>
         </div>);

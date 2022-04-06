@@ -1,7 +1,7 @@
 import React from 'react';
 
 const SearchFilter = (props) => {
-    const {setSorted, page, setMessage, handleChange, setFilter, term, filterList} = props;
+    const {setSorted, page, setMessage, handleChange, setFilter, term, filterList, reset} = props;
     const menuItems = () => {
         switch (page) {
             case "beer":
@@ -112,6 +112,7 @@ const SearchFilter = (props) => {
                         <i className="dropdown icon"/>
                         {menuItems()}
                     </div>
+                    <div className={"ui button"} onClick={reset}>Reset</div>
                 </div>
                 <div className={"row"}>{
                     <div className="ui form">

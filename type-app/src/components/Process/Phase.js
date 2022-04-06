@@ -20,22 +20,28 @@ const Phase = (props) => {
     const [percent, setPercent] = useState("")
 
     useEffect(() => {
-        console.log(data)
-        let startDate = phaseData.startDate.split("T", 1)[0];
-        let endDate = phaseData.endDate.split("T", 1)[0];
+        setData(phaseData)
+    }, [phaseData])
+
+    useEffect(() => {
+        let startDate = formatDate(phaseData.startDate)
+        let endDate = formatDate(phaseData.endDate)
         if (data.complete) {
             setColor("green");
             setPercent(100);
         } else {
-            if (moment(startDate).isAfter(moment())) {
+            if (moment(startDate).startOf('date').isAfter(moment().startOf('date'))) {
                 setColor("");
                 setPercent(0);
-            } else if (moment().isBetween(startDate, endDate)) {
+            } else if (moment().isBetween(moment(startDate).startOf('date'), moment(endDate).endOf('date'))) {
                 let total = (moment(endDate).diff(startDate, "days"));
-                let remaining = moment(endDate).diff(moment(), "days");
+                let remaining = moment(endDate).endOf('date').diff(moment(), "days");
                 let perc = (100 - ((remaining / total) * 100));
                 setColor("yellow");
-                setPercent(perc);
+                if (isNaN(perc))
+                    setPercent(90)
+                else
+                    setPercent(perc);
             } else {
                 setColor("grey");
                 setPercent(100);
@@ -52,39 +58,37 @@ const Phase = (props) => {
         <div className="content">
             <div className="ui small header">{phaseData.phaseName}</div>
             <div className="description">
-                <p>Start Tank: {tanks.startTank.name}</p>
+                <div>Start Tank: {tanks.startTank.name}</div>
 
-                <p>End Tank: {tanks.endTank ? tanks.endTank.name : tanks.startTank.name}</p>
+                <div>End Tank: {tanks.endTank ? tanks.endTank.name : tanks.startTank.name}</div>
 
-                <p className="content" ref={ref} onClick={() => {
+                <br/>
+                <div className="content" ref={ref} onClick={() => {
                     setIsComponentVisible(true)
                     setActiveDateField("start")
                 }}>
                     Start Date: {isComponentVisible && activeDateField === "start" ?
-                    <div className="ui fluid icon input">
+                    <div className="ui fluid input">
                         <input name={"startDate"} type={"date"}
                                onChange={async (e) => {
-                                   await handlePhaseChange(e, index);
                                    setData({...data, [e.target.name]: e.target.value});
+                                   await handlePhaseChange(e, index);
                                }}/>
-                        <i id="icon" className="check green icon"/>
-                    </div> : formatDate(phaseData.startDate)}
-                </p>
-
-                <p className="content" ref={ref} onClick={() => {
+                    </div> : formatDate(data.startDate)}
+                </div>
+                <div className="content" ref={ref} onClick={() => {
                     setIsComponentVisible(true)
                     setActiveDateField("end")
                 }}>
                     End Date: {isComponentVisible && activeDateField === "end" ?
-                    <div className="ui fluid icon input">
+                    <div className="ui fluid  input">
                         <input name={"endDate"} type={"date"}
                                onChange={async (e) => {
-                                   await handlePhaseChange(e, index);
                                    setData({...data, [e.target.name]: e.target.value});
+                                   await handlePhaseChange(e, index);
                                }}/>
-                        <i id="icon" className="check green icon"/>
-                    </div> : formatDate(phaseData.endDate)}
-                </p>
+                    </div> : formatDate(data.endDate)}
+                </div>
             </div>
 
         </div>
