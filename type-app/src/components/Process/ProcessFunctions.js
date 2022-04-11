@@ -56,8 +56,20 @@ export const setPhaseTanks = (tank, index, dateRanges, phases) => {
     return tempPhases;
 }
 
-export const filterEntries = (query, entries, setError) => {
+export const filterSort = (entries, query, sort, setError) => {
+    let ent = entries
+    ent = filterEntries(ent, query, setError);
+    ent = sortEntries(ent, sort)
+
+    return ent;
+
+}
+
+export const filterEntries = (entries, query, setError) => {
     let [key, queryString] = query.split(' ', 2);
+    if (query.length < 1) {
+        return entries;
+    }
     if (query.charAt(0) === ':' && queryString) {
         key = key.substring(1);
         const matcher = new RegExp(queryString, 'ig');
@@ -68,10 +80,13 @@ export const filterEntries = (query, entries, setError) => {
             })
         } catch (err) {
             if (err instanceof TypeError) {
-                setError(`Unrecognized Type '${key}'`)
+                setError({
+                    errorMessage: `Unrecognized Type '${key}'`
+                })
             } else {
-                setError(err.message)
+                setError({errorMessage: err.message});
             }
+            return entries
         }
 
         return result
@@ -87,11 +102,17 @@ export const filterEntries = (query, entries, setError) => {
 
 }
 
-export const sortEntries = (key, direction, entries) => {
-    const sorted = entries.sort((a, b) => {
-        return (a[key].toLowerCase() > b[key].toLowerCase() ? 1 : ((b[key].toLowerCase() > a[key].toLowerCase()) ? -1 : 0))
-    })
-    return direction === 'desc' ? sorted : sorted.reverse();
+export const sortEntries = (entries, sort) => {
+    if (!sort || sort === undefined) {
+        return entries
+    } else {
+        const key = sort[0];
+        const direction = sort[1];
+        const sorted = entries.sort((a, b) => {
+            return (a[key].toLowerCase() > b[key].toLowerCase() ? 1 : ((b[key].toLowerCase() > a[key].toLowerCase()) ? -1 : 0))
+        })
+        return direction === 'desc' ? sorted : sorted.reverse();
+    }
 }
 
 export const formatDate = (date) => {

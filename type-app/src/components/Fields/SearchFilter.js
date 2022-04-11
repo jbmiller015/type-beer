@@ -4,7 +4,7 @@ const SearchFilter = (props) => {
     const {setSorted, page, setMessage, handleChange, setFilter, term, filterList, reset} = props;
     const menuItems = () => {
         switch (page) {
-            case "beer":
+            case "fridge":
                 return (
 
                     <div className={"menu"}>
@@ -79,22 +79,6 @@ const SearchFilter = (props) => {
 
     }
 
-    const filters = () => {
-        return filterList.map((filter, i) => {
-            const filterString = filter.charAt(0).toUpperCase() + filter.slice(1);
-            return (<div className={"field"} style={{padding: "2%"}} key={i}>
-                <div className="ui checkbox">
-                    <input type="checkbox" name={`filter${filterString}`} tabIndex="0"
-                           onChange={(e) => {
-                               setFilter(e)
-                           }}
-                           defaultChecked={i === 0}/>
-                    <label>{filterString}</label>
-                </div>
-            </div>)
-        })
-    }
-
     return (
         <div>
             <div className={"ui centered grid"}
@@ -113,13 +97,6 @@ const SearchFilter = (props) => {
                         {menuItems()}
                     </div>
                     <div className={"ui button"} onClick={reset}>Reset</div>
-                </div>
-                <div className={"row"}>{
-                    <div className="ui form">
-                        <div className="inline fields">
-                            {filters()}
-                        </div>
-                    </div>}
                 </div>
             </div>
 

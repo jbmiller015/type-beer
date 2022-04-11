@@ -1,76 +1,75 @@
-import React, {useEffect, useState} from 'react';
-import {filterEntries, sortEntries} from "./ProcessFunctions";
+import React from 'react';
 import Process from "./Process";
 import Shrugger from "../Messages/Shrugger";
+import ProcessFilterButtons from "./ProcessFilterButtons";
+import {formatDate} from "./ProcessFunctions";
+import moment from "moment";
 
-const ProcessCollection = (props) => {
-    const {
-        header,
-        shruggerMessage,
-        color,
-        processes,
-        filter,
-        sort,
-        setError,
-        getBeerById,
-        getTankDetails,
-        handleProcessChange,
-        deleteProcess
-    } = props;
-    const [procs, setProcs] = useState(processes);
+class ProcessCollection extends React.Component {
 
-    useEffect(() => {
-        let results = procs;
-        if (filter !== null) {
-            results = filterEntries(filter.query, procs, setError)
+    constructor(props) {
+        super(props);
+        this.state = {
+            activeProcesses: this.props.activeProcesses,
+
+            isLoaded: this.props.isLoaded,
+            comps: null,
+            defaultView: "active",
+            color: '#fbbd08',
+            visible: this.props.activeProcesses,
+            shruggerMessage: ""
         }
-        if (sort !== null) {
-            results = sortEntries(sort.key, sort.direction, procs)
-        }
-        setProcs(results)
-    }, [props]);
-
-
-    const renderProcesses = () => {
-        if (procs.length > 0) {
-            return procs.map((process) => {
-                let beer = getBeerById(process.contents)
-                return <Process processData={process} beerData={beer}
-                                getTankDetails={(tankId) => getTankDetails(tankId)}
-                                handleProcessChange={async (e, processId, phaseIndex, choice) => {
-                                    return await handleProcessChange(e, processId, phaseIndex, choice).then(data => {
-                                        return data
-                                    })
-                                }}
-                                deleteProcess={(processId) => {
-                                    deleteProcess(processId)
-                                }}
-                                getBeerById={(beerId) => {
-                                    return getBeerById(beerId)
-                                }}/>
-            })
-        } else
-            return <Shrugger message={shruggerMessage}/>
     }
 
-    return (<div style={{
-        maxWidth: "50%",
-        left: "0",
-        right: "0",
-        marginLeft: "auto",
-        marginRight: "auto"
-    }}>
-        <div className={"ui horizontal divider"}/>
-        <div className={"ui large header"}>{header}</div>
-        <div className="ui relaxed divided items" style={{
-            borderStyle: "solid",
-            borderRadius: "1%",
-            borderWidth: "1px",
-            borderColor: color,
-            padding: "2%"
-        }}>
-            {renderProcesses()}
-        </div>
-    </div>)
+
+    filterEntries = (query) => {
+        let [key, queryString] = query.split(' ', 2);
+        if (query.charAt(0) === ':' && queryString) {
+            key = key.substring(1);
+
+            const matcher = new RegExp(queryString, 'ig');
+            let result;
+            try {
+                result = this.state.procs.filter((process) => {
+                    console.log(process)
+                    return process[key].match(matcher)
+                })
+            } catch (err) {
+                if (err instanceof TypeError) {
+                    this.props.setError(`Unrecognized Type '${key}'`)
+                } else {
+                    this.props.setError(err.message)
+                }
+            }
+
+            return result
+
+        } else {
+            const matcher = new RegExp(query, 'ig')
+            return this.state.procs.filter((process) => {
+                console.log(process)
+                return process.name.match(matcher)
+            })
+        }
+
+    }
+
+    sortEntries = (key, direction) => {
+        const sorted = this.state.procs.sort((a, b) => {
+            return (a[key] > b[key] ? 1 : ((b[key] > a[key]) ? -1 : 0))
+        })
+
+        console.log(sorted)
+
+        return direction === 'desc' ? sorted : sorted.reverse();
+    }
+
+
+    render() {
+        console.log("render")
+        console.log(this.state.activeProcesses)
+
+    }
 }
-export default ProcessCollection;
+
+//export default ProcessCollection;

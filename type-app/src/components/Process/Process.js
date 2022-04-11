@@ -22,11 +22,19 @@ const Process = (props) => {
     const [newData, setNewData] = useState({});
 
     useEffect(() => {
+        console.log("in")
+        return () => {
+            console.log("out")
+            setData(null)
+            setActive(false)
+        }
+    }, [])
+
+    useEffect(() => {
     }, [data])
 
     useEffect(async () => {
         if (choice !== null) {
-            console.log(newData)
             const data = await handleProcessChange(newData.e, newData.processId, newData.phaseIndex, choice);
             setData(data)
             setChoice(null)
@@ -34,7 +42,6 @@ const Process = (props) => {
     }, [choice])
 
     const handleProcessDateChange = (e, processId, phaseIndex, show) => {
-        console.log(e)
         if (show) {
             setNewData({e, processId, phaseIndex})
             setShowModal(true)
@@ -49,7 +56,6 @@ const Process = (props) => {
 
 
     const handlePhaseChange = async (e, processId, phaseIndex, show) => {
-        console.log(e)
         if (show) {
             setShowModal(true)
         }
@@ -64,7 +70,7 @@ const Process = (props) => {
         }
     }
 
-    const chooseEditType = () => {
+    const chooseEditTypeModal = () => {
         return (
             <div className={`ui ${showModal ? 'active' : ''} modal`} style={{
                 zIndex: 1000,
@@ -74,10 +80,11 @@ const Process = (props) => {
                 marginLeft: "auto",
                 marginRight: "auto",
                 marginTop: "auto",
-                marginBottom: "auto"
+                marginBottom: "auto",
+                width: "20%"
             }}>
                 <div className="ui center aligned basic segment">
-                    <div className="ui button" onClick={() => {
+                    <div className="ui yellow button" onClick={() => {
                         setChoice("simple")
                         setShowModal(false)
                     }}>
@@ -86,7 +93,7 @@ const Process = (props) => {
                     <div className="ui horizontal divider">
                         Or
                     </div>
-                    <div className="ui button" onClick={() => {
+                    <div className="ui yellow button" onClick={() => {
                         setChoice("complex")
                         setShowModal(false)
                     }}>
@@ -133,7 +140,7 @@ const Process = (props) => {
                 </div>
             </a> :
             <div className={"item"}>
-                {chooseEditType()}
+                {chooseEditTypeModal()}
                 <div className="content">
                     <div className="ui medium header" style={{color: "goldenrod"}}>{data.name}</div>
                     <a style={{color: "grey"}}><i className={"ui right floated close large icon"} onClick={() => {

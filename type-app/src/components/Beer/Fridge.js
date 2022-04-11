@@ -5,7 +5,9 @@ import Message from "../Messages/Message";
 import NavComponent from "../NavComponent";
 import Beer from "./Beer";
 import Modal from "../modal/Modal";
-import {filterEntries, sortEntries} from "../Process/ProcessFunctions";
+import {filterSort} from "../Process/ProcessFunctions";
+import Shrugger from "../Messages/Shrugger";
+import SearchFilter from "../Fields/SearchFilter";
 
 class Fridge extends React.Component {
     constructor(props) {
@@ -100,96 +102,14 @@ class Fridge extends React.Component {
         }
     };
 
-    filterEntries = (query, filter = null) => {
-        let [key, queryString] = query.split(' ', 2);
-        if (query.charAt(0) === ':' && queryString) {
-            key = key.substring(1);
-            console.log();
-
-            const matcher = new RegExp(queryString, 'ig');
-            let result;
-            try {
-                result = Object.values(this.state.beers).filter((beer) => {
-                    console.log(beer)
-                    return beer[key].match(matcher)
-                })
-            } catch (err) {
-                if (err instanceof TypeError) {
-                    this.setState(state => ({
-                        error: [...state.error, `Unrecognized Type '${key}'`]
-                    }))
-                } else {
-                    this.setState(state => ({
-                        error: [...state.error, err.message]
-                    }))
-                }
-            }
-
-            return result
-
-        } else {
-            const matcher = new RegExp(query, 'ig')
-            const result = Object.values(this.state.beers).filter((beer) => {
-                return beer.name.match(matcher)
-            })
-            return result
-        }
-
+    setInfoMessage = (message) => {
+        this.setState({infoMessage: message.infoMessage})
     }
 
-    sortEntries = (key, direction) => {
-        const sorted = Object.values(this.state.beers).sort((a, b) => {
-            return (a[key] > b[key] ? 1 : ((b[key] > a[key]) ? -1 : 0))
-        })
-
-        console.log(sorted)
-
-        return direction === 'desc' ? sorted : sorted.reverse();
-    }
-
-    filterButtons = () => {
-        return (<div style={{paddingInline: "1%"}}>
-            <div className={"ui centered grid"}
-                 style={{paddingTop: "1%", paddingBottom: "2%"}}>
-                <div style={{textAlign: "center"}} className={"ui icon input"} onClick={() => {
-                    this.setState({infoMessage: "Use ':<type> <value>' to search based on filter type. Example: \":name saftig\" or \":style ipa\" or \":desc tons of fruit\""})
-                }}>
-                    <input value={this.state.term} onChange={e => this.setState({term: e.target.value})}
-                           className="input"/>
-                    <i className={"search icon"} style={{marginRight: "5%"}}/>
-                </div>
-                <div style={{textAlign: "center"}} className={"ui simple icon dropdown button"}>
-                    <i className={"filter icon"}/>
-                    <i className="dropdown icon"/>
-                    <div className={"menu"}>
-                        <div className={"item"} onClick={() => {
-                            this.setState({sorted: ['name', 'desc']})
-                        }}>
-                            <i className={"sort alphabet down icon"}/>
-                            <label>Name</label>
-                        </div>
-                        <div className={"item"} onClick={() => {
-                            this.setState({sorted: ['name', 'asc']})
-                        }}>
-                            <i className={"sort alphabet up icon"}/>
-                            <label>Name</label>
-                        </div>
-                        <div className={"item"} onClick={() => {
-                            this.setState({sorted: ['style', 'desc']})
-                        }}>
-                            <i className={"sort alphabet down icon"}/>
-                            <label>Style</label>
-                        </div>
-                        <div className={"item"} onClick={() => {
-                            this.setState({sorted: ['style', 'asc']})
-                        }}>
-                            <i className={"sort alphabet up icon"}/>
-                            <label>Style</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>);
+    setErrorMessage = (message) => {
+        this.setState(state => ({
+            error: [...state.error, message.errorMessage]
+        }))
     }
 
     render() {
@@ -209,31 +129,19 @@ class Fridge extends React.Component {
                 </div>
             );
         } else {
-            let components;
-            if (this.state.term.length) {
-                try {
-                    components = filterEntries(this.state.term, null, Object.values(this.state.beers), (err) => {
-                        this.setState(state => ({
-                            error: [...state.error, err]
-                        }))
-                    }).map((beer, i) => {
-                        return (
-                            <Beer beerData={beer} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
-                    })
-                } catch (err) {
-                    return null;
-                }
-            } else if (this.state.sorted) {
-                components = sortEntries(this.state.sorted[0], this.state.sorted[1], Object.values(this.state.beers)).map((beer, i) => {
+            let components = Object.values(beers);
+
+            components = filterSort(components, this.state.term, this.state.sorted, this.setErrorMessage)
+
+            if (components.length > 0) {
+                components = components.map((beer, i) => {
                     return (
                         <Beer beerData={beer} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
                 })
-            } else {
-                components = Object.keys(beers).map((beer, i) => {
-                    return (
-                        <Beer beerData={beers[beer]} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
-                })
-            }
+            } else components = (<div>
+                <div className="ui horizontal divider"/>
+                <Shrugger message={"Couldn't find anything"}/>
+            </div>)
 
             return (
 
@@ -247,7 +155,13 @@ class Fridge extends React.Component {
                                                        onClose={() => this.setState({infoMessage: null})}/> :
                         <div style={{marginTop: "3.55%"}} className="ui horizontal divider"/>}
                     <div className="ui horizontal divider"/>
-                    {this.filterButtons()}
+                    <SearchFilter page={"fridge"}
+                                  setMessage={(message) => this.setInfoMessage(message)}
+                                  handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
+                                  setSorted={sorted => this.setState({sorted: sorted.sorted})}
+                                  reset={() => {
+                                      this.setState({term: '', sorted: null, error: []})
+                                  }}/>
                     <Modal onClose={this.showModal}
                            deleteBeer={this.deleteBeer}
                            editBeer={this.editBeer}
@@ -257,7 +171,8 @@ class Fridge extends React.Component {
                            tankModal={false}/>
                     <div className={"ui padded equal height equal width centered stackable grid"}
                          style={{paddingInline: "5%"}}>
-                        {components}
+                        {this.state.error.length < 1 ? components :
+                            <Shrugger message={"Something went wrong.\nCheck the error message before continuing."}/>}
                     </div>
                 </div>
             );

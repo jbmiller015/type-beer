@@ -20,6 +20,12 @@ const Phase = (props) => {
     const [percent, setPercent] = useState("")
 
     useEffect(() => {
+        return () => {
+            setData(null)
+        }
+    }, [])
+
+    useEffect(() => {
         setData(phaseData)
     }, [phaseData])
 
@@ -39,11 +45,11 @@ const Phase = (props) => {
                 let perc = (100 - ((remaining / total) * 100));
                 setColor("yellow");
                 if (isNaN(perc))
-                    setPercent(90)
+                    setPercent(95)
                 else
                     setPercent(perc);
             } else {
-                setColor("grey");
+                setColor("red");
                 setPercent(100);
             }
         }
@@ -99,7 +105,7 @@ const Phase = (props) => {
                     setData({...data, [e.target.name]: e.target.checked});
                 }} value={data.complete ? data.complete : false}
                        defaultChecked={data.complete ? data.complete : false}/>
-                <label>Complete</label>
+                <label>{`Complete${data.complete ? '' : '?'}`}</label>
             </div>
         </div>
         <div className={`ui ${color} bottom attached progress`} data-percent="100">

@@ -4,12 +4,12 @@ import Dropdown from "../Fields/Dropdown";
 import PhaseField from "./PhaseField";
 import NavComponent from "../NavComponent";
 import moment from "moment";
-import Process from "./Process";
 import SearchFilter from "../Fields/SearchFilter";
-import {filterEntries, formatDate, sortEntries} from "./ProcessFunctions";
+import {filterSort, formatDate} from "./ProcessFunctions";
 import Message from "../Messages/Message";
-import ProcessCollection from "./ProcessCollection";
+import Process from "./Process";
 import Shrugger from "../Messages/Shrugger";
+import ProcessFilterButtons from "./ProcessFilterButtons";
 
 
 class Processes extends React.Component {
@@ -21,6 +21,14 @@ class Processes extends React.Component {
         this.state = {
             processes: {},
             activeProcesses: [],
+            allProcesses: [],
+            overdueProcesses: [],
+            upcomingProcesses: [],
+            visible: [],
+            shruggerMessage: "Nothing going on",
+            activeView: "active",
+            color: '#fbbd08',
+
             tanks: {},
             beers: {},
             tasks: [],
@@ -35,10 +43,6 @@ class Processes extends React.Component {
             showExample: false,
             typeDropDown: false,
             showDefault: false,
-            showActive: true,
-            showUpcoming: false,
-            showOverdue: false,
-            showAll: false,
             infoMessage: null,
             error: [],
             term: '',
@@ -89,12 +93,36 @@ class Processes extends React.Component {
         }, err => {
             console.log(err)
         });
+
+        const overdue = Object.values(procResults.procObj).filter((process) => {
+            let endDate = formatDate(process.endDate)
+            if (moment(endDate).isBefore(moment().startOf('date'))) {
+                for (let el of process.phases) {
+                    if (!el.complete) {
+                        return true
+                    }
+                }
+            }
+            return false
+        })
+
+        const upcoming = Object.values(procResults.procObj).filter((process) => {
+            let endDate = formatDate(process.startDate)
+            return moment(endDate).isAfter(moment().startOf('date'));
+        })
+
+        const all = Object.values(procResults.procObj)
+
         this.setState({
             tasks: procResults.tasks,
             processes: procResults.procObj,
             tanks: tanksResults,
             activeProcesses: active,
-            isLoaded: true
+            allProcesses: all,
+            overdueProcesses: overdue,
+            upcomingProcesses: upcoming,
+            isLoaded: true,
+            visible: active
         })
     }
 
@@ -326,34 +354,6 @@ class Processes extends React.Component {
     }
 
 
-    startDateField = () => {
-        return (
-            <div className="field">
-                <label>Start Date:</label>
-                <input type="date" name="startDate"
-                       onChange={(e) => this.setState({startDate: e.target.value})}/>
-            </div>
-        );
-    }
-    endDateField = () => {
-        return (
-            <div className="field">
-                <label>End Date:</label>
-                <input type="date" name="endDate"
-                       onChange={(e) => this.setState({endDate: e.target.value})}/>
-            </div>
-        );
-    }
-
-    contentField = () => {
-        return (
-            <div className="field">
-                <Dropdown label="Select Tank Contents" onSelectedChange={this.setContents} url="beer"
-                          target={'contents'}/>
-            </div>
-        );
-    }
-
     phaseFields = () => {
         console.log(this.state.phases)
         return this.state.phases.map((phase, i) => {
@@ -378,95 +378,6 @@ class Processes extends React.Component {
         this.setState({phases});
     }
 
-    renderCollection = (processes, color, header, shruggerMessage) => {
-        return <ProcessCollection processes={processes} color={color} header={header} shruggerMessage={shruggerMessage}
-                                  filter={this.state.term !== "" ? {query: this.state.term} : null}
-                                  sort={this.state.sorted !== null ? {
-                                      key: this.state.sorted[0],
-                                      direction: this.state.sorted[1]
-                                  } : null}
-                                  setError={this.setErrorMessage}
-                                  getBeerById={(id) => this.getBeerById(id)}
-                                  getTankDetails={(id) => this.getTankDetails(id)}
-                                  deleteProcess={(id) => this.deleteProcess(id)}
-                                  handleProcessChange={async (e, processId, phaseIndex, choice) => {
-                                      return await this.handleProcessChange(e, processId, phaseIndex, choice).then(data => {
-                                          return data
-                                      })
-                                  }}
-        />
-    }
-
-    showActiveCollection = () => {
-        let active = this.state.activeProcesses;
-        if (!this.state.isLoaded) {
-            return (
-                <div className="ui active centered inline inverted dimmer">
-                    <div className="ui big text loader">Loading</div>
-                </div>
-            );
-        } else {
-            return this.renderCollection(active, "goldenrod", "Active Processes", "Nothing going on")
-        }
-    }
-    showAllCollection = () => {
-        let all = Object.values(this.state.processes);
-        return this.renderCollection(all, "lightgrey", "All Processes", "Nothing Planned")
-    }
-    showOverDueCollection = () => {
-        let overdue = Object.values(this.state.processes).filter((process) => {
-            let endDate = formatDate(process.endDate)
-            if (moment(endDate).isBefore(moment().startOf('date'))) {
-                for (let el of process.phases) {
-                    if (!el.complete) {
-                        return true
-                    }
-                }
-            }
-            return false
-        })
-
-        return this.renderCollection(overdue, "palevioletred", "Overdue Processes", "Nothing left to do")
-
-    }
-
-    showUpcomingCollection = () => {
-        let upcoming = Object.values(this.state.processes).filter((process) => {
-            let endDate = formatDate(process.startDate)
-            return moment(endDate).isAfter(moment().startOf('date'));
-        })
-
-        return this.renderCollection(upcoming, "green", "Upcoming Processes", "Nothing coming up")
-
-    }
-
-    setFilter = (e) => {
-        switch (e.target.name) {
-            case 'filterActive':
-                this.setState({
-                    showActive: !this.state.showActive
-                })
-                break
-            case 'filterUpcoming':
-                this.setState({
-                    showUpcoming: !this.state.showUpcoming
-                })
-                break
-            case 'filterOverdue':
-                this.setState({
-                    showOverdue: !this.state.showOverdue
-                })
-                break
-            case 'filterAll':
-                this.setState({
-                    showAll: !this.state.showAll
-                })
-                break
-            default:
-                break
-        }
-    }
-
     setInfoMessage = (message) => {
         this.setState({infoMessage: message.infoMessage})
     }
@@ -477,7 +388,70 @@ class Processes extends React.Component {
         }))
     }
 
-    //TODO: Add Reset button to filterSort that sets term to '' and sort to null
+    setVisible = (view, color) => {
+        console.log(this.state)
+        switch (view) {
+            case "active":
+                this.setState({
+                    shruggerMessage: "Nothing going on", color, activeView: "active"
+                })
+                break;
+            case "upcoming":
+                this.setState({shruggerMessage: "Nothing coming up", color, activeView: "upcoming"})
+                break;
+            case "overdue":
+                this.setState({shruggerMessage: "Nothing left to do", color, activeView: "overdue"})
+                break;
+            case "all":
+                this.setState({shruggerMessage: "Nothing planned", color, activeView: "all"})
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    //!Note: Each process component must have a UNIQUE key otherwise it WILL NOT unmount on view change.
+    renderProcesses = () => {
+        let processes = [];
+        if (this.state.activeView === "active") {
+            processes = this.state.activeProcesses;
+        } else if (this.state.activeView === "all") {
+            processes = this.state.allProcesses
+        } else if (this.state.activeView === "overdue") {
+            processes = this.state.overdueProcesses
+        } else if (this.state.activeView === "upcoming") {
+            processes = this.state.upcomingProcesses
+        }
+
+
+        processes = filterSort(processes, this.state.term, this.state.sorted, this.setErrorMessage);
+        console.log(processes)
+        console.log(this.state.error)
+
+
+        if (this.state.error.length < 1 && processes && processes.length > 0) {
+            return processes.map((process) => {
+                console.log(process)
+                let beer = this.getBeerById(process.contents)
+                return <Process key={process._id} processData={process} beerData={beer}
+                                getTankDetails={(tankId) => this.getTankDetails(tankId)}
+                                handleProcessChange={async (e, processId, phaseIndex, choice) => {
+                                    return await this.handleProcessChange(e, processId, phaseIndex, choice).then(data => {
+                                        return data
+                                    })
+                                }}
+                                deleteProcess={(processId) => {
+                                    this.deleteProcess(processId)
+                                }}
+                                getBeerById={(beerId) => {
+                                    return this.getBeerById(beerId)
+                                }}/>
+            })
+        } else
+            return <Shrugger message={this.state.shruggerMessage}/>
+    }
+
     render() {
         console.log("render")
         let errMessage = this.state.error.map((err, i) => {
@@ -495,18 +469,41 @@ class Processes extends React.Component {
                 {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
                                                    onClose={() => this.setState({infoMessage: null})}/> :
                     <div style={{marginTop: "3.55%"}} className="ui horizontal divider"/>}
-                <SearchFilter page={"processes"} filterList={['Active', 'Upcoming', 'Overdue', 'All']}
-                              setFilter={this.setFilter}
+                <SearchFilter page={"processes"}
                               setMessage={(message) => this.setInfoMessage(message)}
                               handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
                               setSorted={sorted => this.setState({sorted: sorted.sorted})}
                               reset={() => {
-                                  this.setState({term: '', sorted: null})
+                                  this.setState({term: '', sorted: null, error: []})
                               }}/>
-                {this.state.showActive ? this.showActiveCollection() : null}
-                {this.state.showUpcoming ? this.showUpcomingCollection() : null}
-                {this.state.showOverdue ? this.showOverDueCollection() : null}
-                {this.state.showAll ? this.showAllCollection() : null}
+                <div className={"ui horizontal divider"}/>
+                <ProcessFilterButtons setView={(view, color) => {
+                    this.setVisible(view, color)
+                }}/>
+                <div style={{
+                    maxWidth: "50%",
+                    left: "0",
+                    right: "0",
+                    marginLeft: "auto",
+                    marginRight: "auto"
+                }}>
+
+                    <div className={"ui horizontal divider"}/>
+                    <div className="ui relaxed divided items" style={{
+                        borderStyle: "solid",
+                        borderRadius: "1%",
+                        borderWidth: "1px",
+                        borderColor: this.state.color,
+                        padding: "2%"
+                    }}>
+                        {!this.state.isLoaded ?
+                            <div className="ui active centered inline inverted dimmer">
+                                <div className="ui big text loader">Loading</div>
+                            </div> : null}
+                        {this.state.error.length < 1 ? this.renderProcesses() :
+                            <Shrugger message={"Something went wrong.\nCheck the error message before continuing."}/>}
+                    </div>
+                </div>
             </div>
         );
     }
