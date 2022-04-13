@@ -9,6 +9,7 @@ import CreateProcess from "./Process/CreateProcess";
 import Process from "./Process/Processes";
 import Fridge from "./Beer/Fridge";
 import Calendar from "./Calendar/Calendar";
+import AccountInfo from "./Account/AccountInfo";
 
 const App = () => {
 
@@ -28,6 +29,7 @@ const App = () => {
                     <Route path="/fridge" exact component={Fridge}/>
                     <Route path="/calendar" exact component={Calendar}/>
                     <Route path="/processes" exact component={Process}/>
+                    <Route path="/account" exact component={AccountInfo}/>
                 </div>
             </BrowserRouter>
         </div>

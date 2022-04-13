@@ -42,6 +42,11 @@ module.exports = {
                     userId: req.user._id
                 };
             }
+            case 'User': {
+                return {
+                    email: req.email
+                }
+            }
             case 'Inventory':
                 return 'Inventory'
 

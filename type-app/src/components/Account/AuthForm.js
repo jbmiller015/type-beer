@@ -5,8 +5,10 @@ import useWindowDimensions from "../../hooks/useWindowDimensions";
 
 
 const AuthForm = ({setToken}) => {
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [betaKey, setBetaKey] = useState('');
     const [signup, setSignup] = useState(false);
     const [path, setPath] = useState('login');
     const [error, setError] = useState({});
@@ -15,20 +17,53 @@ const AuthForm = ({setToken}) => {
 
     useEffect(() => {
         signup ? setPath('signup') : setPath('login');
+        setEmail('')
+        setPassword('')
+        setConfirmPassword('')
+        setBetaKey('')
     }, [signup])
+
+
+    const validate = () => {
+        if (email === '') {
+            setError({status: 'Missing Field', statusText: 'Please provide email'})
+            return true
+        }
+
+        if (password === '') {
+            setError({status: 'Missing Field', statusText: 'Please provide password'})
+            return true
+        }
+
+        if (signup && confirmPassword !== password) {
+            setError({status: 'Passwords do not match', statusText: 'Please try again'})
+            setConfirmPassword('')
+            return true
+        }
+
+        if (signup && betaKey.length === 0) {
+            setError({status: 'Missing Field', statusText: 'Please provide access key'})
+            return true
+        }
+
+        return false
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const submitError = validate()
 
-        await typeApi.post(`/${path}`, {email, password})
-            .then(res => {
-                setToken(res.data.token);
-            })
-            .catch(err => {
-                console.log(err.response)
-                setError(err.response);
-                console.error(err);
-            });
+        if (!submitError) {
+            await typeApi.post(`/${path}`, {email, password, betaKey})
+                .then(res => {
+                    setToken(res.data.token);
+                })
+                .catch(err => {
+                    console.log(err.response)
+                    setError(err.response);
+                    console.error(err);
+                });
+        }
     }
 
     return (
@@ -40,7 +75,9 @@ const AuthForm = ({setToken}) => {
                 {
                     Object.keys(error).length !== 0 ?
                         <div className={"ui error message"}>
-                            <i className="close icon" onClick={() => setError({})}/>
+                            <i className="close icon" onClick={() => {
+                                setError({})
+                            }}/>
                             <div className={"header"}>
                                 {error.status + ": " + error.statusText}
                             </div>
@@ -67,7 +104,7 @@ const AuthForm = ({setToken}) => {
                         </div>
                         <div className={"field"}>
                             <div className={"ui left icon input"}>
-                                <i className={"user icon"}/>
+                                <i className={"key icon"}/>
                                 <input
                                     type="password"
                                     placeholder="Password"
@@ -80,6 +117,36 @@ const AuthForm = ({setToken}) => {
                                 />
                             </div>
                         </div>
+                        {signup ? <div className={"field"}>
+                            <div className={"ui left icon input"}>
+                                <i className={"key icon"}/>
+                                <input
+                                    type="password"
+                                    placeholder="Confirm Password"
+                                    value={confirmPassword}
+                                    autoCapitalize="none"
+                                    autoCorrect="false"
+                                    onChange={e => {
+                                        setConfirmPassword(e.target.value)
+                                    }}
+                                />
+                            </div>
+                        </div> : null}
+                        {signup ? <div className={"field"}>
+                            <div className={"ui left icon input"}>
+                                <i className={"beer icon"}/>
+                                <input
+                                    type="password"
+                                    placeholder="Beta Access Key"
+                                    value={betaKey}
+                                    autoCapitalize="none"
+                                    autoCorrect="false"
+                                    onChange={e => {
+                                        setBetaKey(e.target.value)
+                                    }}
+                                />
+                            </div>
+                        </div> : null}
                     </div>
                     <div className={"ui fluid large submit button"}
                          onClick={handleSubmit}>{path === 'login' ? "Log In" : "Sign Up"}</div>

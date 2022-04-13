@@ -412,7 +412,7 @@ class Processes extends React.Component {
     }
 
     //!Note: Each process component must have a UNIQUE key otherwise it WILL NOT unmount on view change.
-    renderProcesses = () => {
+    renderComponents = () => {
         let processes = [];
         if (this.state.activeView === "active") {
             processes = this.state.activeProcesses;
@@ -460,52 +460,55 @@ class Processes extends React.Component {
                          message={err}/>
             )
         })
-        return (
-            <div>
-                <NavComponent tanks={false}/>
-                <div className={"ui horizontal divider"}/>
+        if (!this.state.isLoaded) {
+            return (
+                <div className="ui active centered inline inverted dimmer">
+                    <div className="ui big text loader">Loading</div>
+                </div>
+            );
+        } else
+            return (
 
-                {this.state.error.length > 0 ? errMessage : null}
-                {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
-                                                   onClose={() => this.setState({infoMessage: null})}/> :
-                    <div style={{marginTop: "3.55%"}} className="ui horizontal divider"/>}
-                <SearchFilter page={"processes"}
-                              setMessage={(message) => this.setInfoMessage(message)}
-                              handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
-                              setSorted={sorted => this.setState({sorted: sorted.sorted})}
-                              reset={() => {
-                                  this.setState({term: '', sorted: null, error: []})
-                              }}/>
-                <div className={"ui horizontal divider"}/>
-                <ProcessFilterButtons setView={(view, color) => {
-                    this.setVisible(view, color)
-                }}/>
-                <div style={{
-                    maxWidth: "50%",
-                    left: "0",
-                    right: "0",
-                    marginLeft: "auto",
-                    marginRight: "auto"
-                }}>
-
+                <div>
+                    <NavComponent tanks={false}/>
                     <div className={"ui horizontal divider"}/>
-                    <div className="ui relaxed divided items" style={{
-                        borderStyle: "solid",
-                        borderRadius: "1%",
-                        borderWidth: "1px",
-                        borderColor: this.state.color,
-                        padding: "2%"
+                    {this.state.error.length > 0 ? errMessage : null}
+                    {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
+                                                       onClose={() => this.setState({infoMessage: null})}/> :
+                        <div style={{marginTop: "3.55%"}} className="ui horizontal divider"/>}
+                    <SearchFilter page={"processes"}
+                                  setMessage={(message) => this.setInfoMessage(message)}
+                                  handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
+                                  setSorted={sorted => this.setState({sorted: sorted.sorted})}
+                                  reset={() => {
+                                      this.setState({term: '', sorted: null, error: []})
+                                  }}/>
+                    <div className={"ui horizontal divider"}/>
+                    <ProcessFilterButtons setView={(view, color) => {
+                        this.setVisible(view, color)
+                    }}/>
+                    <div style={{
+                        maxWidth: "50%",
+                        left: "0",
+                        right: "0",
+                        marginLeft: "auto",
+                        marginRight: "auto"
                     }}>
-                        {!this.state.isLoaded ?
-                            <div className="ui active centered inline inverted dimmer">
-                                <div className="ui big text loader">Loading</div>
-                            </div> : null}
-                        {this.state.error.length < 1 ? this.renderProcesses() :
-                            <Shrugger message={"Something went wrong.\nCheck the error message before continuing."}/>}
+                        <div className={"ui horizontal divider"}/>
+                        <div className="ui relaxed divided items" style={{
+                            borderStyle: "solid",
+                            borderRadius: "1%",
+                            borderWidth: "1px",
+                            borderColor: this.state.color,
+                            padding: "2%"
+                        }}>
+                            {this.state.error.length < 1 ? this.renderComponents() :
+                                <Shrugger
+                                    message={"Something went wrong.\nCheck the error message before continuing."}/>}
+                        </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
     }
 
 }

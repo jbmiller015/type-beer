@@ -20,6 +20,8 @@ router.route('/:base').get(async (req, res) => {
         getRes = await Object.find({_id: id, userId: req.user._id});
     else if (name)
         getRes = await Object.find({name: {$regex: name, $options: 'i'}, userId: req.user._id, fill});
+    else if (base === 'User')
+        getRes = await Object.find({_id: req.user._id});
     else
         getRes = await Object.find({userId: req.user._id});
 
@@ -115,6 +117,11 @@ router.route('/:base/:sub').get(async (req, res) => {
     const base = toUpper(req.params.base);
     const _id = req.params.sub;
     const Object = mongoose.model(base);
+    if (req.params.sub === 'email' || req.params.sub === 'password') {
+        const User = mongoose.model('User');
+        const user = await User.findOne({email});
+        User.comp
+    }
     try {
         await Object.findOneAndUpdate({_id}, createModel(base, req), {upsert: true, useFindAndModify: false});
         res.send(req.body);

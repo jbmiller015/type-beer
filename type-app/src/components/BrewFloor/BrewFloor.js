@@ -157,7 +157,6 @@ class BrewFloor extends React.Component {
             let components = Object.values(tanks).map((tank, i) => {
                 let process;
                 for (let el in processes) {
-                    console.log(processes)
                     if (processes[el].activePhase.startTank === tank._id) {
                         process = processes[el];
                         tank.fill = true;

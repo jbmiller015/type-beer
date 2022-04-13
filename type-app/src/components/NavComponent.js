@@ -97,6 +97,17 @@ const NavComponent = (props) => {
                         <i className="dropdown icon"/>
                         <div className={"menu"}>
                             <div className={"item"}>
+                                <div className={"item"}>
+                                    <div className={"fluid ui basic animated fade button"} tabIndex="2"
+                                         onClick={() => history.push('/account')}>
+                                        <div className={"visible content"}>Account Info</div>
+                                        <div className={"hidden content"}>
+                                            <i className={"user icon"}/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={"item"}>
                                 <div className={"fluid ui red button"} tabIndex="0"
                                      onClick={() => {
                                          localStorage.clear()

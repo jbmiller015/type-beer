@@ -112,8 +112,25 @@ class Fridge extends React.Component {
         }))
     }
 
+    renderComponents = () => {
+        let components = Object.values(this.state.beers);
+
+        components = filterSort(components, this.state.term, this.state.sorted, this.setErrorMessage)
+
+        if (components.length > 0) {
+            components = components.map((beer, i) => {
+                return (
+                    <Beer beerData={beer} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
+            })
+        } else components = (<div>
+            <div className="ui horizontal divider"/>
+            <Shrugger message={"Couldn't find anything"}/>
+        </div>)
+        return components
+    }
+
     render() {
-        const {beers, isLoaded, error} = this.state;
+        const {isLoaded, error} = this.state;
 
         let errMessage = error.map((err, i) => {
             return (
@@ -129,22 +146,7 @@ class Fridge extends React.Component {
                 </div>
             );
         } else {
-            let components = Object.values(beers);
-
-            components = filterSort(components, this.state.term, this.state.sorted, this.setErrorMessage)
-
-            if (components.length > 0) {
-                components = components.map((beer, i) => {
-                    return (
-                        <Beer beerData={beer} key={i} loadData={this.loadBeerData} detailButtonVisible={true}/>)
-                })
-            } else components = (<div>
-                <div className="ui horizontal divider"/>
-                <Shrugger message={"Couldn't find anything"}/>
-            </div>)
-
             return (
-
                 <div>
                     <NavComponent tanks={true} toggleActive={(state) => {
                         this.setState({tanksActive: state})
@@ -171,7 +173,7 @@ class Fridge extends React.Component {
                            tankModal={false}/>
                     <div className={"ui padded equal height equal width centered stackable grid"}
                          style={{paddingInline: "5%"}}>
-                        {this.state.error.length < 1 ? components :
+                        {this.state.error.length < 1 ? this.renderComponents() :
                             <Shrugger message={"Something went wrong.\nCheck the error message before continuing."}/>}
                     </div>
                 </div>
