@@ -8,7 +8,7 @@ const Message = (props) => {
         }}>
             <div style={{
                 marginInline: "6%",
-                paddingInline: "2%",
+                paddingInline: "5%",
                 width: "auto",
                 display: "inline-flex",
                 justifyContent: "center",

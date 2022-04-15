@@ -12,6 +12,8 @@ module.exports = (req, res, next) => {
         return res.status(401).send('You must be logged in.');
 
     let token = authorization.replace('Bearer ', '');
+
+    //Comment out line below for postman testing
     token = token.substring(1, token.length - 1);
 
     jwt.verify(token, jwtString, async (err, payload) => {

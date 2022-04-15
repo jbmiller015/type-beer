@@ -3,6 +3,7 @@ import logo from "../../media/typeBfull.png";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import typeApi from "../../api/type-server";
 import NavComponent from "../NavComponent";
+import Message from "../Messages/Message";
 
 const AccountInfo = () => {
     const [data, setData] = useState();
@@ -12,6 +13,7 @@ const AccountInfo = () => {
     const [email, setEmail] = useState('');
     const [change, setChange] = useState(false);
     const [error, setError] = useState({});
+    const [info, setInfo] = useState({})
     const [reset, setReset] = useState(false);
     const {height, width} = useWindowDimensions();
 
@@ -55,55 +57,61 @@ const AccountInfo = () => {
 
     const handlePasswordSubmit = async (e) => {
         e.preventDefault();
+        setError({});
+        setInfo({});
         const submitError = validatePass()
 
         if (!submitError) {
-            await typeApi.post(`/user/password`, {oldPassword, password}).then(() => {
+            await typeApi.put(`/user/password`, {oldPassword, password}).then((res) => {
                 setReset(false)
-            })
-                .catch(err => {
-                    console.log(err.response)
-                    setError(err.response);
-                    console.error(err);
-                });
+                setChange(false)
+                setInfo({statusText: "Successfully Updated Password"})
+            }).catch(err => {
+                setError(err.response);
+            });
+
         }
     }
 
     const handleEmailSubmit = async (e) => {
         e.preventDefault();
+        setError({});
+        setInfo({});
         const submitError = validateEmail()
 
         if (!submitError) {
-            await typeApi.post(`/user/email`, {email}).then(() => {
+            await typeApi.put(`/user/email`, {email}).then((res) => {
+                setChange(false)
                 setReset(false)
-            })
-                .catch(err => {
-                    console.log(err.response)
-                    setError(err.response);
-                    console.error(err);
-                });
+                setData({...data, email: res.data.email})
+                setInfo({statusText: "Successfully Updated Email"})
+            }).catch(err => {
+                setError(err.response);
+            });
         }
     }
 
     return (<div><NavComponent tanks={false}/>
-        <div style={width > 770 ? {paddingInline: "40%"} : {paddingInline: "10%"}}
+        <div style={width > 770 ? {paddingInline: "30%"} : {paddingInline: "10%"}}
              className={"ui middle aligned center aligned padded grid"}>
             <div className={"column"}>
                 <div className="ui horizontal divider"/>
                 {
                     Object.keys(error).length !== 0 ?
-                        <div className={"ui error message"}>
-                            <i className="close icon" onClick={() => {
-                                setError({})
-                            }}/>
-                            <div className={"header"}>
-                                {error.status + ": " + error.statusText}
-                            </div>
-                            <div><p>{error.data}</p></div>
-                        </div>
+                        <Message messageType={'error'} message={error.statusText} onClose={() => {
+                            setError({})
+                        }}/>
+                        : null
+                }
+                {
+                    Object.keys(info).length !== 0 ?
+                        <Message messageType={'info'} message={info.statusText} onClose={() => {
+                            setInfo({})
+                        }}/>
                         : null
                 }
                 <div>
+                    <div className="ui horizontal divider"/>
                     <h2 className="ui header">
                         Account Settings
                     </h2>
@@ -131,7 +139,6 @@ const AccountInfo = () => {
                                     <input
                                         type="password"
                                         placeholder="Old Password"
-                                        value={oldPassword}
                                         autoCapitalize="none"
                                         autoCorrect="false"
                                         onChange={e => {
@@ -146,7 +153,6 @@ const AccountInfo = () => {
                                     <input
                                         type="password"
                                         placeholder="Password"
-                                        value={password}
                                         autoCapitalize="none"
                                         autoCorrect="false"
                                         onChange={e => {
@@ -161,7 +167,6 @@ const AccountInfo = () => {
                                     <input
                                         type="password"
                                         placeholder="Confirm Password"
-                                        value={confirmPassword}
                                         autoCapitalize="none"
                                         autoCorrect="false"
                                         onChange={e => {
@@ -188,9 +193,8 @@ const AccountInfo = () => {
                                 <div className={"ui left icon input"}>
                                     <i className={"user icon"}/>
                                     <input
-                                        type="password"
+                                        type="text"
                                         placeholder="New Email"
-                                        value={email}
                                         autoCapitalize="none"
                                         autoCorrect="false"
                                         onChange={e => {

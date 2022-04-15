@@ -44,7 +44,7 @@ module.exports = {
             }
             case 'User': {
                 return {
-                    email: req.email
+                    email: req.user.email
                 }
             }
             case 'Inventory':
