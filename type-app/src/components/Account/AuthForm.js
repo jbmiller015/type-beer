@@ -8,7 +8,7 @@ const AuthForm = ({setToken}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [betaKey, setBetaKey] = useState('');
+    const [accessKey, setAccessKey] = useState('');
     const [signup, setSignup] = useState(false);
     const [path, setPath] = useState('login');
     const [error, setError] = useState({});
@@ -20,7 +20,7 @@ const AuthForm = ({setToken}) => {
         setEmail('')
         setPassword('')
         setConfirmPassword('')
-        setBetaKey('')
+        setAccessKey('')
     }, [signup])
 
 
@@ -41,7 +41,7 @@ const AuthForm = ({setToken}) => {
             return true
         }
 
-        if (signup && betaKey.length === 0) {
+        if (signup && accessKey.length === 0) {
             setError({status: 'Missing Field', statusText: 'Please provide access key'})
             return true
         }
@@ -54,7 +54,7 @@ const AuthForm = ({setToken}) => {
         const submitError = validate()
 
         if (!submitError) {
-            await typeApi.post(`/${path}`, {email, password, betaKey})
+            await typeApi.post(`/${path}`, {email, password, accessKey})
                 .then(res => {
                     setToken(res.data.token);
                 })
@@ -136,13 +136,13 @@ const AuthForm = ({setToken}) => {
                             <div className={"ui left icon input"}>
                                 <i className={"beer icon"}/>
                                 <input
-                                    type="password"
+                                    type="string"
                                     placeholder="Beta Access Key"
-                                    value={betaKey}
+                                    value={accessKey}
                                     autoCapitalize="none"
                                     autoCorrect="false"
                                     onChange={e => {
-                                        setBetaKey(e.target.value)
+                                        setAccessKey(e.target.value)
                                     }}
                                 />
                             </div>

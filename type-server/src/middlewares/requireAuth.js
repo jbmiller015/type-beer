@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const jwtString = process.env.JWT_AUTH;
 
-//TODO Investigate User ids change between sessions
 module.exports = (req, res, next) => {
     const {authorization} = req.headers;
 

@@ -25,6 +25,8 @@ router.route('/:base').get(generic_controller.generic_get)
 //Sub-base routes or specific base routes
 router.route('/user/email').put(user_controller.user_email_put)
 router.route('/user/password').put(user_controller.user_password_put)
+router.route('/user/admin').post(user_controller.user_admin_post)
+router.route('/user/admin').get(user_controller.user_admin_get)
 router.route('/process/active').get(process_controller.process_active_get)
 router.route('/beer/:sub').delete(contents_controller.contents_sub_delete)
 router.route('/tank/:sub').delete(container_controller.container_sub_delete)
@@ -36,6 +38,8 @@ router.route('/:base/:sub').get(generic_controller.generic_sub_get)
 //Specific sub-base routes
 router.route('/:base/:sub/:ref').put(generic_controller.generic_sub_ref_put)
     .delete(generic_controller.generic_sub_ref_delete);
+router.route('/user/admin/access').get(user_controller.user_admin_access_key_get)
+router.route('/user/admin/reset').put(user_controller.user_admin_reset_password_put)
 
 module.exports = router;
 

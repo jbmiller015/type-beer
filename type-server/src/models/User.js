@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-//TODO: Use person-outline as user icon.
 const userSchema = new mongoose.Schema({
     email: {
         type: String,

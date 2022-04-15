@@ -8,15 +8,21 @@ const jwtString = process.env.JWT_AUTH;
 const router = express.Router();
 
 router.route('/signup').post(async (req, res) => {
-    const {email, password} = req.body;
-    try {
-        const user = new User({email, password});
-        await user.save();
+    const {email, password, accessKey} = req.body;
+    if (accessKey) {
+        try {
+            const Key = mongoose.model('AccessKey')
+            Key.findOneAndDelete({accessKey})
+            const user = new User({email, password});
+            await user.save();
 
-        const token = jwt.sign({userId: user._id}, jwtString);
-        res.send({token});
-    } catch (e) {
-        res.status(422).send(e.message);
+            const token = jwt.sign({userId: user._id}, jwtString);
+            res.send({token});
+        } catch (e) {
+            res.status(422).send(e.message);
+        }
+    } else {
+        res.status(422).send('Beta Key Required. Contact jbmiller015@gmail.com for beta key.');
     }
 });
 

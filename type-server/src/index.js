@@ -4,6 +4,8 @@ require('./models/Beer');
 require('./models/Brewery');
 require('./models/Tank');
 require('./models/Process');
+require('./models/AccessKey');
+require('./models/Admins');
 
 const express = require('express');
 const app = express();
