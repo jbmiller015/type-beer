@@ -1,83 +1,86 @@
-import React, {Component} from "react";
+import React, {useCallback, useEffect, useState} from 'react';
 import EditTank from "./EditTank";
-import TankComponent from "./TankContent";
 import TankContent from "./TankContent";
 import BeerContent from "./BeerContent";
 import EditBeer from "./EditBeer";
+import useComponentVisible from "../Hooks/useComponentVisible";
 
-class Modal extends Component {
+const Modal = (props) => {
 
-    constructor(props) {
-        super(props);
+    const [edit, setEdit] = useState(false)
+    const [verify, setVerify] = useState(false)
+    const [data, setData] = useState()
+    const [editData, setEditData] = useState({})
 
-        this.state = {
-            edit: false,
-            verify: false,
-            data: this.props.data,
-            editData: {}
+    const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(true);
+
+
+    const escFunction = useCallback((event) => {
+
+        if (event.key === "Escape") {
+            onClose()
         }
-    }
+    }, []);
 
-    componentWillUnmount() {
-        this.setState({data: null, editData: null})
-    }
+    useEffect(() => {
+        if (props.data !== null) {
+            setData(props.data)
+            setIsComponentVisible(true)
+        }
+    }, [props.data])
 
-    onClose = event => {
-        this.props.onClose && this.props.onClose(event);
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, []);
+
+    const onClose = event => {
+        props.onClose(event);
     };
 
-    handleEditChange = e => {
+    const handleEditChange = e => {
         let {name, value, checked} = e.target;
         if (name === "fill") {
             value = checked
         }
-        this.setState(prevState => ({
-            editData: {
-                ...prevState.editData,
-                [name]: value
-            }
-        }))
-    };
-
-    setEditContents = content => {
-        this.setState(prevState => ({
-            editData: {
-                ...prevState.editData,
-                contents: content._id
-            }
-        }));
+        setEditData({...editData, [name]: value});
     };
 
 
-    buttons = () => {
-        if (this.state.edit) {
+    const buttons = () => {
+        if (edit) {
             return (
                 <div className="actions">
-                    <button className="ui grey button" onClick={() => this.setState({edit: false, editData: null})}>
+                    <button className="ui grey button" onClick={() => {
+                        setEditData(null)
+                        setEdit(false)
+                    }}>
                         Cancel
                     </button>
                     <button className="ui right floated green button"
                             onClick={async (e) => {
-                                this.props.tankModal ? await this.props.editTank(this.props.data.tankData._id, this.state.editData) : await this.props.editBeer(this.props.data._id, this.state.editData);
-                                this.setState({edit: false});
-                                this.onClose(e);
+                                props.tankModal ? await props.editTank(props.data.tankData._id, editData) : await props.editBeer(props.data._id, editData);
+                                setEdit(false)
+                                onClose(e);
                             }}>
                         Submit
                     </button>
                 </div>
             )
-        } else if (this.state.verify) {
+        } else if (verify) {
             return (
                 <div className="actions"><h4>Are You Sure?</h4>
                     <button className="ui red button" onClick={async (e) => {
-                        this.props.tankModal ? await this.props.deleteTank(this.props.data.tankData._id) : await this.props.deleteBeer(this.props.data._id);
-                        this.setState({verify: false})
-                        this.onClose(e);
+                        props.tankModal ? await props.deleteTank(props.data.tankData._id) : await props.deleteBeer(props.data._id);
+                        setVerify(false)
+                        onClose(e);
                     }}>
                         Delete
                     </button>
                     <button className="ui grey button" onClick={(e) => {
-                        this.setState({verify: false})
+                        setVerify(false)
                     }}>
                         Cancel
                     </button>
@@ -86,60 +89,48 @@ class Modal extends Component {
         } else {
             return (
                 <div className="actions">
-                    <button className="ui grey button" onClick={this.onClose}>
+                    <button className="ui grey button" onClick={onClose}>
                         Close
                     </button>
                     <button className="ui grey button"
-                            onClick={() => this.setState({edit: true, editData: this.state.data})}>
+                            onClick={() => {
+                                setEditData(data)
+                                setEdit(true)
+                            }}>
                         Edit
                     </button>
                     <button className="ui right floated red button" onClick={() =>
-                        this.setState({verify: true})}>
+                        setVerify(true)}>
                         Delete
                     </button>
                 </div>
             )
         }
     }
-    content = () => {
-        return this.props.tankModal ?
-            <TankContent data={this.props.data} getBeerById={async (beerId) => await this.props.getBeerById(beerId)}/> :
-            <BeerContent data={this.props.data}/>;
+    const content = () => {
+        return props.tankModal ?
+            <TankContent data={props.data} getBeerById={async (beerId) => await props.getBeerById(beerId)}/> :
+            <BeerContent data={props.data}/>;
     };
 
-    editContent = () => {
+    const editContent = () => {
         return (<div className="content">
-                {this.props.tankModal ?
-                    <EditTank passed={this.props.data} handleChange={this.handleEditChange}
-                              setConents={this.setEditContents}/> :
-                    <EditBeer passed={this.props.data} handleChange={this.handleEditChange}/>}
+                {props.tankModal ?
+                    <EditTank passed={props.data} handleChange={handleEditChange}/> :
+                    <EditBeer passed={props.data} handleChange={handleEditChange}/>}
             </div>
         )
     };
 
-    modalStyle = () => {
+    const modalStyle = () => {
         return window.innerHeight > 900 ? {height: "auto", width: "30%"} : {height: "65%", width: "95%"}
     }
-
-    render() {
-        if (!this.props.show) {
-            return null;
-        }
-        const {data} = this.props;
-
-        return (
-            <div style={this.modalStyle()}
-                 className="modal"
-                 id="modal">
-                <h2>{data.tankData ? data.tankData.name : data.name}</h2>
-                {this.state.edit ?
-                    this.editContent()
-                    :
-                    this.content()}
-                {this.buttons()}
-            </div>
-        );
-    }
+    return (props.show && data && isComponentVisible ?
+        <div style={modalStyle()} className="modal" id="modal" ref={ref}>
+            <h2>{data.tankData ? data.tankData.name : data.name} < /h2>
+            {edit ? editContent() : content()}
+            {buttons()}
+        </div> : null);
 
 
 }

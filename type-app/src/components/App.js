@@ -4,16 +4,18 @@ import BrewFloor from "./BrewFloor/BrewFloor";
 import CreateTank from "./BrewFloor/CreateTank";
 import CreateBeer from "./Beer/CreateBeer";
 import AuthForm from "./Account/AuthForm";
-import useToken from "../hooks/useToken";
+import useToken from "./Hooks/useToken";
 import CreateProcess from "./Process/CreateProcess";
 import Process from "./Process/Processes";
 import Fridge from "./Beer/Fridge";
 import Calendar from "./Calendar/Calendar";
 import AccountInfo from "./Account/AccountInfo";
+import useWindowDimensions from "./Hooks/useWindowDimensions";
 
 const App = () => {
 
     const {token, setToken} = useToken();
+    useWindowDimensions();
 
     if (!localStorage.getItem('token')) {
         return <AuthForm setToken={setToken}/>

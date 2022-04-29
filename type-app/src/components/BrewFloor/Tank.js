@@ -4,6 +4,7 @@ import bTankOverlay from '../../media/britetankwwindow.png'
 import kTankOverlay from '../../media/kettletankwwindow.png'
 import barrelOverlay from '../../media/barreltankwwindow.png'
 import moment from "moment";
+import {formatDate} from "../Process/ProcessFunctions";
 
 //const moment = moment.utcOffset(-360)
 
@@ -11,18 +12,43 @@ const Tank = (props) => {
 
     const [className, setClassName] = useState("card");
     const [contents, setContents] = useState(null);
+    const [color, setColor] = useState("");
+    const [data, setData] = useState(props.process);
+
+    const [percent, setPercent] = useState("")
     const {currPhase, currPhaseDate, fill, name, tankType} = props.tankData;
     const process = props.process;
     const {getContents} = props;
 
-
     useEffect(async () => {
         if (process) {
-            moment().diff(process.endDate) > 0 ? setClassName("red card") : setClassName("green card")
             const contents = await getContents(process.contents)
             setContents(contents);
+            let startDate = formatDate(process.startDate)
+            let endDate = formatDate(process.endDate)
+            if (process.complete) {
+                setColor("green");
+                setPercent(100);
+            } else {
+                if (moment(startDate).startOf('date').isAfter(moment().startOf('date'))) {
+                    setColor("");
+                    setPercent(0);
+                } else if (moment().isBetween(moment(startDate).startOf('date'), moment(endDate).endOf('date'))) {
+                    let total = (moment(endDate).diff(startDate, "days"));
+                    let remaining = moment(endDate).endOf('date').diff(moment(), "days");
+                    let perc = (100 - ((remaining / total) * 100));
+                    setColor("yellow");
+                    if (isNaN(perc))
+                        setPercent(95)
+                    else
+                        setPercent(perc);
+                } else {
+                    setColor("red");
+                    setPercent(100);
+                }
+            }
         }
-    }, [])
+    }, [process])
 
 
     const imageWrapper = {
@@ -111,6 +137,10 @@ const Tank = (props) => {
                             <i className="setting icon"/>
                             Details
                         </button> : null}
+                    {props.process ? <div className={`ui ${color} bottom attached progress`} data-percent="100">
+                        <div className="bar" style={{width: `${percent}%`}}>
+                        </div>
+                    </div> : null}
                 </div>
             </div>
         </div>

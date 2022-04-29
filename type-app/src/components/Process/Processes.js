@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import typeApi from '../../api/type-server'
 import Dropdown from "../Fields/Dropdown";
 import PhaseField from "./PhaseField";
@@ -10,6 +10,7 @@ import Message from "../Messages/Message";
 import Process from "./Process";
 import Shrugger from "../Messages/Shrugger";
 import ProcessFilterButtons from "./ProcessFilterButtons";
+import useWindowDimensions from "../Hooks/useWindowDimensions";
 
 
 class Processes extends React.Component {
@@ -49,9 +50,12 @@ class Processes extends React.Component {
             sorted: null,
             showModal: false,
             newDateData: null,
-            dateType: null
+            dateType: null,
+            width: window.innerWidth,
+            height: window.innerHeight
         }
     }
+
 
     async componentDidMount() {
         const procResults = await typeApi.get('/process').then(response => {
@@ -488,7 +492,7 @@ class Processes extends React.Component {
                         this.setVisible(view, color)
                     }}/>
                     <div style={{
-                        maxWidth: "50%",
+                        maxWidth: this.state.width > 415 ? "50%" : "90%",
                         left: "0",
                         right: "0",
                         marginLeft: "auto",

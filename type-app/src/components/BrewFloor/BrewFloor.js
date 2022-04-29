@@ -180,13 +180,13 @@ class BrewFloor extends React.Component {
                     {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
                                                        onClose={() => this.setState({infoMessage: null})}/> : null}
 
-                    <Modal onClose={this.showModal}
-                           deleteTank={this.deleteTank}
-                           editTank={this.editTank}
-                           getBeerById={this.getBeerById}
-                           show={this.state.show}
-                           data={modalData}
-                           tankModal={true}/>
+                    {this.state.show ? < Modal onClose={this.showModal}
+                                               deleteTank={this.deleteTank}
+                                               editTank={this.editTank}
+                                               getBeerById={this.getBeerById}
+                                               show={this.state.show}
+                                               data={modalData}
+                                               tankModal={true}/> : null}
 
 
                     <div className={"ui padded equal height centered stackable grid"}>

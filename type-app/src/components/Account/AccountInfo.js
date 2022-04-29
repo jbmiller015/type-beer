@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import logo from "../../media/typeBfull.png";
-import useWindowDimensions from "../../hooks/useWindowDimensions";
+import useWindowDimensions from "../Hooks/useWindowDimensions";
 import typeApi from "../../api/type-server";
 import NavComponent from "../NavComponent";
 import Message from "../Messages/Message";

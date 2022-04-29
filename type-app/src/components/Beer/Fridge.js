@@ -151,7 +151,6 @@ class Fridge extends React.Component {
                     <NavComponent tanks={true} toggleActive={(state) => {
                         this.setState({tanksActive: state})
                     }}/>
-                    <div className="ui horizontal divider"/>
                     {error.length > 0 ? errMessage : null}
                     {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
                                                        onClose={() => this.setState({infoMessage: null})}/> :
@@ -164,15 +163,14 @@ class Fridge extends React.Component {
                                   reset={() => {
                                       this.setState({term: '', sorted: null, error: []})
                                   }}/>
-                    <Modal onClose={this.showModal}
-                           deleteBeer={this.deleteBeer}
-                           editBeer={this.editBeer}
-                           getBeerById={this.getBeerById}
-                           show={this.state.show}
-                           data={this.state.modalData}
-                           tankModal={false}/>
-                    <div className={"ui padded equal height equal width centered stackable grid"}
-                         style={{paddingInline: "5%"}}>
+                    {this.state.show ? <Modal onClose={this.showModal}
+                                              deleteBeer={this.deleteBeer}
+                                              editBeer={this.editBeer}
+                                              getBeerById={this.getBeerById}
+                                              show={this.state.show}
+                                              data={this.state.modalData}
+                                              tankModal={false}/> : null}
+                    <div className={"ui padded equal height equal width centered stackable grid"}>
                         {this.state.error.length < 1 ? this.renderComponents() :
                             <Shrugger message={"Something went wrong.\nCheck the error message before continuing."}/>}
                     </div>

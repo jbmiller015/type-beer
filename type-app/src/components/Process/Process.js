@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import moment from "moment";
 import PhaseField from "./PhaseField";
 import Phase from "./Phase";
 import ProcessDetail from "./ProcessDetail";
 import {formatDate} from "./ProcessFunctions"
+import useComponentVisible from "../Hooks/useComponentVisible";
+import useWindowDimensions from "../Hooks/useWindowDimensions";
 
 const Process = (props) => {
     const {
@@ -20,6 +22,22 @@ const Process = (props) => {
     const [showModal, setShowModal] = useState(false)
     const [data, setData] = useState(processData);
     const [newData, setNewData] = useState({});
+    const {ref, isComponentVisible} = useComponentVisible(true);
+
+
+    const escFunction = useCallback((event) => {
+        if (event.key === "Escape") {
+            setActive(false)
+        }
+    }, []);
+
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, []);
 
     useEffect(() => {
         console.log("in")
@@ -139,7 +157,7 @@ const Process = (props) => {
                     </div>
                 </div>
             </a> :
-            <div className={"item"}>
+            <div className={"item"} ref={ref}>
                 {chooseEditTypeModal()}
                 <div className="content">
                     <div className="ui medium header" style={{color: "goldenrod"}}>{data.name}</div>

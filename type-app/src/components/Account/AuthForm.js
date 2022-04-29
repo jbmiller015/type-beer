@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import typeApi from "../../api/type-server";
 import logo from "../../media/typeBfull.png"
-import useWindowDimensions from "../../hooks/useWindowDimensions";
+import useWindowDimensions from "../Hooks/useWindowDimensions";
 
 
 const AuthForm = ({setToken}) => {

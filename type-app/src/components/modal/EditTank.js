@@ -3,10 +3,6 @@ import Dropdown from "../Fields/Dropdown";
 
 class EditTank extends React.Component {
 
-    setContents = content => {
-        this.props.setConents(content)
-    };
-
     render() {
         return (
             <div>

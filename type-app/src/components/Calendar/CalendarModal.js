@@ -1,10 +1,24 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import moment from "moment";
 
 const CalendarModal = (props) => {
     const {showModal, closeModal} = props;
     const {process, tank, date, beer} = props.modalData;
     const [activePhase, setActivePhase] = useState(null);
+
+    const escFunction = useCallback((event) => {
+        if (event.key === "Escape") {
+            closeModal()
+        }
+    }, []);
+
+    useEffect(() => {
+        document.addEventListener("keydown", escFunction, false);
+
+        return () => {
+            document.removeEventListener("keydown", escFunction, false);
+        };
+    }, []);
 
 
     const formatDate = (date) => {
