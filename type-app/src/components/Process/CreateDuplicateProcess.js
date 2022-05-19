@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import moment from "moment";
 import Dropdown from "../Fields/Dropdown";
 import {mapDates, setPhaseTanks} from "./ProcessFunctions";
 
@@ -60,10 +59,19 @@ const CreateDuplicateProcess = (props) => {
         setPhases([...tempPhases]);
     }
 
+
     const submitButton = () => {
         return (dateRanges.length > 0 && startTankSet) || (dateRanges.length < 1 && startTankSet) ?
-            <button className="ui button" type="Submit"
-                    onClick={() => onSubmit(phases, endDate)}>Submit</button> : null
+            <div className="ui basic center aligned segment" style={{marginBottom: "3%"}}>
+                <button className="ui green button" type="Submit" style={{
+                    left: "0",
+                    right: "0",
+                    marginLeft: "auto",
+                    marginRight: "auto"
+                }}
+                        onClick={() => onSubmit(phases, endDate)}>Submit
+                </button>
+            </div> : null
     }
 
     return (<div>

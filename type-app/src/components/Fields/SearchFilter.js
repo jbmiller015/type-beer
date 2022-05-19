@@ -1,7 +1,7 @@
 import React from 'react';
 
 const SearchFilter = (props) => {
-    const {setSorted, page, setMessage, handleChange, setFilter, term, filterList, reset} = props;
+    const {setSorted, page, setMessage, handleChange, term, reset} = props;
     const menuItems = () => {
         switch (page) {
             case "fridge":

@@ -15,14 +15,14 @@ const https = require('https');
 const db_string = process.env.CLOUD_STRING;
 const authRoutes = require('./routes/authRoutes');
 const routeHandler = require('./routes/routeHandler');
-//const tankRoutes = require('./routes/tankRoutes');
-//const beerRoutes = require('./routes/beerRoutes');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
 //Use for authorized routes
 const requireAuth = require('./middlewares/requireAuth');
 
+
+//app.use(cors({origin: ['https://typebeer.com'], credentials: true}));
 app.use(cors({origin: ['http://localhost:3006'], credentials: true}));
 
 app.use(bodyParser.json({limit: '60mb'}));

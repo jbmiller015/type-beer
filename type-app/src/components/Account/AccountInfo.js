@@ -15,7 +15,7 @@ const AccountInfo = () => {
     const [error, setError] = useState({});
     const [info, setInfo] = useState({})
     const [reset, setReset] = useState(false);
-    const {height, width} = useWindowDimensions();
+    const {width} = useWindowDimensions();
 
     useEffect(async () => {
         const data = await typeApi.get('user').then((res) => {
@@ -112,6 +112,7 @@ const AccountInfo = () => {
                 }
                 <div>
                     <div className="ui horizontal divider"/>
+                    <img className={"ui fluid image"} src={logo} alt={"logo"}/>
                     <h2 className="ui header">
                         Account Settings
                     </h2>

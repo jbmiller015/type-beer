@@ -2,9 +2,7 @@ import axios from 'axios';
 
 
 const instance = axios.create({
-    //paste ngrok url here to connect
-    //baseURL: 'https://ec2-3-132-249-207.us-east-2.compute.amazonaws.com:8080/',
-    baseURL: 'http://localhost:8080/',
+    baseURL: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : 'https://type-beer-349121.uc.r.appspot.com/' ,
     header: {
         'Accept': 'application/json',
         'Content-Type': 'multipart/form-data'

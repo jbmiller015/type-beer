@@ -12,12 +12,16 @@ router.route('/signup').post(async (req, res) => {
     if (accessKey) {
         try {
             const Key = mongoose.model('AccessKey')
-            Key.findOneAndDelete({accessKey})
-            const user = new User({email, password});
-            await user.save();
+            const key = await Key.findOneAndDelete({accessKey});
 
-            const token = jwt.sign({userId: user._id}, jwtString);
-            res.send({token});
+            if (key) {
+                const user = new User({email, password});
+                await user.save();
+                const token = jwt.sign({userId: user._id}, jwtString);
+                res.send({token});
+            } else {
+                throw new Error("Invalid Beta Key. Contact jbmiller015@gmail.com for assistance.")
+            }
         } catch (e) {
             res.status(422).send(e.message);
         }

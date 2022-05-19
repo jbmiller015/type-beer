@@ -6,10 +6,8 @@ import useComponentVisible from "../Hooks/useComponentVisible";
 const Phase = (props) => {
     let {
         index,
-        removePhase,
         handlePhaseChange,
         phaseData,
-        validatePhase,
         tanks
     } = props;
 

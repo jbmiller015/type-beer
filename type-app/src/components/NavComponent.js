@@ -6,14 +6,15 @@ import useWindowDimensions from "./Hooks/useWindowDimensions";
 
 const NavComponent = (props) => {
 
-    const dem = useWindowDimensions();
+
     const {token, setToken} = useToken();
     const history = useHistory();
-
+    const dem = useWindowDimensions();
+    const [mobileView, setMobileView] = useState();
     useEffect(() => {
         setMobileView(dem.width < 415);
-    }, [dem])
-    const [mobileView, setMobileView] = useState();
+    }, [dem]);
+
 
     return (
 

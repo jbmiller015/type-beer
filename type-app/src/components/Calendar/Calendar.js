@@ -4,7 +4,7 @@ import CalendarModal from "./CalendarModal";
 import moment from 'moment'
 import Date from "./Date";
 import typeApi from "../../api/type-server";
-import {formatDate, putProcess} from "../Process/ProcessFunctions";
+import {formatDate} from "../Process/ProcessFunctions";
 
 class Calendar extends React.Component {
 
@@ -31,8 +31,12 @@ class Calendar extends React.Component {
             modalProcessId: null,
             modalTankId: null,
             modalDate: null,
-            modalBeerData: null
+            modalBeerData: null,
+            visible: false,
+            width: window.innerWidth,
+            height: window.innerHeight
         }
+
     }
 
 
@@ -46,6 +50,7 @@ class Calendar extends React.Component {
     }
 
     async componentDidMount() {
+        document.addEventListener("mousedown", this.handleClickOutside);
         const procResults = await typeApi.get('/process').then(response => {
             const procObj = response.data.reduce((a, v, i) => ({
                 ...a,
@@ -92,7 +97,6 @@ class Calendar extends React.Component {
 
     handleProcessChange = async (e, processId, phaseIndex) => {
         let {name, value, checked} = e.target;
-        console.log("name: ", name)
         if (name === "complete") {
             value = checked
         }
@@ -109,7 +113,7 @@ class Calendar extends React.Component {
 
     putProcess = async (processId, process) => {
         await typeApi.put(`/process/${processId}`, process).then((res) => {
-            console.log(res.data)
+
             let newState = {...this.state};
             newState.processes[processId] = res.data;
             newState.showModal = false;
@@ -197,21 +201,24 @@ class Calendar extends React.Component {
     calendarControlButtons = () => {
         return (
             <div className={"ui container"}>
-                <div className="ui borderless fluid three item menu"
+
+                <div className="ui borderless three item menu"
                      style={{borderStyle: "none", boxShadow: "none"}}>
                     <div className="item">
-                        <button className="ui left floated labeled icon button" onClick={() => this.setMonth("prev")}>
+                        <button className={`ui left floated ${this.state.width > 415 ? "labeled" : ""} icon button`}
+                                onClick={() => this.setMonth("prev")}>
                             <i className="left chevron icon"/>
-                            {moment().add(this.state.prevMonth, 'months').format('MMMM')}
+                            {this.state.width > 415 ? moment().add(this.state.prevMonth, 'months').format('MMMM') : null}
                         </button>
                     </div>
                     <div className="item">
                         <h2>{moment().add(this.state.currMonth, 'months').format('MMMM')}</h2>
                     </div>
                     <div className="item">
-                        <button className="ui right floated right labeled icon button"
-                                onClick={() => this.setMonth("next")}>
-                            {moment().add(this.state.nextMonth, 'months').format('MMMM')}
+                        <button
+                            className={`ui right floated right ${this.state.width > 415 ? "labeled" : ""} icon button`}
+                            onClick={() => this.setMonth("next")}>
+                            {this.state.width > 415 ? moment().add(this.state.nextMonth, 'months').format('MMMM') : null}
                             <i className="right chevron icon"/>
                         </button>
                     </div>
@@ -225,18 +232,20 @@ class Calendar extends React.Component {
                 <div className="ui borderless fluid three item menu"
                      style={{borderStyle: "none", boxShadow: "none"}}>
                     <div className="item">
-                        <button className="ui left floated labeled icon button" onClick={() => this.setWeek("prev")}>
+                        <button className={`ui left floated ${this.state.width > 415 ? "labeled" : ""} icon button`}
+                                onClick={() => this.setWeek("prev")}>
                             <i className="left chevron icon"/>
-                            {moment().startOf('week').add(this.state.prevWeek, 'weeks').format('M/DD') + " - " + moment().endOf('week').add(this.state.prevWeek, 'weeks').format('M/DD')}
+                            {this.state.width > 415 ? moment().startOf('week').add(this.state.prevWeek, 'weeks').format('M/DD') + " - " + moment().endOf('week').add(this.state.prevWeek, 'weeks').format('M/DD') : null}
                         </button>
                     </div>
                     <div className="item">
-                        <h2>{moment().startOf('week').add(this.state.currWeek, 'weeks').format('MMMM DD') + " : " + moment().endOf('week').add(this.state.currWeek, 'weeks').format('MMMM DD')}</h2>
+                        <p>{moment().startOf('week').add(this.state.currWeek, 'weeks').format('MMM DD') + " : " + moment().endOf('week').add(this.state.currWeek, 'weeks').format('MMM DD')}</p>
                     </div>
                     <div className="item">
-                        <button className="ui right floated right labeled icon button"
-                                onClick={() => this.setWeek("next")}>
-                            {moment().startOf('week').add(this.state.nextWeek, 'weeks').format('M/DD') + " - " + moment().endOf('week').add(this.state.nextWeek, 'weeks').format('M/DD')}
+                        <button
+                            className={`ui right floated right ${this.state.width > 415 ? "labeled" : ""} icon button`}
+                            onClick={() => this.setWeek("next")}>
+                            {this.state.width > 415 ? moment().startOf('week').add(this.state.nextWeek, 'weeks').format('M/DD') + " - " + moment().endOf('week').add(this.state.nextWeek, 'weeks').format('M/DD') : null}
                             <i className="right chevron icon"/>
                         </button>
                     </div>
@@ -330,67 +339,80 @@ class Calendar extends React.Component {
         }
     }
 
+
     sidebar = () => {
         return (
-            <div className="ui side attached vertical menu" style={{margin: "1em"}}>
-                <div className={"item"}>
-                    <div className={"ui buttons"}>
-                        <div className={`ui ${this.state.monthViewActive ? "" : "active yellow"}  button`}
-                             onClick={() => {
-                                 this.setState({monthViewActive: false})
-                             }} style={{minWidth: "80px", maxWidth: "80px"}}>
-                            Week
-                        </div>
-                        <div className="or"/>
-                        <div className={`ui ${this.state.monthViewActive ? "active yellow" : ""} button`}
-                             onClick={() => {
-                                 this.setState({monthViewActive: true})
-                             }} style={{minWidth: "80px", maxWidth: "80px"}}>
-                            Month
+            <div className={`ui ${this.state.visible ? "visible" : ""} sidebar`}>
+                <div className="ui side attached vertical menu" style={{margin: "1em", paddingTop: "10%"}}>
+                    <div className={"item"} style={{paddingInline: "5px"}}>
+                        <div className={"ui right aligned basic segment"} style={{padding: "0"}}>
+                            <button className={"ui icon button"} onClick={() => {
+                                this.setState({visible: !this.state.visible})
+                            }}>
+                                <i className={"ui bars icon"}/>
+                            </button>
                         </div>
                     </div>
-                </div>
-
-                <div className={"item"}>
-                    <div className={"ui buttons"}>
-                        <div className={`ui ${this.state.processViewActive ? "active yellow" : ""} button`}
-                             onClick={() => {
-                                 this.setState({processViewActive: true})
-                             }} style={{minWidth: "80px", maxWidth: "80px", paddingInline: "1px"}}>
-                            Process
-                        </div>
-                        <div className="or"/>
-                        <div className={`ui ${this.state.processViewActive ? "" : "active yellow"} button`}
-                             onClick={() => {
-                                 this.setState({processViewActive: false})
-                             }} style={{minWidth: "80px", maxWidth: "80px"}}>
-                            Tank
-                        </div>
-                    </div>
-                </div>
-                <div className={"item"}>
-                    <div className={"ui basic segment"}>
-                        <div className={"ui header"}>Today's Tasks</div>
-                        <div className={"content"}
-                             style={{maxHeight: "225px", overflow: "auto", minHeight: "200px"}}>
-                            {this.taskComponents()}
-                        </div>
-                    </div>
-                </div>
-                <div className={"item"}>
-                    <div className={"ui basic segment"}>
-                        <div className={"ui header"}>Filter Tanks</div>
-                        <div className={"content"} style={{maxHeight: "250px", overflow: "auto", minHeight: "200px"}}>
-                            <div className={"grouped fields"}>
-                                {this.tankFilterComponents()}
+                    <div className={"item"}>
+                        <div className={"ui buttons"}>
+                            <div className={`ui ${this.state.monthViewActive ? "" : "active yellow"}  button`}
+                                 onClick={() => {
+                                     this.setState({monthViewActive: false})
+                                 }} style={{minWidth: "80px", maxWidth: "80px"}}>
+                                Week
+                            </div>
+                            <div className="or"/>
+                            <div className={`ui ${this.state.monthViewActive ? "active yellow" : ""} button`}
+                                 onClick={() => {
+                                     this.setState({monthViewActive: true})
+                                 }} style={{minWidth: "80px", maxWidth: "80px"}}>
+                                Month
                             </div>
                         </div>
-                        <div className={"ui mini basic blue button"} onClick={() => {
-                            let ele = document.getElementsByName("tankFilter");
-                            for (let i = 0; i < ele.length; i++)
-                                ele[i].checked = false;
-                            this.setState({renderedProcesses: {}, filteredProcesses: {}})
-                        }} style={{padding: "2px"}}>Reset
+                    </div>
+
+                    <div className={"item"}>
+                        <div className={"ui buttons"}>
+                            <div className={`ui ${this.state.processViewActive ? "active yellow" : ""} button`}
+                                 onClick={() => {
+                                     this.setState({processViewActive: true})
+                                 }} style={{minWidth: "80px", maxWidth: "80px", paddingInline: "1px"}}>
+                                Process
+                            </div>
+                            <div className="or"/>
+                            <div className={`ui ${this.state.processViewActive ? "" : "active yellow"} button`}
+                                 onClick={() => {
+                                     this.setState({processViewActive: false})
+                                 }} style={{minWidth: "80px", maxWidth: "80px"}}>
+                                Tank
+                            </div>
+                        </div>
+                    </div>
+                    <div className={"item"}>
+                        <div className={"ui basic segment"}>
+                            <div className={"ui header"}>Today's Tasks</div>
+                            <div className={"content"}
+                                 style={{maxHeight: "225px", overflow: "auto", minHeight: "200px"}}>
+                                {this.taskComponents()}
+                            </div>
+                        </div>
+                    </div>
+                    <div className={"item"}>
+                        <div className={"ui basic segment"}>
+                            <div className={"ui header"}>Filter Tanks</div>
+                            <div className={"content"}
+                                 style={{maxHeight: "250px", overflow: "auto", minHeight: "200px"}}>
+                                <div className={"grouped fields"}>
+                                    {this.tankFilterComponents()}
+                                </div>
+                            </div>
+                            <div className={"ui mini basic blue button"} onClick={() => {
+                                let ele = document.getElementsByName("tankFilter");
+                                for (let i = 0; i < ele.length; i++)
+                                    ele[i].checked = false;
+                                this.setState({renderedProcesses: {}, filteredProcesses: {}})
+                            }} style={{padding: "2px"}}>Reset
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -454,16 +476,21 @@ class Calendar extends React.Component {
         });
 
         let daysinmonth = rows.map((d, i) => {
-            return <div key={i} className={"seven column row"} style={{minHeight: "133px"}}>{d}</div>
+            return <div key={i} className={"seven column row"}
+                        style={{
+                            minHeight: this.state.width > 415 ? "133px" : null,
+                            maxHeight: this.state.width > 415 ? null : "40%"
+                        }}>{d}</div>
         });
         daysinmonth.shift();
 
         return (
             <div className={"ui side attached segment"} style={{padding: "0", borderStyle: "none"}}>
                 {this.calendarControlButtons()}
-                <div className={"ui stackable celled seven column grid fluid container"}
-                     style={{margin: "0", width: "100%"}}>
-                    <div className={"seven column row"}>{this.weekdayShortName()}</div>
+                <div className={"ui celled seven column grid fluid container"}
+                     style={{margin: "0", width: "100%", left: "-5%"}}>
+                    <div className={"seven column row"}
+                         style={{maxHeight: this.state.width > 415 ? null : "20%"}}>{this.weekdayShortName()}</div>
                     {daysinmonth}
                 </div>
             </div>
@@ -487,7 +514,7 @@ class Calendar extends React.Component {
         return (
             <div className={"ui side attached segment"} style={{padding: "0", borderStyle: "none"}}>
                 {this.weekControlButtons()}
-                <div className={"ui stackable celled seven column grid fluid container"}
+                <div className={"ui celled seven column grid fluid container"}
                      style={{margin: "0", width: "100%"}}>
                     <div className={"seven column row"}>{this.weekdayShortName()}</div>
                     <div className={"seven column row"} style={{minHeight: "133px"}}>{week}</div>
@@ -498,28 +525,42 @@ class Calendar extends React.Component {
 
 
     render() {
-        console.log("render")
+        return (
+            <div>
+                <NavComponent tanks={false}/>
+                <div className="ui horizontal divider"/>
+                <div style={{
+                    paddingLeft: "1%",
+                    marginRight: "-1%",
+                    overflow: "visible",
+                    zIndex: 1
+                }}>
+                    {!this.state.visible ? <button className={"ui icon button"} onClick={() => {
+                        this.setState({visible: !this.state.visible})
+                    }}>
+                        <i className={"ui bars icon"}/>
+                    </button> : <div className={"ui horizontal divider"}
+                                     style={{marginBottom: this.state.width > 415 ? "2.65%" : "9%"}}/>}
+                    {this.sidebar()}
+                </div>
+                <div className="container" style={{display: "flex", flexDirection: "row"}}>
 
-        return (<div>
-            <NavComponent tanks={false}/>
-            <div className="ui horizontal divider"/>
-            <div className="container" style={{display: "flex", flexDirection: "row"}}>
-                {this.sidebar()}
-                <CalendarModal
-                    showModal={this.state.showModal}
-                    closeModal={() => {
-                        this.closeModal()
-                    }}
-                    modalData={{
-                        process: this.state.processes[this.state.modalProcessId],
-                        tank: this.state.tanks[this.state.modalTankId],
-                        date: this.state.modalDate,
-                        beer: this.state.modalBeerData
-                    }}
-                />
-                {this.state.monthViewActive ? this.calendarView() : this.weekView()}
-            </div>
-        </div>)
+                    <CalendarModal
+                        showModal={this.state.showModal}
+                        closeModal={() => {
+                            this.closeModal()
+                        }}
+                        modalData={{
+                            process: this.state.processes[this.state.modalProcessId],
+                            tank: this.state.tanks[this.state.modalTankId],
+                            date: this.state.modalDate,
+                            beer: this.state.modalBeerData
+                        }}
+                    />
+
+                    {this.state.monthViewActive ? this.calendarView() : this.weekView()}
+                </div>
+            </div>)
     }
 
 

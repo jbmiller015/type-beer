@@ -1,6 +1,5 @@
 import React from "react";
 import typeApi from "../../api/type-server";
-import Tank from "../BrewFloor/Tank";
 import Message from "../Messages/Message";
 import NavComponent from "../NavComponent";
 import Beer from "./Beer";

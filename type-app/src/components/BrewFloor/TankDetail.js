@@ -9,15 +9,6 @@ const TankDetail = (props) => {
 
     const {currPhase, currPhaseDate, contents, fill, _id, tankName} = props.tankData;
 
-    /*const dateFormat = (date) => {
-        let datetime = new Date(date);
-        let result = datetime.getMonth();
-        result += "/" + datetime.getDay();
-        result += "/" + datetime.getFullYear();
-        return result;
-    };*/
-
-
 
     const remainingTime = (phaseDate) => {
         const nextMoment = moment(phaseDate);
@@ -28,7 +19,7 @@ const TankDetail = (props) => {
         <div>
             <div className="item">
                 <div className="ui small image">
-                    <img src={contents.image}/>
+                    <img src={contents.image} alt={"contents"}/>
                 </div>
                 <div className="content">
                     <div className="header">{tankName}</div>

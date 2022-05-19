@@ -4,6 +4,7 @@ import TankContent from "./TankContent";
 import BeerContent from "./BeerContent";
 import EditBeer from "./EditBeer";
 import useComponentVisible from "../Hooks/useComponentVisible";
+import useWindowDimensions from "../Hooks/useWindowDimensions";
 
 const Modal = (props) => {
 
@@ -13,7 +14,11 @@ const Modal = (props) => {
     const [editData, setEditData] = useState({})
 
     const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(true);
-
+    const dem = useWindowDimensions();
+    const [mobileView, setMobileView] = useState();
+    useEffect(() => {
+        setMobileView(dem.width < 415);
+    }, [dem]);
 
     const escFunction = useCallback((event) => {
 
@@ -37,6 +42,7 @@ const Modal = (props) => {
     }, []);
 
     const onClose = event => {
+        setData(null)
         props.onClose(event);
     };
 
@@ -123,7 +129,13 @@ const Modal = (props) => {
     };
 
     const modalStyle = () => {
-        return window.innerHeight > 900 ? {height: "auto", width: "30%"} : {height: "65%", width: "95%"}
+        if (props.tankModal && mobileView) {
+            return {height: "65%", width: "90%", scrollbars: "none"}
+        }
+        if (!props.tankModal && mobileView) {
+            return {maxHeight: "51%", width: "90%", scrollbars: "none"}
+        } else
+            return {height: "auto", width: "30%"}
     }
     return (props.show && data && isComponentVisible ?
         <div style={modalStyle()} className="modal" id="modal" ref={ref}>

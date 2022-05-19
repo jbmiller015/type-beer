@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import moment from "moment";
 import {formatDate} from "../Process/ProcessFunctions";
 
 const TankContent = ({data, getBeerById}) => {

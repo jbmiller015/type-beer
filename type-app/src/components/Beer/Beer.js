@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import beerOverlay from '../../media/beerwwindow.png';
 
 const Beer = (props) => {
-    const {name, style, desc} = props.beerData;
+    const {name, style} = props.beerData;
 
     const [focus, setFocus] = useState(false);
 
@@ -14,7 +14,6 @@ const Beer = (props) => {
 
     useEffect(() => {
         document.addEventListener("keydown", escFunction, false);
-
         return () => {
             document.removeEventListener("keydown", escFunction, false);
         };

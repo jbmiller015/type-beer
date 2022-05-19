@@ -99,7 +99,6 @@ class CreateProcess extends React.Component {
             phases[index] = value;
             //{phaseName, startDate, endDate, startTank, endTank}
             phases.forEach((phase) => {
-                //TODO:FIX - transfer phases showing up as {Transfer:""}
                 if (phase.phaseName !== "Transfer") {
                     phase.startTank = value.startTank
                     phase.endTank = value.startTank
@@ -230,8 +229,6 @@ class CreateProcess extends React.Component {
 
     }
 
-
-    //TODO:Add estimated end date field
 
     render() {
         return (

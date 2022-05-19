@@ -17,13 +17,22 @@ const CreateBasicProcess = (props) => {
         );
     }
 
+
     useEffect(() => {
         console.log("phase:", phase)
     }, [phase])
     const submitButton = () => {
         return (phase.endDate && phase.startTank && phase.endTank) ?
-            <button className="ui button" type="Submit"
-                    onClick={() => onSubmit([phase], phase.endDate)}>Submit</button> : null
+            <div className="ui basic center aligned segment" style={{marginBottom: "3%"}}>
+                <button className="ui green button" type="Submit" style={{
+                    left: "0",
+                    right: "0",
+                    marginLeft: "auto",
+                    marginRight: "auto"
+                }}
+                        onClick={() => onSubmit([phase], phase.endDate)}>Submit
+                </button>
+            </div> : null
     }
 
     const defaultPhase = () => {

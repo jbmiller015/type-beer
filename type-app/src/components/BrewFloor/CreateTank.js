@@ -1,7 +1,5 @@
 import React from 'react';
 import typeApi from '../../api/type-server'
-import Dropdown from "../Fields/Dropdown";
-import PhaseField from "../Process/PhaseField";
 import NavComponent from "../NavComponent";
 import Tank from "./Tank";
 

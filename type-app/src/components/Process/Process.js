@@ -1,11 +1,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import moment from "moment";
-import PhaseField from "./PhaseField";
 import Phase from "./Phase";
 import ProcessDetail from "./ProcessDetail";
 import {formatDate} from "./ProcessFunctions"
 import useComponentVisible from "../Hooks/useComponentVisible";
-import useWindowDimensions from "../Hooks/useWindowDimensions";
 
 const Process = (props) => {
     const {
@@ -22,7 +19,7 @@ const Process = (props) => {
     const [showModal, setShowModal] = useState(false)
     const [data, setData] = useState(processData);
     const [newData, setNewData] = useState({});
-    const {ref, isComponentVisible} = useComponentVisible(true);
+    const {ref} = useComponentVisible(true);
 
 
     const escFunction = useCallback((event) => {

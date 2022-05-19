@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 
 
-//TODO: Use people-outline from vector icons as customer icon
-
 const CustomerSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,

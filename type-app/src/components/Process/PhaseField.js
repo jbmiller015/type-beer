@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import Dropdown from "../Fields/Dropdown";
 import moment from "moment";
 
 const PhaseField = (props) => {
@@ -9,7 +8,6 @@ const PhaseField = (props) => {
         handleFieldChange,
         phaseData,
         validatePhase,
-        previousPhase
     } = props;
 
 
@@ -87,41 +85,6 @@ const PhaseField = (props) => {
                 </div>
             </div>
     };
-
-    const endTankField = () => {
-        return (index > 0 && transfer ? <div>
-            <div className={fieldName} id={"startTank"}>
-                <Dropdown label="Select Start Tank" onSelectedChange={setStartTank} url="tank"
-                          target={'startTank'} defaultTerm={startTank ? startTank.name : ""} startDate={startDate}
-                          endDate={endDate}/>
-            </div>
-            <div className={fieldName} id={"endTank"}>
-                <Dropdown label="Select End Tank" defaultTerm={endTank ? endTank.name : ""}
-                          onSelectedChange={setEndTank} url="tank"
-                          target={'endTank'} startDate={startDate}
-                          endDate={endDate}/>
-            </div>
-        </div> : null)
-    };
-
-    //TODO: Get phases w/out tanks first, then set tanks as needed (see create duplicate process flow)
-    const startTankField = () => {
-        return previousPhase === null && endDate ? <div>
-            <div className={fieldName} id={"endTank"}>
-                <div className={"field"}>
-                    <Dropdown label="Select Start Tank" defaultTerm={""}
-                              onSelectedChange={(tank) => {
-                                  setStartTank(tank._id, 0)
-                              }}
-                              url="tank"
-                              index={0}
-                              startDate={startDate}
-                              endDate={endDate}
-                              target={'startTank'}/> : null}
-                </div>
-            </div>
-        </div> : null
-    }
 
     function submitPhase() {
         const phase = {phaseName, startDate, endDate, startTank, endTank}

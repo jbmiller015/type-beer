@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import typeApi from '../../api/type-server'
-import Dropdown from "../Fields/Dropdown";
 import PhaseField from "./PhaseField";
 import NavComponent from "../NavComponent";
 import moment from "moment";
@@ -10,7 +9,6 @@ import Message from "../Messages/Message";
 import Process from "./Process";
 import Shrugger from "../Messages/Shrugger";
 import ProcessFilterButtons from "./ProcessFilterButtons";
-import useWindowDimensions from "../Hooks/useWindowDimensions";
 
 
 class Processes extends React.Component {
@@ -242,25 +240,36 @@ class Processes extends React.Component {
         });
     }
 
+    /**
+     * Handles date changes in custom processes.
+     * Shifts changed and each subsequent date by calculated difference of new vs old date.
+     *
+     * @param name Start or End Date of process or phase.
+     * @param value New date to replace old.
+     * @param phaseIndex index of specific phase in process.
+     * @param processId id of specific process.
+     * @returns Put response from type-server api.
+     */
     complexDateChange = async (name, value, phaseIndex, processId) => {
-        console.log(name)
-        console.log(phaseIndex)
         let process = this.state.processes[processId]
-        console.log(process)
         let oldDate = phaseIndex === null ? process[name] : process.phases[phaseIndex][name];
-        const diff = moment(formatDate(value)).diff(formatDate(oldDate), 'days')
+        const diff = moment(formatDate(value)).diff(formatDate(oldDate), 'days');
+
+        //If changing a process start date. Update all phases in process.
         if (name === 'startDate' && phaseIndex === null) {
             process.startDate = value;
             for (let i = 0; i < process.phases.length; i++) {
-                process = this.shiftStartDate(process, diff, i)
+                process = this.shiftStartDate(process, diff, i);
                 if (i === process.phases.length - 1) {
-                    process.endDate = process.phases[process.phases.length - 1].endDate
+                    process.endDate = process.phases[process.phases.length - 1].endDate;
                 }
 
             }
+            //If changing process end date. Update last phase end date.
         } else if (name === 'endDate' && phaseIndex === null) {
             process.endDate = value;
             process.phases[process.phases.length - 1].endDate = value;
+            //If changing a phase date at phase index i. Update all phases from i : n.
         } else if (phaseIndex !== null) {
             if (name === 'endDate' && phaseIndex === process.phases.length - 1) {
                 process.endDate = value;
@@ -276,7 +285,7 @@ class Processes extends React.Component {
             }
         }
         return await this.putProcess(processId, process).then((data) => {
-            return data
+            return data;
         });
     }
 
@@ -339,7 +348,7 @@ class Processes extends React.Component {
                 }
             }
         }
-        const {startDate, endDate, startTank, endTank} = phase;
+        const {startDate, endDate} = phase;
         const checkDates = () => {
             const start = new Date(startDate);
             const end = new Date(endDate);

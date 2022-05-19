@@ -17,7 +17,6 @@ export default function useWindowDimensions() {
             setWindowDimensions(getWindowDimensions());
         }
 
-        localStorage.setItem('mobileView', navigator.userAgentData.mobile);
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);

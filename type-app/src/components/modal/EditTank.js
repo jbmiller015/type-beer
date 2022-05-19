@@ -1,5 +1,4 @@
 import React from 'react';
-import Dropdown from "../Fields/Dropdown";
 
 class EditTank extends React.Component {
 

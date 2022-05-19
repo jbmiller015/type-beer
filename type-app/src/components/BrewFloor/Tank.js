@@ -6,17 +6,14 @@ import barrelOverlay from '../../media/barreltankwwindow.png'
 import moment from "moment";
 import {formatDate} from "../Process/ProcessFunctions";
 
-//const moment = moment.utcOffset(-360)
-
 const Tank = (props) => {
 
     const [className, setClassName] = useState("card");
     const [contents, setContents] = useState(null);
     const [color, setColor] = useState("");
-    const [data, setData] = useState(props.process);
 
     const [percent, setPercent] = useState("")
-    const {currPhase, currPhaseDate, fill, name, tankType} = props.tankData;
+    const { fill, name, tankType} = props.tankData;
     const process = props.process;
     const {getContents} = props;
 

@@ -12,7 +12,8 @@ const AuthForm = ({setToken}) => {
     const [signup, setSignup] = useState(false);
     const [path, setPath] = useState('login');
     const [error, setError] = useState({});
-    const {height, width} = useWindowDimensions();
+    const [loading, setLoading] = useState(false);
+    const {width} = useWindowDimensions();
 
 
     useEffect(() => {
@@ -54,16 +55,18 @@ const AuthForm = ({setToken}) => {
         const submitError = validate()
 
         if (!submitError) {
+            setLoading(true);
             await typeApi.post(`/${path}`, {email, password, accessKey})
                 .then(res => {
                     setToken(res.data.token);
+                    setLoading(false);
                 })
                 .catch(err => {
-                    console.log(err.response)
                     setError(err.response);
-                    console.error(err);
+                    setLoading(false)
                 });
         }
+
     }
 
     return (
@@ -85,80 +88,85 @@ const AuthForm = ({setToken}) => {
                         </div>
                         : null
                 }
-                <form className={"ui large form"}>
-                    <div className={"ui stacked segment"}>
-                        <div className={"field"}>
-                            <div className={"ui left icon input"}>
-                                <i className={"user icon"}/>
-                                <input
-                                    type="text"
-                                    placeholder="Email"
-                                    value={email}
-                                    autoCapitalize="none"
-                                    autoCorrect="false"
-                                    onChange={e => {
-                                        setEmail(e.target.value)
-                                    }}
-                                />
+
+                {loading ? <div style={{paddingTop: "100%"}} className="ui active inverted dimmer">
+                    <div className="ui big text loader">Loading</div>
+                </div> : <div>
+                    <form className={"ui large form"}>
+                        <div className={"ui stacked segment"}>
+                            <div className={"field"}>
+                                <div className={"ui left icon input"}>
+                                    <i className={"user icon"}/>
+                                    <input
+                                        type="text"
+                                        placeholder="Email"
+                                        value={email}
+                                        autoCapitalize="none"
+                                        autoCorrect="false"
+                                        onChange={e => {
+                                            setEmail(e.target.value)
+                                        }}
+                                    />
+                                </div>
                             </div>
+                            <div className={"field"}>
+                                <div className={"ui left icon input"}>
+                                    <i className={"key icon"}/>
+                                    <input
+                                        type="password"
+                                        placeholder="Password"
+                                        value={password}
+                                        autoCapitalize="none"
+                                        autoCorrect="false"
+                                        onChange={e => {
+                                            setPassword(e.target.value)
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            {signup ? <div className={"field"}>
+                                <div className={"ui left icon input"}>
+                                    <i className={"key icon"}/>
+                                    <input
+                                        type="password"
+                                        placeholder="Confirm Password"
+                                        value={confirmPassword}
+                                        autoCapitalize="none"
+                                        autoCorrect="false"
+                                        onChange={e => {
+                                            setConfirmPassword(e.target.value)
+                                        }}
+                                    />
+                                </div>
+                            </div> : null}
+                            {signup ? <div className={"field"}>
+                                <div className={"ui left icon input"}>
+                                    <i className={"beer icon"}/>
+                                    <input
+                                        type="string"
+                                        placeholder="Beta Access Key"
+                                        value={accessKey}
+                                        autoCapitalize="none"
+                                        autoCorrect="false"
+                                        onChange={e => {
+                                            setAccessKey(e.target.value)
+                                        }}
+                                    />
+                                </div>
+                            </div> : null}
                         </div>
-                        <div className={"field"}>
-                            <div className={"ui left icon input"}>
-                                <i className={"key icon"}/>
-                                <input
-                                    type="password"
-                                    placeholder="Password"
-                                    value={password}
-                                    autoCapitalize="none"
-                                    autoCorrect="false"
-                                    onChange={e => {
-                                        setPassword(e.target.value)
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        {signup ? <div className={"field"}>
-                            <div className={"ui left icon input"}>
-                                <i className={"key icon"}/>
-                                <input
-                                    type="password"
-                                    placeholder="Confirm Password"
-                                    value={confirmPassword}
-                                    autoCapitalize="none"
-                                    autoCorrect="false"
-                                    onChange={e => {
-                                        setConfirmPassword(e.target.value)
-                                    }}
-                                />
-                            </div>
-                        </div> : null}
-                        {signup ? <div className={"field"}>
-                            <div className={"ui left icon input"}>
-                                <i className={"beer icon"}/>
-                                <input
-                                    type="string"
-                                    placeholder="Beta Access Key"
-                                    value={accessKey}
-                                    autoCapitalize="none"
-                                    autoCorrect="false"
-                                    onChange={e => {
-                                        setAccessKey(e.target.value)
-                                    }}
-                                />
-                            </div>
-                        </div> : null}
+                        <div className={"ui fluid large submit button"}
+                             onClick={handleSubmit}>{path === 'login' ? "Log In" : "Sign Up"}</div>
+                    </form>
+                    <div className="ui message">
+                        {path === 'login' ? "New to us? " : "Already have an account? "}
+                        <a href="#" onClick={() => {
+                            path === 'login' ? setSignup(true) : setSignup(false)
+                        }}>
+                            {path === 'login' ? "Sign Up" : "Log In"}
+                        </a>
                     </div>
-                    <div className={"ui fluid large submit button"}
-                         onClick={handleSubmit}>{path === 'login' ? "Log In" : "Sign Up"}</div>
-                </form>
-                <div className="ui message">
-                    {path === 'login' ? "New to us? " : "Already have an account? "}
-                    <a href="#" onClick={() => {
-                        path === 'login' ? setSignup(true) : setSignup(false)
-                    }}>
-                        {path === 'login' ? "Sign Up" : "Log In"}
-                    </a>
-                </div>
+                </div>}
             </div>
         </div>
     );

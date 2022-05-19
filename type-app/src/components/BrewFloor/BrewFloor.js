@@ -4,12 +4,8 @@ import NavComponent from "../NavComponent";
 import typeApi from "../../api/type-server";
 import Modal from "../modal/Modal";
 import modal from "../modal/Modal.css"
-import Beer from "../Beer/Beer";
 import Message from "../Messages/Message";
-import Processes from "../Process/Processes";
 
-//TODO:Break off beers to new component
-//TODO:Get list of active beers from server by ids
 class BrewFloor extends React.Component {
 
     constructor(props) {
