@@ -21,7 +21,7 @@ const ProcessDetail = ({icon, header, data, type, editable, handleProcessChange,
                     {isComponentVisible && editable ?
                         <div className="ui fluid input">
                             <input type={type} name={name} placeholder={data} onChange={(e) => handleProcessChange(e)}/>
-                        </div> : data}
+                        </div> : data || null}
                 </div>
             </div>
         </div>);

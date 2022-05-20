@@ -34,7 +34,7 @@ const App = () => {
                     <Route path="/calendar" exact component={Calendar}/>
                     <Route path="/processes" exact component={Process}/>
                     <Route path="/account" exact component={AccountInfo}/>
-                    <Route path="*" exact component={fourOfour}/>
+                    <Route path="/404" exact component={fourOfour}/>
                 </div>
             </BrowserRouter>
         </div>

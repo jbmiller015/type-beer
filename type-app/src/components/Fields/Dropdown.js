@@ -75,7 +75,7 @@ const Dropdown = ({onSelectedChange, label, url, target, defaultTerm, startDate,
         );
     });
     return (
-        <div className="field" ref={ref}>
+        <div className="required field" ref={ref}>
             <label className="label">{label}</label>
             <div
                 className={`ui selection dropdown ${open ? 'visible active' : ''}`}

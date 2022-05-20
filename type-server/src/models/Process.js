@@ -14,6 +14,10 @@ const processSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    batch:{
+        type:String,
+        required:false
+    },
     expectedYield: {
         type: String,
         required: false
@@ -61,6 +65,10 @@ const processSchema = new mongoose.Schema({
         startDate: Date,
         endDate: Date,
         complete: Boolean
+    },
+    notes:{
+        type: String,
+        required:false
     }
 });
 

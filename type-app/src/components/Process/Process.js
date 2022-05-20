@@ -3,6 +3,7 @@ import Phase from "./Phase";
 import ProcessDetail from "./ProcessDetail";
 import {formatDate} from "./ProcessFunctions"
 import useComponentVisible from "../Hooks/useComponentVisible";
+import ProcessNotes from "./ProcessNotes";
 
 const Process = (props) => {
     const {
@@ -63,7 +64,7 @@ const Process = (props) => {
         }
     }
 
-    const handleProcessYieldChange = async (e, _id) => {
+    const handleProcessStringChange = async (e, _id) => {
         await handleProcessChange(e, _id).then(data => {
             setData(data)
         })
@@ -168,6 +169,9 @@ const Process = (props) => {
                         <div className={"ui three stackable cards"}>
                             <ProcessDetail data={beerData.name} name={'contents'} icon={"beer"} header={"Contents"}
                                            editable={false}/>
+                            <ProcessDetail data={data.batch} name={'batch'} icon={"barcode"} header={"Batch Code"}
+                                           editable={true}
+                                           handleProcessChange={(e) => handleProcessStringChange(e, data._id)}/>
                             <ProcessDetail data={formatDate(data.startDate)} name={'startDate'}
                                            icon={"calendar alternate outline"}
                                            header={"Process Start Date"} type={"date"} editable={true}
@@ -179,7 +183,7 @@ const Process = (props) => {
                                            header={"Expected Yield"} type={"text"} editable={false}/>
                             <ProcessDetail data={data.actualYield} name={'actualYield'} icon={"paper plane"}
                                            header={"Actual Yield"} type={"text"} editable={true}
-                                           handleProcessChange={(e) => handleProcessYieldChange(e, data._id)}/>
+                                           handleProcessChange={(e) => handleProcessStringChange(e, data._id)}/>
                         </div>
                         <div className={"ui divider"}/>
                         <div className="ui small header">Phases:</div>
@@ -187,6 +191,11 @@ const Process = (props) => {
                             <div className={"ui three stackable cards"}>
                                 {renderPhases()}
                             </div>
+                        </div>
+                        <div className={"ui divider"}/>
+                        <div className="ui small header">Notes:</div>
+                        <div className={"extra"}>
+                            <ProcessNotes data={data.notes} type={"text"} name={'notes'} editable={true} handleProcessChange={(e) => handleProcessStringChange(e, data._id)}/>
                         </div>
                     </div>
                     <div className="ui basic right floated icon button" onClick={() => {

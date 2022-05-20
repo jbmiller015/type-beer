@@ -118,7 +118,7 @@ const NavComponent = (props) => {
                 <div className={"item"}>
                     <div style={{textAlign: "center"}}
                          className={mobileView ? "ui fluid simple basic icon dropdown button" : "fluid ui basic simple dropdown button"}>
-                        {mobileView ? <i className="user icon"/> : <span className={"text"}>More</span>}
+                        {mobileView ? <i className="user icon"/> : <span className={"text"}>Account</span>}
                         <i className="dropdown icon"/>
                         <div className={"left menu"}>
                             <div className={"item"}>
@@ -150,7 +150,6 @@ const NavComponent = (props) => {
             <div className={"ui horizontal divider"}/>
             <div className={"ui horizontal divider"}/>
         </div>
-    )
-        ;
+    );
 }
 export default NavComponent;

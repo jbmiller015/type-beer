@@ -244,6 +244,10 @@ class CreateProcess extends React.Component {
                                 <label>Process Name:</label>
                                 <input type="text" name="name" onChange={this.handleChange}/>
                             </div>
+                            <div className="field">
+                                <label>Batch Code:</label>
+                                <input type="text" name="batch" onChange={this.handleChange}/>
+                            </div>
                             <div className="required field">
                                 <label>Expected Yield:</label>
                                 <input type="text" name="expectedYield" onChange={this.handleChange}/>
