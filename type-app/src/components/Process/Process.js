@@ -197,6 +197,7 @@ const Process = (props) => {
                         <div className={"extra"}>
                             <ProcessNotes data={data.notes} type={"text"} name={'notes'} editable={true} handleProcessChange={(e) => handleProcessStringChange(e, data._id)}/>
                         </div>
+                        <div className={"ui horizontal divider"}/>
                     </div>
                     <div className="ui basic right floated icon button" onClick={() => {
                         deleteProcess(data._id)

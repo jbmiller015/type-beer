@@ -7,6 +7,7 @@ const ProcessNotes = ({ data, handleProcessChange, name, type, editable}) => {
     const [notes, setNotes] = useState(data);
     //TODO:handle when click off -> ref off => notes -> handleProcessChange.
     //TODO:Make text more readable.
+    //TODO: Handle new line and tabs.
     return (
         <div className={"ui fluid segment"} ref={ref} onClick={() => {
             setIsComponentVisible(true)
