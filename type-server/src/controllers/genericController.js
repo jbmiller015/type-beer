@@ -57,13 +57,11 @@ exports.generic_sub_post = async (req, res) => {
 }
 
 exports.generic_sub_put = async (req, res) => {
-    console.log(req.params.base)
     const base = toUpper(req.params.base);
     const _id = req.params.sub;
     const Object = mongoose.model(base);
     try {
         await Object.findOneAndUpdate({_id}, createModel(base, req), {upsert: true, useFindAndModify: false});
-        console.log("found")
         res.send(req.body);
     } catch (e) {
         res.status(422).send(e.message);
