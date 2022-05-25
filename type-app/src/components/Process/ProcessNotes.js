@@ -1,22 +1,60 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import useComponentVisible from "../Hooks/useComponentVisible";
 
 
-const ProcessNotes = ({ data, handleProcessChange, name, type, editable}) => {
-    const {ref, isComponentVisible, setIsComponentVisible} = useComponentVisible(false);
+const ProcessNotes = ({data, handleProcessChange, name, editable}) => {
+    const {ref, isComponentVisible, setIsComponentVisible, handleClickOutside} = useComponentVisible(false);
     const [notes, setNotes] = useState(data);
-    //TODO:handle when click off -> ref off => notes -> handleProcessChange.
-    //TODO:Make text more readable.
-    //TODO: Handle new line and tabs.
+    const [debouncedNotes, setDebouncedNotes] = useState(null);
+
+    useEffect(() => {
+        if (data)
+            setNotes(data)
+    }, [data])
+
+    useEffect(() => {
+        const procChange = () => {
+            handleProcessChange({target: {name: name, value: debouncedNotes}});
+        };
+        if (debouncedNotes != null) {
+            procChange();
+        }
+
+    }, [debouncedNotes]);
+
+    useEffect(() => {
+        let timerId;
+        if (notes !== data) {
+            timerId = setTimeout(() => {
+                setDebouncedNotes(notes);
+            }, 1000);
+        }
+        return (() => {
+            clearTimeout(timerId)
+        })
+    }, [notes])
+
+    const getColumns = () => {
+        const mod = window.innerWidth > 415 ? 12 : 10.5;
+        return Math.ceil(document.getElementById('textAreaParent').clientWidth / 100) * mod;
+    }
+
+    const handleClick = (e) => {
+        e.preventDefault()
+        handleProcessChange({target: {name: "notes", value: notes}});
+        setIsComponentVisible(false);
+    }
+
     return (
         <div className={"ui fluid segment"} ref={ref} onClick={() => {
             setIsComponentVisible(true)
-        }}>
-            <div className="content">
-                {isComponentVisible && editable?
-                    <div className="ui fluid input">
-                        <input type={type} name={name} value={notes} onChange={(e) => setNotes(e.target.value)}/>
-                    </div> : notes}
+        }} id={"textAreaParent"}>
+            <div className="content" style={{whiteSpace: "pre-wrap"}}>
+                {(editable && isComponentVisible) ?
+                    <textarea name={name} cols={getColumns()} rows="10"
+                              value={notes}
+                              onChange={(e) => setNotes(e.target.value)}/>
+                    : notes}
             </div>
         </div>);
 }

@@ -38,9 +38,7 @@ const Process = (props) => {
     }, []);
 
     useEffect(() => {
-        console.log("in")
         return () => {
-            console.log("out")
             setData(null)
             setActive(false)
         }
@@ -141,7 +139,6 @@ const Process = (props) => {
         })
     }
 
-
     return (
         !active ?
             <a className={"item"} onClick={async () => {
@@ -151,7 +148,7 @@ const Process = (props) => {
             }}>
                 <div className="content">
                     <div className="header">
-                        {data.name}
+                        {data ? data.name : ""}
                     </div>
                 </div>
             </a> :
@@ -167,9 +164,11 @@ const Process = (props) => {
                     <div className={"description"}>
                         <div className={"ui horizontal divider"}/>
                         <div className={"ui three stackable cards"}>
-                            <ProcessDetail data={beerData.name} name={'contents'} icon={"beer"} header={"Contents"}
+                            <ProcessDetail data={beerData.name} name={'contents'} icon={"beer"} type={"text"}
+                                           header={"Contents"}
                                            editable={false}/>
-                            <ProcessDetail data={data.batch} name={'batch'} icon={"barcode"} header={"Batch Code"}
+                            <ProcessDetail data={data.batch} name={'batch'} icon={"barcode"} type={"text"}
+                                           header={"Batch Code"}
                                            editable={true}
                                            handleProcessChange={(e) => handleProcessStringChange(e, data._id)}/>
                             <ProcessDetail data={formatDate(data.startDate)} name={'startDate'}
@@ -195,7 +194,10 @@ const Process = (props) => {
                         <div className={"ui divider"}/>
                         <div className="ui small header">Notes:</div>
                         <div className={"extra"}>
-                            <ProcessNotes data={data.notes} type={"text"} name={'notes'} editable={true} handleProcessChange={(e) => handleProcessStringChange(e, data._id)}/>
+                            <ProcessNotes data={data.notes} type={"text"} name={'notes'} editable={true}
+                                          handleProcessChange={(e) => {
+                                              handleProcessStringChange(e, data._id)
+                                          }}/>
                         </div>
                         <div className={"ui horizontal divider"}/>
                     </div>

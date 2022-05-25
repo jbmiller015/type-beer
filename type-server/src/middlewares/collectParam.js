@@ -33,13 +33,15 @@ module.exports = {
             case 'Process': {
                 return {
                     name: req.body.name,
+                    batch: req.body.batch,
                     expectedYield: req.body.expectedYield,
                     actualYield: req.body.actualYield,
                     contents: req.body.contents,
                     startDate: req.body.startDate,
                     endDate: req.body.endDate,
                     phases: req.body.phases,
-                    userId: req.user._id
+                    userId: req.user._id,
+                    notes: req.body.notes
                 };
             }
             case 'User': {

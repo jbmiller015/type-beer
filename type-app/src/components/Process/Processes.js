@@ -186,9 +186,7 @@ class Processes extends React.Component {
     }
 
     handleProcessChange = async (e, processId, phaseIndex = null, dateChange = null) => {
-        console.log(e)
         let {name, value, checked} = e.target;
-        console.log("name: ", name)
         if (name === "complete") {
             value = checked
         }
@@ -203,7 +201,6 @@ class Processes extends React.Component {
                     return data
                 });
             }
-            console.log(data)
             return data
         } else {
             let process = this.state.processes[processId]
@@ -221,7 +218,6 @@ class Processes extends React.Component {
 
     simpleDateChange = async (name, value, phaseIndex, processId) => {
         let process = this.state.processes[processId]
-        console.log(process)
         if (phaseIndex !== null) {
             if (name === 'endDate' && phaseIndex === process.phases.length - 1) {
                 process[name] = value;
@@ -322,7 +318,6 @@ class Processes extends React.Component {
                 error: [...state.error, err.message]
             }))
         })
-        console.log(data)
         let newState = {...this.state};
         newState.processes[processId] = data;
         newState.showModal = false;
@@ -368,7 +363,6 @@ class Processes extends React.Component {
 
 
     phaseFields = () => {
-        console.log(this.state.phases)
         return this.state.phases.map((phase, i) => {
             return <PhaseField
                 phaseData={{
@@ -402,7 +396,6 @@ class Processes extends React.Component {
     }
 
     setVisible = (view, color) => {
-        console.log(this.state)
         switch (view) {
             case "active":
                 this.setState({
@@ -439,13 +432,10 @@ class Processes extends React.Component {
 
 
         processes = filterSort(processes, this.state.term, this.state.sorted, this.setErrorMessage);
-        console.log(processes)
-        console.log(this.state.error)
 
 
         if (this.state.error.length < 1 && processes && processes.length > 0) {
             return processes.map((process) => {
-                console.log(process)
                 let beer = this.getBeerById(process.contents)
                 return <Process key={process._id} processData={process} beerData={beer}
                                 getTankDetails={(tankId) => this.getTankDetails(tankId)}
@@ -466,7 +456,6 @@ class Processes extends React.Component {
     }
 
     render() {
-        console.log("render")
         let errMessage = this.state.error.map((err, i) => {
             return (
                 <Message key={i} messageType={'error'} onClose={() => this.setState({error: [], term: ''})}
