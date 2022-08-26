@@ -44,6 +44,16 @@ module.exports = {
                     notes: req.body.notes
                 };
             }
+            case 'Event': {
+                return {
+                    name: req.body.name,
+                    startDate: req.body.startDate,
+                    endDate: req.body.endDate,
+                    userId: req.user._id,
+                    details: req.body.details,
+                    eventType: req.body.eventType
+                };
+            }
             case 'User': {
                 return {
                     email: req.user.email

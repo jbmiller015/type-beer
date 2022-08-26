@@ -22,7 +22,7 @@ const eventSchema = new mongoose.Schema({
         type: String,
         required: false
     },
-    color:{
+    eventType:{
         type: String,
         required:false
     }

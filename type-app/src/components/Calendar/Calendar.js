@@ -28,6 +28,8 @@ class Calendar extends React.Component {
             monthViewActive: true,
             processViewActive: true,
             showModal: false,
+            showProcess: "",
+            showEvents: "",
             modalProcessId: null,
             modalTankId: null,
             modalDate: null,
@@ -387,6 +389,34 @@ class Calendar extends React.Component {
                                 Tank
                             </div>
                         </div>
+                    </div>
+                    <div className={"item"}>
+                        <div className="ui toggle checkbox">
+                            <input type="checkbox" name="public"/>
+                            <label>Show Processes</label>
+                        </div>
+                        <div className={"ui horizontal divider"}/>
+                        <div className="ui slider checkbox">
+                            <input type="checkbox" name="public"/>
+                            <label>Show Events</label>
+                        </div>
+                    </div>
+                    <div className={"item"}>
+                        <button className={`ui basic ${this.state.showProcess} toggle button`} onClick={() => {
+                            if (this.state.showProcess === "active yellow")
+                                this.setState({showProcess: ""})
+                            else
+                                this.setState({showProcess: "active yellow"})
+                        }}>Processes
+                        </button>
+                        <div className={"ui horizontal divider"}/>
+                        <button className={`ui ${this.state.showEvents} toggle button`} onClick={() => {
+                            if (this.state.showEvents === "yellow active")
+                                this.setState({showEvents: ""})
+                            else
+                                this.setState({showEvents: "yellow active"})
+                        }}>Events
+                        </button>
                     </div>
                     <div className={"item"}>
                         <div className={"ui basic segment"}>

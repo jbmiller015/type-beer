@@ -6,6 +6,7 @@ require('./models/Tank');
 require('./models/Process');
 require('./models/AccessKey');
 require('./models/Admins');
+require('./models/Event');
 
 const express = require('express');
 const app = express();
