@@ -18,7 +18,10 @@ class Calendar extends React.Component {
             tanks: {},
             beers: {},
             tasks: {},
-            colors: ['#FFF897', '#EDCF5C', '#f6c101', '#EC9D00', '#DF8D03', '#C96E12', '#9C5511', '#6F3B10', '#42220F', '#14080E'],
+            eventTasks:{},
+            events: {},
+            processColors: ['#FFF897', '#EDCF5C', '#f6c101', '#EC9D00', '#DF8D03', '#C96E12', '#9C5511', '#6F3B10', '#42220F', '#14080E'],
+            eventColors: ['#74A4E4', '#4C77F6', '#2663F1', '#1259E6', '#0954C4', '#0B4DA4', '#0C427D', '#0D3655', '#0B2532', '#08140E'],
             prevMonth: -1,
             currMonth: 0,
             nextMonth: 1,
@@ -51,12 +54,18 @@ class Calendar extends React.Component {
         this.setState({showModal: false, modalProcessId: null, modalTankId: null, modalDate: null})
     }
 
+    /**
+     * Load objects for calendar.
+     * NOTE: This can be a problem later if processes/events become too great. Will require some sort of limited loading.
+     * Perhaps getting a range of processes (limit to within 6 months in either direction, re-requesting if current view date extends beyond current range.)
+     * @returns {Promise<void>}
+     */
     async componentDidMount() {
         document.addEventListener("mousedown", this.handleClickOutside);
         const procResults = await typeApi.get('/process').then(response => {
             const procObj = response.data.reduce((a, v, i) => ({
                 ...a,
-                [v._id]: {...v, color: this.state.colors[(i % 10 + 10) % 10]}
+                [v._id]: {...v, color: this.state.processColors[(i % 10 + 10) % 10]}
             }), {})
 
             let tasks = {};
@@ -94,7 +103,41 @@ class Calendar extends React.Component {
                 error: [...state.error, err.message]
             }))
         })
-        this.setState({tasks: procResults.tasks, processes: procResults.procObj, tanks: tanksResults, isLoaded: true})
+        const eventResults = await typeApi.get('/events').then(response => {
+            const eventObj = response.data.reduce((a, v, i) => ({
+                ...a,
+                [v._id]: {...v, color: this.state.eventColors[(i % 10 + 10) % 10]}
+            }), {})
+
+            let eventTasks = {};
+            for (let i = 0; i < eventObj.length; i++) {
+                let endDate = eventObj[i].endDate;
+                if (moment().startOf('date').isBetween(moment(endDate).startOf('date'), moment(endDate).endOf('date'), 'date', "[]")) {
+                    eventTasks = {
+                        ...eventTasks,
+                        [eventObj[i].name]:
+                            {
+                                ...eventObj[i],
+                                index: i
+                            }
+                    }
+                }
+            }
+            return {eventTasks, eventObj};
+        }, err => {
+            this.setState(state => ({
+                isLoaded: true,
+                error: [...state.error, err.message]
+            }))
+        })
+        this.setState({
+            tasks: procResults.tasks,
+            processes: procResults.procObj,
+            tanks: tanksResults,
+            eventTasks: eventResults.eventTasks,
+            events: eventResults.eventObj,
+            isLoaded: true
+        });
     }
 
     handleProcessChange = async (e, processId, phaseIndex) => {
