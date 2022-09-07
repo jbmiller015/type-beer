@@ -18,7 +18,7 @@ class Calendar extends React.Component {
             tanks: {},
             beers: {},
             tasks: {},
-            eventTasks:{},
+            eventTasks: {},
             events: {},
             processColors: ['#FFF897', '#EDCF5C', '#f6c101', '#EC9D00', '#DF8D03', '#C96E12', '#9C5511', '#6F3B10', '#42220F', '#14080E'],
             eventColors: ['#74A4E4', '#4C77F6', '#2663F1', '#1259E6', '#0954C4', '#0B4DA4', '#0C427D', '#0D3655', '#0B2532', '#08140E'],
@@ -234,14 +234,28 @@ class Calendar extends React.Component {
         });
     }
 
+
     getPhasesByDate = (date) => {
         const rendered = Object.keys(this.state.renderedProcesses).length > 0 ? this.state.renderedProcesses : this.state.processes;
         return Object.values(rendered).filter(process => {
             let startDate = process.startDate.split("T", 1)[0];
             let endDate = process.endDate.split("T", 1)[0];
-            return (date.startOf('date').isBetween(moment(startDate).startOf('date'), moment(endDate).startOf('date'), undefined, '[]'))
+            return this.dateIsBetween(date, startDate, endDate);
         });
     }
+
+    getEventsByDate =(date)=>{
+        return Object.values(this.state.events).filter(event =>{
+            let startDate = event.startDate.split("T", 1)[0];
+            let endDate = event.endDate.split("T", 1)[0];
+            return this.dateIsBetween(date, startDate, endDate);
+        })
+    }
+
+    dateIsBetween =(date, startDate, endDate)=>{
+        return (date.startOf('date').isBetween(moment(startDate).startOf('date'), moment(endDate).startOf('date'), undefined, '[]'))
+    }
+
 
     calendarControlButtons = () => {
         return (
@@ -499,9 +513,10 @@ class Calendar extends React.Component {
         let prevMonth = [];
         for (let i = daysInPrevMonth; i >= 0; i--) {
             let date = moment().add(this.state.prevMonth, 'months').endOf('month').subtract(i, 'days');
-            let phases = this.getPhasesByDate(date)
+            let phases = this.getPhasesByDate(date);
+            let events = this.getEventsByDate(date);
             prevMonth.push(
-                <Date date={date} events={phases} key={i + 100} processesActive={this.state.processViewActive}
+                <Date date={date} events={events} phases={phases} key={i + 100} processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
                       calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             );
@@ -509,9 +524,10 @@ class Calendar extends React.Component {
         let daysInMonth = [];
         for (let i = 1; i <= daysInCurrMonth; i++) {
             let date = moment().add(this.state.currMonth, 'months').date(i);
-            let phases = this.getPhasesByDate(date)
+            let phases = this.getPhasesByDate(date);
+            let events = this.getEventsByDate(date);
             daysInMonth.push(
-                <Date date={date} events={phases} key={i + 200} processesActive={this.state.processViewActive}
+                <Date date={date} events={events} phases={phases} key={i + 200} processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
                       calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             );
@@ -523,9 +539,10 @@ class Calendar extends React.Component {
         let i = 0;
         while (maxDates % 7 !== 0) {
             let date = moment().add(this.state.nextMonth, 'months').startOf('month').add(i, 'days');
-            let phases = this.getPhasesByDate(date)
+            let phases = this.getPhasesByDate(date);
+            let events = this.getEventsByDate(date);
             nextMonth.push(
-                <Date date={date} events={phases} key={i + 300} processesActive={this.state.processViewActive}
+                <Date date={date} events={events} phases={phases} key={i + 300} processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
                       calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             )
@@ -577,8 +594,9 @@ class Calendar extends React.Component {
 
         for (let i = 0; i <= 6; i++) {
             let date = moment(weekStart).add(this.state.currWeek, 'weeks').add(i, 'days')
-            let phases = this.getPhasesByDate(date)
-            week.push(<Date date={date} events={phases} key={i + 100} week={true}
+            let phases = this.getPhasesByDate(date);
+            let events = this.getEventsByDate(date);
+            week.push(<Date date={date} events={events} phases={phases} key={i + 100} week={true}
                             processesActive={this.state.processViewActive}
                             getTankDetails={(id) => this.getTankDetails(id)}
                             calModalData={(processId, tankId) => this.calModalData(processId, tankId)}/>);

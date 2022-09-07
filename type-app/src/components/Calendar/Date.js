@@ -3,7 +3,7 @@ import Event from "./Event";
 import moment from "moment";
 
 const Date = (props) => {
-    const {events, date, week, processesActive, getTankDetails, calModalData} = props;
+    const {events, phases, date, week, processesActive, getTankDetails, calModalData} = props;
     const isSameWeek = date.isSame(moment(), "week", []);
     const isSameDay = date.isSame(moment(), "day");
     const [showExtended, setShowExtended] = useState(false);
@@ -41,7 +41,7 @@ const Date = (props) => {
     }
 
     const mapEvents = () => {
-        const mapped = events.map((event, i) => {
+        let mapped = phases.map((phase, i) => {
             let tankId = null;
             for (let el of event.phases) {
                 let endDate = el.endDate.split("T", 1)[0];
@@ -61,6 +61,7 @@ const Date = (props) => {
                               calModalData={(processId, tankId) => calModalData(processId, tankId, date)}/>
             }
         })
+        mapped.push()
 
         if (mapped.length > 3 && !week && !showExtended) {
             return ([mapped[0], mapped[1],
