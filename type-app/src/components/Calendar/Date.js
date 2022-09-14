@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Event from "./Event";
 import moment from "moment";
+import PhaseEvent from "./PhaseEvent";
 
 const Date = (props) => {
     const {events, phases, date, week, processesActive, getTankDetails, calModalData} = props;
@@ -41,9 +42,9 @@ const Date = (props) => {
     }
 
     const mapEvents = () => {
-        let mapped = phases.map((phase, i) => {
+        const mapped = phases.map((phase, i) => {
             let tankId = null;
-            for (let el of event.phases) {
+            for (let el of phase.phases) {
                 let endDate = el.endDate.split("T", 1)[0];
                 let startDate = el.startDate.split("T", 1)[0];
                 if (date.isBetween(startDate, endDate, 'date', "[]")) {
@@ -56,12 +57,19 @@ const Date = (props) => {
             }
             if (tankId) {
                 const tank = getTankDetails(tankId)
-                return <Event event={event} color={event.color} key={i} processesActive={processesActive}
-                              date={date} tank={tank}
-                              calModalData={(processId, tankId) => calModalData(processId, tankId, date)}/>
+                return <PhaseEvent event={phase} color={phase.color} key={i} processesActive={processesActive}
+                                   date={date} tank={tank}
+                                   calModalData={(processId, tankId) => calModalData(processId, tankId, date)}/>
             }
         })
-        mapped.push()
+        mapped.push(
+            events.map((phase, i) => {
+
+                return <Event event={phase} color={phase.color} key={i} processesActive={processesActive}
+                              date={date}
+                              calModalData={(processId) => calModalData(processId, null, date)}/>
+
+            }))
 
         if (mapped.length > 3 && !week && !showExtended) {
             return ([mapped[0], mapped[1],

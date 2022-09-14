@@ -34,6 +34,7 @@ class Calendar extends React.Component {
             showProcess: "",
             showEvents: "",
             modalProcessId: null,
+            modalEventId: null,
             modalTankId: null,
             modalDate: null,
             modalBeerData: null,
@@ -46,12 +47,26 @@ class Calendar extends React.Component {
 
 
     calModalData = async (processId, tankId, modalDate) => {
-        const beer = await this.getBeerById(this.state.processes[processId].contents);
-        this.setState({showModal: true, modalProcessId: processId, modalTankId: tankId, modalDate, modalBeerData: beer})
+        if (tankId) {
+            const beer = await this.getBeerById(this.state.processes[processId].contents);
+            this.setState({
+                showModal: true,
+                modalProcessId: processId,
+                modalTankId: tankId,
+                modalDate,
+                modalBeerData: beer
+            })
+        } else {
+            this.setState({
+                showModal: true,
+                modalEventId: processId,
+                modalDate,
+            })
+        }
     }
 
     closeModal = () => {
-        this.setState({showModal: false, modalProcessId: null, modalTankId: null, modalDate: null})
+        this.setState({showModal: false, modalProcessId: null, modalEventId: null, modalTankId: null, modalDate: null})
     }
 
     /**
@@ -244,15 +259,15 @@ class Calendar extends React.Component {
         });
     }
 
-    getEventsByDate =(date)=>{
-        return Object.values(this.state.events).filter(event =>{
+    getEventsByDate = (date) => {
+        return Object.values(this.state.events).filter(event => {
             let startDate = event.startDate.split("T", 1)[0];
             let endDate = event.endDate.split("T", 1)[0];
             return this.dateIsBetween(date, startDate, endDate);
         })
     }
 
-    dateIsBetween =(date, startDate, endDate)=>{
+    dateIsBetween = (date, startDate, endDate) => {
         return (date.startOf('date').isBetween(moment(startDate).startOf('date'), moment(endDate).startOf('date'), undefined, '[]'))
     }
 
@@ -516,7 +531,8 @@ class Calendar extends React.Component {
             let phases = this.getPhasesByDate(date);
             let events = this.getEventsByDate(date);
             prevMonth.push(
-                <Date date={date} events={events} phases={phases} key={i + 100} processesActive={this.state.processViewActive}
+                <Date date={date} events={events} phases={phases} key={i + 100}
+                      processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
                       calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             );
@@ -527,7 +543,8 @@ class Calendar extends React.Component {
             let phases = this.getPhasesByDate(date);
             let events = this.getEventsByDate(date);
             daysInMonth.push(
-                <Date date={date} events={events} phases={phases} key={i + 200} processesActive={this.state.processViewActive}
+                <Date date={date} events={events} phases={phases} key={i + 200}
+                      processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
                       calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             );
@@ -542,7 +559,8 @@ class Calendar extends React.Component {
             let phases = this.getPhasesByDate(date);
             let events = this.getEventsByDate(date);
             nextMonth.push(
-                <Date date={date} events={events} phases={phases} key={i + 300} processesActive={this.state.processViewActive}
+                <Date date={date} events={events} phases={phases} key={i + 300}
+                      processesActive={this.state.processViewActive}
                       getTankDetails={(id) => this.getTankDetails(id)}
                       calModalData={(processId, tankId, date) => this.calModalData(processId, tankId, date)}/>
             )
@@ -642,6 +660,7 @@ class Calendar extends React.Component {
                             this.closeModal()
                         }}
                         modalData={{
+                            event: this.state.events[this.state.modalEventId],
                             process: this.state.processes[this.state.modalProcessId],
                             tank: this.state.tanks[this.state.modalTankId],
                             date: this.state.modalDate,
