@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import useComponentVisible from "../Hooks/useComponentVisible";
 
 
-const ProcessNotes = ({data, handleProcessChange, name, editable}) => {
+const ProcessNotes = ({data, handleProcessChange, name, editable, label}) => {
     const {ref, isComponentVisible, setIsComponentVisible, handleClickOutside} = useComponentVisible(false);
     const [notes, setNotes] = useState(data);
     const [debouncedNotes, setDebouncedNotes] = useState(null);
@@ -51,6 +51,7 @@ const ProcessNotes = ({data, handleProcessChange, name, editable}) => {
         }} id={"textAreaParent"}>
             <div className="content" style={{whiteSpace: "pre-wrap"}}>
                 {(editable && isComponentVisible) ?
+                    {label? <label>{label}:</label>:null}
                     <textarea name={name} cols={getColumns()} rows="10"
                               value={notes}
                               onChange={(e) => setNotes(e.target.value)}/>

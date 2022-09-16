@@ -1,12 +1,12 @@
 import React from 'react';
 
 const Event = (props) => {
-    const {event, tank, color, processesActive, calModalData} = props;
+    const {event, color, processesActive, calModalData} = props;
 
     return (
         <div
             className={`ui fluid button`}
-            style={['#C96E12', '#9C5511', '#6F3B10', '#42220F', '#14080E'].includes(color) ? {
+            style={['#0954C4', '#0B4DA4', '#0C427D', '#0D3655', '#0B2532', '#08140E', '#1259E6'].includes(color) ? {
                 backgroundColor: color,
                 padding: "5px",
                 overflow: "hidden",
@@ -21,8 +21,8 @@ const Event = (props) => {
                 textOverflow: "ellipsis"
             }}
             onClick={() => {
-                calModalData(event._id, tank._id)
+                calModalData(event._id, null);
             }}
-        >{processesActive ? event.name : tank.name}</div>);
+        >{processesActive ? event.name : event.name}</div>);
 }
 export default Event;

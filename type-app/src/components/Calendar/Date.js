@@ -64,11 +64,9 @@ const Date = (props) => {
         })
         mapped.push(
             events.map((phase, i) => {
-
                 return <Event event={phase} color={phase.color} key={i} processesActive={processesActive}
                               date={date}
                               calModalData={(processId) => calModalData(processId, null, date)}/>
-
             }))
 
         if (mapped.length > 3 && !week && !showExtended) {

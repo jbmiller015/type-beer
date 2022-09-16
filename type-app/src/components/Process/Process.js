@@ -197,7 +197,7 @@ const Process = (props) => {
                             <ProcessNotes data={data.notes} type={"text"} name={'notes'} editable={true}
                                           handleProcessChange={(e) => {
                                               handleProcessStringChange(e, data._id)
-                                          }}/>
+                                          }} label={null}/>
                         </div>
                         <div className={"ui horizontal divider"}/>
                     </div>

@@ -36,7 +36,6 @@ const CreateBasicProcess = (props) => {
     }
 
     const defaultPhase = () => {
-        console.log("rerender")
         return (
             <div>
                 {endDateField()}
