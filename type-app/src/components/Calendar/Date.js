@@ -4,11 +4,12 @@ import moment from "moment";
 import PhaseEvent from "./PhaseEvent";
 
 const Date = (props) => {
-    const {events, phases, date, week, processesActive, getTankDetails, calModalData} = props;
+    const {events, phases, date, week=false, processesActive, getTankDetails, calModalData} = props;
     const isSameWeek = date.isSame(moment(), "week", []);
     const isSameDay = date.isSame(moment(), "day");
     const [showExtended, setShowExtended] = useState(false);
 
+    console.log(date)
     useEffect(() => {
     }, [showExtended]);
 
@@ -63,12 +64,11 @@ const Date = (props) => {
             }
         })
         mapped.push(
-            events.map((phase, i) => {
+            ...events.map((phase, i) => {
                 return <Event event={phase} color={phase.color} key={i} processesActive={processesActive}
                               date={date}
                               calModalData={(processId) => calModalData(processId, null, date)}/>
             }))
-
         if (mapped.length > 3 && !week && !showExtended) {
             return ([mapped[0], mapped[1],
                 <div className="ui grey fluid button" style={{padding: "5px"}}

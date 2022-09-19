@@ -5,6 +5,7 @@ import moment from 'moment'
 import Date from "./Date";
 import typeApi from "../../api/type-server";
 import {formatDate} from "../Process/ProcessFunctions";
+import * as events from "events";
 
 class Calendar extends React.Component {
 
@@ -120,7 +121,7 @@ class Calendar extends React.Component {
                 error: [...state.error, err.message]
             }))
         })
-        const eventResults = await typeApi.get('/events').then(response => {
+        const eventResults = await typeApi.get('/event').then(response => {
             const eventObj = response.data.reduce((a, v, i) => ({
                 ...a,
                 [v._id]: {...v, color: this.state.eventColors[(i % 10 + 10) % 10]}
@@ -254,19 +255,23 @@ class Calendar extends React.Component {
 
     getPhasesByDate = (date) => {
         const rendered = Object.keys(this.state.renderedProcesses).length > 0 ? this.state.renderedProcesses : this.state.processes;
-        return Object.values(rendered).filter(process => {
-            let startDate = process.startDate.split("T", 1)[0];
-            let endDate = process.endDate.split("T", 1)[0];
-            return this.dateIsBetween(date, startDate, endDate);
-        });
+        if (this.state.showProcess !== "") {
+            return Object.values(rendered).filter(process => {
+                let startDate = process.startDate.split("T", 1)[0];
+                let endDate = process.endDate.split("T", 1)[0];
+                return this.dateIsBetween(date, startDate, endDate);
+            });
+        }
     }
 
     getEventsByDate = (date) => {
-        return Object.values(this.state.events).filter(event => {
-            let startDate = event.startDate.split("T", 1)[0];
-            let endDate = event.endDate.split("T", 1)[0];
-            return this.dateIsBetween(date, startDate, endDate);
-        })
+        if (this.state.showEvents !== "") {
+            return Object.values(this.state.events).filter(event => {
+                let startDate = event.startDate.split("T", 1)[0];
+                let endDate = event.endDate.split("T", 1)[0];
+                return this.dateIsBetween(date, startDate, endDate);
+            })
+        }
     }
 
     dateIsBetween = (date, startDate, endDate) => {
@@ -466,12 +471,24 @@ class Calendar extends React.Component {
                     </div>
                     <div className={"item"}>
                         <div className="ui toggle checkbox">
-                            <input type="checkbox" name="public"/>
+                            <input type="checkbox" name="public" onChange={() => {
+                                if (this.state.showProcess === "") {
+                                    this.setState({showProcesses: "active"});
+                                } else {
+                                    this.setState({showProcesses: ""})
+                                }
+                            }} defaultChecked={true}/>
                             <label>Show Processes</label>
                         </div>
                         <div className={"ui horizontal divider"}/>
                         <div className="ui slider checkbox">
-                            <input type="checkbox" name="public"/>
+                            <input type="checkbox" name="public" onChange={() => {
+                                if (this.state.showEvents === "") {
+                                    this.setState({showEvents: "active"});
+                                } else {
+                                    this.setState({showEvents: ""})
+                                }
+                            }} defaultChecked={true}/>
                             <label>Show Events</label>
                         </div>
                     </div>

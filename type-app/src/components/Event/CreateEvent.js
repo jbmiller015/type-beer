@@ -1,13 +1,7 @@
 import React from 'react';
 import typeApi from '../../api/type-server'
-import Dropdown from "../Fields/Dropdown";
-import PhaseField from "./PhaseField";
-import Tank from "../BrewFloor/Tank";
 import NavComponent from "../NavComponent";
 import moment from "moment";
-import CreateDuplicateProcess from "./CreateDuplicateProcess";
-import CreateBasicProcess from "./CreateBasicProcess";
-import CreateCustomProcess from "./CreateCustomProcess";
 import ProcessNotes from "../Process/ProcessNotes";
 
 
@@ -41,6 +35,7 @@ class CreateEvent extends React.Component {
 
 
     handleChange = e => {
+        console.log(this.state)
         let {name, value, checked} = e.target;
         if (name === "fill") {
             value = checked
@@ -86,20 +81,22 @@ class CreateEvent extends React.Component {
         return result;
     }
 
-    onFormSubmit = async (phases, endDate) => {
+    onFormSubmit = async () => {
         const formData = {
             name: this.state.name,
             startDate: this.state.startDate,
-            endDate,
-            contents: this.state.contents,
-            phases: phases
+            endDate: this.state.endDate,
+            details: this.state.details,
+            eventType: this.state.eventType
         }
 
         await typeApi.post('/event', formData)
-            .then(res =>
-                this.props.history.push('/events'))
+            .then(res => {
+                this.setState(null);
+                this.props.history.push('/events');
+            })
             .catch(err => {
-                console.error(err)
+                console.error(err);
             });
     };
 
@@ -108,7 +105,7 @@ class CreateEvent extends React.Component {
             <div className="required field">
                 <label>Start Date:</label>
                 <input type="date" name="startDate"
-                       onChange={(e) => this.setState({startDate: e.target.value})}/>
+                       onChange={this.handleChange}/>
             </div>
         );
     }
@@ -117,8 +114,8 @@ class CreateEvent extends React.Component {
         return (
             <div className="required field">
                 <label>End Date:</label>
-                <input type="date" name="startDate"
-                       onChange={(e) => this.setState({startDate: e.target.value})}/>
+                <input type="date" name="endDate"
+                       onChange={this.handleChange}/>
             </div>
         );
     }
@@ -155,13 +152,13 @@ class CreateEvent extends React.Component {
                 <div className="container"
                      style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "center"}}>
                     <div className="form" style={{padding: "1%", minWidth: this.screenSize()}}>
-                        <form className="ui form" onSubmit={this.onFormSubmit}>
+                        <form className="ui form">
                             <div className={"ui horizontal divider"}/>
                             {this.textField("Event Name", "name", true)}
                             {this.startDateField()}
                             {this.endDateField()}
                             {this.textField("Event Type", "eventType", false)}
-                            <ProcessNotes data={null} name={"details"} editable={true} handleProcessChange={this.handleChange}/>
+                            <ProcessNotes data={null} name={"details"} editable={true} handleProcessChange={this.handleChange} label={"Details"}/>
                             {this.submitButton()}
                             </form>
                     </div>

@@ -3,6 +3,7 @@ import {BrowserRouter, Route} from 'react-router-dom';
 import BrewFloor from "./BrewFloor/BrewFloor";
 import CreateTank from "./BrewFloor/CreateTank";
 import CreateBeer from "./Beer/CreateBeer";
+import CreateEvent from "./Event/CreateEvent";
 import AuthForm from "./Account/AuthForm";
 import useToken from "./Hooks/useToken";
 import CreateProcess from "./Process/CreateProcess";
@@ -30,6 +31,7 @@ const App = () => {
                     <Route path="/create/tank" exact component={CreateTank}/>
                     <Route path="/create/beer" exact component={CreateBeer}/>
                     <Route path="/create/process" exact component={CreateProcess}/>
+                    <Route path="/create/event" exact component={CreateEvent}/>
                     <Route path="/fridge" exact component={Fridge}/>
                     <Route path="/calendar" exact component={Calendar}/>
                     <Route path="/processes" exact component={Process}/>

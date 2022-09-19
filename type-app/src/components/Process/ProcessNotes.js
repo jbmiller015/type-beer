@@ -49,9 +49,9 @@ const ProcessNotes = ({data, handleProcessChange, name, editable, label}) => {
         <div className={"ui fluid segment"} ref={ref} onClick={() => {
             setIsComponentVisible(true)
         }} id={"textAreaParent"}>
+            {label?<label>{label}:</label>:null}
             <div className="content" style={{whiteSpace: "pre-wrap"}}>
                 {(editable && isComponentVisible) ?
-                    {label? <label>{label}:</label>:null}
                     <textarea name={name} cols={getColumns()} rows="10"
                               value={notes}
                               onChange={(e) => setNotes(e.target.value)}/>

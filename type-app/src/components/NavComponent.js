@@ -108,6 +108,15 @@ const NavComponent = (props) => {
                                                 </div>
                                             </div>
                                         </div>
+                                        <div className={"item"}>
+                                            <div className={"fluid ui basic animated fade button"} tabIndex="2"
+                                                 onClick={() => history.push('/create/event')}>
+                                                <div className={"visible content"}>Create Event</div>
+                                                <div className={"hidden content"}>
+                                                    <i className={"plus icon"}/>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
