@@ -4,12 +4,12 @@ import moment from "moment";
 import PhaseEvent from "./PhaseEvent";
 
 const Date = (props) => {
-    const {events, phases, date, week=false, processesActive, getTankDetails, calModalData} = props;
+    const {events, phases, date, week = false, processesActive, getTankDetails, calModalData} = props;
     const isSameWeek = date.isSame(moment(), "week", []);
     const isSameDay = date.isSame(moment(), "day");
     const [showExtended, setShowExtended] = useState(false);
+    const [hasEvents, setHasEvents] = useState(false);
 
-    console.log(date)
     useEffect(() => {
     }, [showExtended]);
 
@@ -43,32 +43,39 @@ const Date = (props) => {
     }
 
     const mapEvents = () => {
-        const mapped = phases.map((phase, i) => {
-            let tankId = null;
-            for (let el of phase.phases) {
-                let endDate = el.endDate.split("T", 1)[0];
-                let startDate = el.startDate.split("T", 1)[0];
-                if (date.isBetween(startDate, endDate, 'date', "[]")) {
-                    if (el.startTank !== el.endTank) {
-                        tankId = el.endTank;
-                    } else {
-                        tankId = el.startTank;
+        let mapped = [];
+        if (phases) {
+            setHasEvents(true);
+            mapped = phases.map((phase, i) => {
+                let tankId = null;
+                for (let el of phase.phases) {
+                    let endDate = el.endDate.split("T", 1)[0];
+                    let startDate = el.startDate.split("T", 1)[0];
+                    if (date.isBetween(startDate, endDate, 'date', "[]")) {
+                        if (el.startTank !== el.endTank) {
+                            tankId = el.endTank;
+                        } else {
+                            tankId = el.startTank;
+                        }
                     }
                 }
-            }
-            if (tankId) {
-                const tank = getTankDetails(tankId)
-                return <PhaseEvent event={phase} color={phase.color} key={i} processesActive={processesActive}
-                                   date={date} tank={tank}
-                                   calModalData={(processId, tankId) => calModalData(processId, tankId, date)}/>
-            }
-        })
-        mapped.push(
-            ...events.map((phase, i) => {
-                return <Event event={phase} color={phase.color} key={i} processesActive={processesActive}
-                              date={date}
-                              calModalData={(processId) => calModalData(processId, null, date)}/>
-            }))
+                if (tankId) {
+                    const tank = getTankDetails(tankId)
+                    return <PhaseEvent event={phase} color={phase.color} key={i} processesActive={processesActive}
+                                       date={date} tank={tank}
+                                       calModalData={(processId, tankId) => calModalData(processId, tankId, date)}/>
+                }
+            })
+        }
+        if (events) {
+            setHasEvents(true);
+            mapped.push(
+                ...events.map((phase, i) => {
+                    return <Event event={phase} color={phase.color} key={i} processesActive={processesActive}
+                                  date={date}
+                                  calModalData={(processId) => calModalData(processId, null, date)}/>
+                }))
+        }
         if (mapped.length > 3 && !week && !showExtended) {
             return ([mapped[0], mapped[1],
                 <div className="ui grey fluid button" style={{padding: "5px"}}
@@ -92,7 +99,7 @@ const Date = (props) => {
             <div className={"ui basic segment"} style={{padding: "0"}}>
                 <p>{date.get('date')}</p>
             </div>
-            <div className={events.length > 0 ? "ui raised segments" : null}>
+            <div className={hasEvents ? "ui raised segments" : null}>
                 {mapEvents()}
             </div>
         </div>
