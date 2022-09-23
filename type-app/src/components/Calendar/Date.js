@@ -7,8 +7,8 @@ const Date = (props) => {
     const {events, phases, date, week = false, processesActive, getTankDetails, calModalData} = props;
     const isSameWeek = date.isSame(moment(), "week", []);
     const isSameDay = date.isSame(moment(), "day");
+    let hasEvents = false;
     const [showExtended, setShowExtended] = useState(false);
-    const [hasEvents, setHasEvents] = useState(false);
 
     useEffect(() => {
     }, [showExtended]);
@@ -45,7 +45,7 @@ const Date = (props) => {
     const mapEvents = () => {
         let mapped = [];
         if (phases) {
-            setHasEvents(true);
+            hasEvents = true;
             mapped = phases.map((phase, i) => {
                 let tankId = null;
                 for (let el of phase.phases) {
@@ -68,7 +68,7 @@ const Date = (props) => {
             })
         }
         if (events) {
-            setHasEvents(true);
+            hasEvents = true;
             mapped.push(
                 ...events.map((phase, i) => {
                     return <Event event={phase} color={phase.color} key={i} processesActive={processesActive}
@@ -99,7 +99,7 @@ const Date = (props) => {
             <div className={"ui basic segment"} style={{padding: "0"}}>
                 <p>{date.get('date')}</p>
             </div>
-            <div className={hasEvents ? "ui raised segments" : null}>
+            <div className={(events && events.length > 0) || (phases && phases.length > 0) ? "ui raised segments" : null}>
                 {mapEvents()}
             </div>
         </div>

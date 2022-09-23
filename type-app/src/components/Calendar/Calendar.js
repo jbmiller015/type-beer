@@ -34,8 +34,8 @@ class Calendar extends React.Component {
             monthViewActive: true,
             processViewActive: true,
             showModal: false,
-            showProcess: "",
-            showEvents: "",
+            showProcess: true,
+            showEvents: true,
             modalProcessId: null,
             modalEventId: null,
             modalTankId: null,
@@ -255,7 +255,7 @@ class Calendar extends React.Component {
 
     getPhasesByDate = (date) => {
         const rendered = Object.keys(this.state.renderedProcesses).length > 0 ? this.state.renderedProcesses : this.state.processes;
-        if (this.state.showProcess !== "") {
+        if (this.state.showProcess) {
             return Object.values(rendered).filter(process => {
                 let startDate = process.startDate.split("T", 1)[0];
                 let endDate = process.endDate.split("T", 1)[0];
@@ -265,7 +265,7 @@ class Calendar extends React.Component {
     }
 
     getEventsByDate = (date) => {
-        if (this.state.showEvents !== "") {
+        if (this.state.showEvents) {
             return Object.values(this.state.events).filter(event => {
                 let startDate = event.startDate.split("T", 1)[0];
                 let endDate = event.endDate.split("T", 1)[0];
@@ -470,44 +470,19 @@ class Calendar extends React.Component {
                         </div>
                     </div>
                     <div className={"item"}>
-                        <div className="ui toggle checkbox">
-                            <input type="checkbox" name="public" onChange={() => {
-                                if (this.state.showProcess === "") {
-                                    this.setState({showProcesses: "active"});
-                                } else {
-                                    this.setState({showProcesses: ""})
-                                }
-                            }} defaultChecked={true}/>
-                            <label>Show Processes</label>
+                        <div className={"ui buttons"}>
+                            <button className={`ui ${this.state.showProcess ? "active yellow" : ""} button`}
+                                    onClick={() => {
+                                        this.setState(prev => ({showProcess: !prev.showProcess}));
+                                    }} style={{minWidth: "80px", maxWidth: "80px", paddingInline: "1px"}}>Processes
+                            </button>
+                            <div style={{width:"0.3rem", height:"auto", zIndex:"3"}}/>
+                            <button className={`ui ${this.state.showEvents ? "active yellow" : ""} button`}
+                                    onClick={() => {
+                                        this.setState(prev => ({showEvents: !prev.showEvents}));
+                                    }} style={{minWidth: "80px", maxWidth: "80px"}}>Events
+                            </button>
                         </div>
-                        <div className={"ui horizontal divider"}/>
-                        <div className="ui slider checkbox">
-                            <input type="checkbox" name="public" onChange={() => {
-                                if (this.state.showEvents === "") {
-                                    this.setState({showEvents: "active"});
-                                } else {
-                                    this.setState({showEvents: ""})
-                                }
-                            }} defaultChecked={true}/>
-                            <label>Show Events</label>
-                        </div>
-                    </div>
-                    <div className={"item"}>
-                        <button className={`ui basic ${this.state.showProcess} toggle button`} onClick={() => {
-                            if (this.state.showProcess === "active yellow")
-                                this.setState({showProcess: ""})
-                            else
-                                this.setState({showProcess: "active yellow"})
-                        }}>Processes
-                        </button>
-                        <div className={"ui horizontal divider"}/>
-                        <button className={`ui ${this.state.showEvents} toggle button`} onClick={() => {
-                            if (this.state.showEvents === "yellow active")
-                                this.setState({showEvents: ""})
-                            else
-                                this.setState({showEvents: "yellow active"})
-                        }}>Events
-                        </button>
                     </div>
                     <div className={"item"}>
                         <div className={"ui basic segment"}>
