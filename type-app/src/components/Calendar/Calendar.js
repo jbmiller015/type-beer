@@ -5,7 +5,6 @@ import moment from 'moment'
 import Date from "./Date";
 import typeApi from "../../api/type-server";
 import {formatDate} from "../Process/ProcessFunctions";
-import * as events from "events";
 
 class Calendar extends React.Component {
 
@@ -661,7 +660,6 @@ class Calendar extends React.Component {
                             beer: this.state.modalBeerData
                         }}
                     />
-
                     {this.state.monthViewActive ? this.calendarView() : this.weekView()}
                 </div>
             </div>)

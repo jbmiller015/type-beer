@@ -3,7 +3,7 @@ import moment from "moment";
 
 const CalendarModal = (props) => {
     const {showModal, closeModal} = props;
-    const {process, tank, date, beer} = props.modalData;
+    const {process, tank, date, beer, event} = props.modalData;
     const [activePhase, setActivePhase] = useState(null);
 
     const escFunction = useCallback((event) => {
@@ -20,12 +20,10 @@ const CalendarModal = (props) => {
         };
     }, []);
 
-
     const formatDate = (date) => {
 
         return moment(date.split("T", 1)[0]).format("M/D/YY")
     }
-
 
     useEffect(() => {
         if (process) {
@@ -40,7 +38,6 @@ const CalendarModal = (props) => {
         }
     })
 
-
     const breadcrumbs = () => {
         if (process && activePhase) {
             return process.phases.map((phase, i) => {
@@ -53,9 +50,72 @@ const CalendarModal = (props) => {
 
     }
 
-    const modal = () => {
-
-        return process && tank && activePhase && beer ?
+    const eventContent = () => {
+        return (
+            <div className={`ui ${showModal ? "active" : ""} modal`} style={{
+                zIndex: "1000",
+                position: "fixed",
+                left: "0",
+                right: "0",
+                marginLeft: "auto",
+                marginRight: "auto",
+            }}>
+                <div className="header">{event.name}
+                    <div className={"ui right floated icon button"} onClick={() => closeModal()}><i
+                        className={"close icon"}/></div>
+                </div>
+                <div className="scrolling content">
+                    <h4 className="ui horizontal divider header">
+                        <i className="tasks icon"/>
+                        Event Details
+                    </h4>
+                    <div className="ui divided list">
+                        <div className="item">
+                            <div className="header">
+                                Name:
+                            </div>
+                            <div className="content">
+                                {event.name}
+                            </div>
+                        </div>
+                        <div className="item">
+                            <div className="header">
+                                Start Date:
+                            </div>
+                            <div className="content">
+                                {formatDate(event.startDate)}
+                            </div>
+                        </div>
+                        <div className="item">
+                            <div className="header">
+                                End Dates:
+                            </div>
+                            <div className="content">
+                                {formatDate(event.endDate)}
+                            </div>
+                        </div>
+                        <div className="item">
+                            <div className="header">
+                                Event Type:
+                            </div>
+                            <div className="content">
+                                {event.eventType}
+                            </div>
+                        </div>
+                        <div className="item">
+                            <div className="header">
+                                Event Details:
+                            </div>
+                            <div className="content" style={{whiteSpace: "pre-wrap"}}>
+                                {event.details}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>)
+    }
+    const phaseContent = () => {
+        return (
             <div className={`ui ${showModal ? "active" : ""} modal`} style={{
                 zIndex: "1000",
                 position: "fixed",
@@ -118,9 +178,24 @@ const CalendarModal = (props) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>)
+
+    }
+
+    const getContent = () => {
+        if (event) {
+            return eventContent()
+        } else {
+            return phaseContent()
+        }
+    }
+
+    const modal = () => {
+        return (process && tank && activePhase && beer) || event ?
+            getContent()
             : null
     }
+
     return (
         <div>{modal()}</div>
     );
