@@ -14,6 +14,7 @@ import AccountInfo from "./Account/AccountInfo";
 import useWindowDimensions from "./Hooks/useWindowDimensions";
 import './App.css';
 import fourOfour from "./Messages/404";
+import EventsHome from "./Event/EventsHome";
 
 const App = () => {
 
@@ -35,6 +36,7 @@ const App = () => {
                     <Route path="/fridge" exact component={Fridge}/>
                     <Route path="/calendar" exact component={Calendar}/>
                     <Route path="/processes" exact component={Process}/>
+                    <Route path="/events" exact component={EventsHome}/>
                     <Route path="/account" exact component={AccountInfo}/>
                     <Route path="/404" exact component={fourOfour}/>
                 </div>
