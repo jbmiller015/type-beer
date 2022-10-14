@@ -2,6 +2,7 @@ import React from "react";
 import typeApi from "../../api/type-server";
 import moment from "moment";
 import {formatDate} from "../Process/ProcessFunctions";
+import EventYear from "./EventYear";
 
 class EventsHome extends React.Component {
     constructor(props) {
@@ -33,14 +34,20 @@ class EventsHome extends React.Component {
             }
             let eventsByDate = {};
             for (let event of eventObj) {
-                const startDate = event.startDate;
-                const eventMoment = moment(startDate);
+                const eventMoment = moment(event.startDate);
                 const year = eventMoment.get("year");
                 const month = eventMoment.get("month");
-                eventsByDate[year].push(eventsByDate[year][month].push(event))
+                if(!eventsByDate[year]){
+                    eventsByDate[year]={}
+                }
+                if(!eventsByDate[year][month]){
+                    eventsByDate[year][month] = []
+                    eventsByDate[year][month].push(event)
+                }
+                else if(eventsByDate[year][month]){
+                    eventsByDate[year][month].push(event)
+                }
             }
-            console.log(eventsByDate)
-
             return {eventTasks, eventObj, eventsByDate};
         }, err => {
             this.setState(state => ({
@@ -56,8 +63,12 @@ class EventsHome extends React.Component {
         });
     }
 
+    years(){
+        return(<EventYear data={}/>)
+    }
+
     render() {
-        return (<div>EventsHome</div>)
+        return (<div className={'ui segments'}>EventsHome</div>)
     };
 }
 
