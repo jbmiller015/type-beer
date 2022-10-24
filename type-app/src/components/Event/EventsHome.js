@@ -1,8 +1,8 @@
 import React from "react";
 import typeApi from "../../api/type-server";
 import moment from "moment";
-import {formatDate} from "../Process/ProcessFunctions";
 import EventYear from "./EventYear";
+import NavComponent from "../NavComponent";
 
 class EventsHome extends React.Component {
     constructor(props) {
@@ -34,17 +34,16 @@ class EventsHome extends React.Component {
             }
             let eventsByDate = {};
             for (let event of eventObj) {
-                const eventMoment = moment(event.startDate);
+                let eventMoment = moment(event.startDate);
                 const year = eventMoment.get("year");
                 const month = eventMoment.get("month");
-                if(!eventsByDate[year]){
-                    eventsByDate[year]={}
+                if (!eventsByDate[year]) {
+                    eventsByDate[year] = {}
                 }
-                if(!eventsByDate[year][month]){
+                if (!eventsByDate[year][month]) {
                     eventsByDate[year][month] = []
                     eventsByDate[year][month].push(event)
-                }
-                else if(eventsByDate[year][month]){
+                } else if (eventsByDate[year][month]) {
                     eventsByDate[year][month].push(event)
                 }
             }
@@ -55,20 +54,30 @@ class EventsHome extends React.Component {
                 error: [...state.error, err.message]
             }))
         })
+        console.log(eventResults.eventObj)
+        console.log(eventResults.eventsByDate)
         this.setState({
             eventTasks: eventResults.eventTasks,
             events: eventResults.eventObj,
             eventsByDate: eventResults.eventsByDate,
             isLoaded: true
         });
+
     }
 
-    years(){
-        return(<EventYear data={}/>)
+    years() {
+        if (this.state.events && this.state.eventsByDate)
+            return Object.entries(this.state.eventsByDate).map((event, i) => {
+                return <EventYear data={event} key={"eventYear" + i}/>
+            })
     }
 
     render() {
-        return (<div className={'ui segments'}>EventsHome</div>)
+        return (<div>
+                <NavComponent tanks={false}/>
+                <div className={'ui segments'}>{this.years()}</div>
+            </div>
+        )
     };
 }
 
