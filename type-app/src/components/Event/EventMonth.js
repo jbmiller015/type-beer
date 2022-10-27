@@ -3,10 +3,10 @@ import moment from "moment";
 import EventSegment from "./EventSegment";
 
 const EventMonth = (props) => {
-    console.log(props.data)
     const month = props.data[0];
     const [events, setEvents] = useState(props.data[1]);
     const monthName = moment().month(month).format("MMMM");
+    const [showActiveMonth, setShowActiveMonth] = useState(props.activeMonth);
 
     const eventSegments = () => {
         return events.map((event, i) => {
@@ -14,9 +14,15 @@ const EventMonth = (props) => {
         })
     }
 
-    return (<div className={"ui padded segment"}>
-        <div className={"ui header"}>{monthName}</div>
-        <div className={'ui divided items'}>{eventSegments()}</div>
-    </div>);
+    return (
+        <div>
+            <div className={`${showActiveMonth ? "active" : ""} title`} onClick={() => {
+                setShowActiveMonth(!showActiveMonth)
+            }}>{monthName}</div>
+            <div className={`${showActiveMonth ? "active" : ""} content`}>
+                <div className={'ui segments'}
+                     style={{borderStyle: "none", boxShadow: "none"}}>{eventSegments()}</div>
+            </div>
+        </div>);
 }
 export default EventMonth;

@@ -68,14 +68,17 @@ class EventsHome extends React.Component {
     years() {
         if (this.state.events && this.state.eventsByDate)
             return Object.entries(this.state.eventsByDate).map((event, i) => {
-                return <EventYear data={event} key={"eventYear" + i}/>
+                const active = event[0] === new Date().getFullYear().toString();
+                return <EventYear data={event} activeYear={active} key={"eventYear" + i}/>
             })
     }
 
     render() {
         return (<div>
                 <NavComponent tanks={false}/>
-                <div className={'ui segments'}>{this.years()}</div>
+                <div style={{display: "flex", alignContent: "center", justifyContent: "center", paddingTop: "5%"}}>
+                    <div className={'ui styled accordion'}>{this.years()}</div>
+                </div>
             </div>
         )
     };
