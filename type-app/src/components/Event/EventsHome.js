@@ -3,6 +3,7 @@ import typeApi from "../../api/type-server";
 import moment from "moment";
 import EventYear from "./EventYear";
 import NavComponent from "../NavComponent";
+import {formatDate} from "../Process/ProcessFunctions";
 
 class EventsHome extends React.Component {
     constructor(props) {
@@ -65,11 +66,54 @@ class EventsHome extends React.Component {
 
     }
 
+    deleteEvent = (eventId) => {
+        typeApi.delete(`/event/${eventId}`).then((res) => {
+            window.location.reload();
+            this.setState({infoMessage: "Deleted Event:" + eventId})
+        }).catch(err => {
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
+        })
+    }
+
+    handleEventChange = async (e, eventId) => {
+        let {name, value} = e.target;
+        let event = this.state.events[eventId]
+        event[name] = value;
+        return await this.putEvent(eventId, event).then(data => {
+            return data
+        });
+    }
+
+
+    putEvent = async (eventId, event) => {
+        const data = await typeApi.put(`/event/${eventId}`, event).then((res) => {
+            return res.data
+        }).catch(err => {
+            this.setState(state => ({
+                error: [...state.error, err.message]
+            }))
+        })
+        let newState = {...this.state};
+        newState.event[eventId] = data;
+        this.setState(newState);
+        return data;
+    }
+
     years() {
         if (this.state.events && this.state.eventsByDate)
             return Object.entries(this.state.eventsByDate).map((event, i) => {
                 const active = event[0] === new Date().getFullYear().toString();
-                return <EventYear data={event} activeYear={active} key={"eventYear" + i}/>
+                return <EventYear data={event} activeYear={active} key={"eventYear" + i}
+                                  deleteEvent={(eventId) => {
+                                      this.deleteEvent(eventId)
+                                  }}
+                                  handleEventChange={async (e, eventId) => {
+                                      return this.handleEventChange(e, eventId).then(data => {
+                                          return data
+                                      })
+                                  }}/>
             })
     }
 

@@ -44,7 +44,7 @@ const EventSegment = (props) => {
                     </div> : null}
                 </div>
                 {
-                    showDetail ? <div class="extra content"
+                    showDetail ? <div className="extra content"
                                       style={{
                                           paddingTop: "2%",
                                           paddingBottom: "2%",
@@ -76,8 +76,8 @@ const EventSegment = (props) => {
                             </div> : null}
                             {showDelete ? <div>
                                 <div className="ui tiny basic red button" onClick={() => {
-                                    setShowDelete(!showDelete)
-                                    //deleteEvent(eventData._id)
+                                    setShowDelete(!showDelete);
+                                    props.deleteEvent(eventData._id);
                                 }}>Delete
                                 </div>
                                 <div className="ui tiny basic grey button" onClick={() => {
@@ -90,9 +90,9 @@ const EventSegment = (props) => {
                                     setEdit(!edit)
                                 }}>Cancel
                                 </div>
-                                <div className="ui tiny basic green button" onClick={() => {
+                                <div className="ui tiny basic green button" onClick={(e) => {
                                     setEdit(!edit)
-                                    //deleteEvent(eventData._id)
+                                    props.handleEventChange(e, eventData._id)
                                 }}>Save
                                 </div>
                             </div> : null}

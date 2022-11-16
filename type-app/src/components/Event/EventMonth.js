@@ -10,7 +10,8 @@ const EventMonth = (props) => {
 
     const eventSegments = () => {
         return events.map((event, i) => {
-            return <EventSegment data={event} key={"eventSegment" + i}/>
+            return <EventSegment data={event} key={"eventSegment" + i} deleteEvent={props.deleteEvent}
+                                 handleEventChange={props.handleEventChange}/>
         })
     }
 

@@ -12,7 +12,8 @@ const EventYear = (props) => {
         if (months) {
             return Object.entries(months).map((month, i) => {
                 const activeMonth = (month[0] === new Date().getMonth().toString() && showActive);
-                return <EventMonth data={month} activeMonth={activeMonth} key={"eventMonth" + i}/>
+                return <EventMonth data={month} activeMonth={activeMonth} key={"eventMonth" + i}
+                                   deleteEvent={props.deleteEvent} handleEventChange={props.handleEventChange}/>
             })
         }
     }
