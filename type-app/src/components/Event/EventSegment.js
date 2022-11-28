@@ -1,13 +1,12 @@
 import React, {useState} from 'react';
 import moment from "moment";
+import EditOrDelete from "../Buttons/EditOrDelete";
 
 const EventSegment = (props) => {
+    const {deleteEvent} = props
     const [eventData, setEventData] = useState(props.data);
     const [showDetail, setShowDetail] = useState(false);
-    const [showEdit, setShowEdit] = useState(false);
-    const [edit, setEdit] = useState(false);
-    const [showDelete, setShowDelete] = useState(false);
-    const {deleteEvent} = props;
+    const [editFields, setEditFields] = useState(false);
 
     const formatDates = (startDate, endDate) => {
         const start = moment(startDate.split("T", 1)[0]);
@@ -18,88 +17,82 @@ const EventSegment = (props) => {
         return {startDateFormatted, endDateFormatted}
     }
 
-    const {startDateFormatted, endDateFormatted} = formatDates(eventData.startDate, eventData.endDate);
+    const formatFieldDates = (startDate, endDate) => {
+        const start = moment(startDate.split("T", 1)[0]);
+        const end = moment(endDate.split("T", 1)[0]);
+        const startDateFieldFormatted = start.format("yyyy-MM-DD");
+        const endDateFieldFormatted = end.format("yyyy-MM-DD");
+        return {startDateFieldFormatted, endDateFieldFormatted}
+    }
+    const getColumns = () => {
+        const mod = window.innerWidth > 415 ? 12 : 10.5;
+        return Math.ceil(document.getElementById('textAreaParent').clientWidth / 100) * mod;
+    }
 
+    const handleEventChange = () => {
+        props.handleEventChange()
+    }
+    const {
+        startDateFormatted,
+        endDateFormatted
+    } = formatDates(eventData.startDate, eventData.endDate);
+    const {startDateFieldFormatted, endDateFieldFormatted} = formatFieldDates(eventData.startDate, eventData.endDate);
 
-    console.log(eventData)
     return (
         <div className={"ui basic segment"} style={{paddingTop: "0"}}>
             <div className={"ui basic fluid card"}>
                 <div className={"content"} style={{paddingTop: "14px", paddingBottom: "14px"}}>
-                    <div className={"meta"} onClick={() => {
+                    <div className={"meta"} style={{cursor: "pointer"}} onClick={() => {
                         setShowDetail(!showDetail)
                     }}>
                         <a className={"ui medium header"}>{
-                            !eventData.eventType ? eventData.name : eventData.name + " |"
+                            eventData.eventType ? eventData.name + " |" : eventData.name
                         }</a>
                         <span className={"ui tiny yellow header"}
                               style={{paddingLeft: "1px"}}>{eventData.eventType}</span>
                     </div>
-                    <div className={"ui small header"} onClick={() => {
-                        setShowDetail(!showDetail)
-                    }}
-                         style={{marginTop: "0"}}>{(startDateFormatted === endDateFormatted) ? startDateFormatted : startDateFormatted + " - " + endDateFormatted}</div>
-                    {showDetail ? <div className="description">
-                        <p>{eventData.details}</p>
+                    {editFields ?
+                        <div>
+                            <label>Start Date</label>
+                            <div className="ui input">
+                                <input type="Date" name={"startDate"} defaultValue={startDateFieldFormatted}
+                                       onChange={(e) => {
+                                           setEventData(eventData, {startDate: e.target.value})
+                                       }}/>
+                            </div>
+                            <label>End Date</label>
+                            <div className="ui input">
+                                <input type="Date" name={"endDate"} defaultValue={endDateFieldFormatted}
+                                       onChange={(e) => {
+                                           setEventData(eventData, {endDate: e.target.value})
+                                       }}/>
+                            </div>
+                        </div> :
+                        <div className={"ui small header"} onClick={() => {
+                            setShowDetail(!showDetail)
+                        }}
+                             style={{
+                                 marginTop: "0",
+                                 cursor: "pointer"
+                             }}>{(startDateFormatted === endDateFormatted) ? startDateFormatted : startDateFormatted + " - " + endDateFormatted}</div>
+                    }
+                    {showDetail ? <div className="extra content"
+                                       style={{
+                                           paddingTop: "2%",
+                                           paddingBottom: "2%"
+                                       }}>
+                        <div className="description" id={"textAreaParent"}>
+                            {editFields ? <textarea name={"details"} cols={getColumns()} rows="10"
+                                                    value={eventData.details}
+                                                    onChange={(e) => setEventData(eventData, {details: e.target.value})}/> :
+                                <p>{eventData.details}</p>}
+                        </div>
+                        <EditOrDelete eventData={eventData} deleteEvent={deleteEvent}
+                                      handleEventChange={handleEventChange} setEditFields={setEditFields}/>
                     </div> : null}
                 </div>
-                {
-                    showDetail ? <div className="extra content"
-                                      style={{
-                                          paddingTop: "2%",
-                                          paddingBottom: "2%",
-                                          display: "flex",
-                                          justifyContent: "right",
-                                          flexDirection: "row"
-                                      }}>
-                        <div style={{
-                            display: "flex",
-                            justifyContent: "right",
-                            flexDirection: "row"
-                        }}>
-                            {!showDelete && !edit ? <button className="circular tiny ui icon button" onClick={() => {
-                                setShowEdit(!showEdit)
-                            }}>
-                                <i className="icon settings"/>
-                            </button> : null}
-                            {showEdit ? <div>
-                                <div className="ui tiny basic grey button" onClick={() => {
-                                    setShowEdit(!showEdit)
-                                    setEdit(!edit)
-                                }}>Edit
-                                </div>
-                                <div className="ui tiny basic red button" onClick={() => {
-                                    setShowDelete(!showDelete)
-                                    setShowEdit(!showEdit)
-                                }}>Delete
-                                </div>
-                            </div> : null}
-                            {showDelete ? <div>
-                                <div className="ui tiny basic red button" onClick={() => {
-                                    setShowDelete(!showDelete);
-                                    props.deleteEvent(eventData._id);
-                                }}>Delete
-                                </div>
-                                <div className="ui tiny basic grey button" onClick={() => {
-                                    setShowDelete(!showDelete)
-                                }}>Cancel
-                                </div>
-                            </div> : null}
-                            {edit ? <div>
-                                <div className="ui tiny basic grey button" onClick={() => {
-                                    setEdit(!edit)
-                                }}>Cancel
-                                </div>
-                                <div className="ui tiny basic green button" onClick={(e) => {
-                                    setEdit(!edit)
-                                    props.handleEventChange(e, eventData._id)
-                                }}>Save
-                                </div>
-                            </div> : null}
-                        </div>
-                    </div> : null
-                }
             </div>
-        </div>);
+        </div>
+    );
 }
 export default EventSegment;
