@@ -30,12 +30,11 @@ const EventSegment = (props) => {
     }
 
     const handleEventChange = () => {
-        props.handleEventChange()
+        //handleEventChange = async (e, eventId) => {
+        //         let {name, value} = e.target;
+        props.handleEventChange(eventData)
     }
-    const {
-        startDateFormatted,
-        endDateFormatted
-    } = formatDates(eventData.startDate, eventData.endDate);
+    const {startDateFormatted, endDateFormatted} = formatDates(eventData.startDate, eventData.endDate);
     const {startDateFieldFormatted, endDateFieldFormatted} = formatFieldDates(eventData.startDate, eventData.endDate);
 
     return (
@@ -57,14 +56,14 @@ const EventSegment = (props) => {
                             <div className="ui input">
                                 <input type="Date" name={"startDate"} defaultValue={startDateFieldFormatted}
                                        onChange={(e) => {
-                                           setEventData(eventData, {startDate: e.target.value})
+                                           setEventData( {...eventData, startDate: e.target.value})
                                        }}/>
                             </div>
                             <label>End Date</label>
                             <div className="ui input">
                                 <input type="Date" name={"endDate"} defaultValue={endDateFieldFormatted}
                                        onChange={(e) => {
-                                           setEventData(eventData, {endDate: e.target.value})
+                                           setEventData({...eventData, endDate: e.target.value})
                                        }}/>
                             </div>
                         </div> :
@@ -84,7 +83,7 @@ const EventSegment = (props) => {
                         <div className="description" id={"textAreaParent"}>
                             {editFields ? <textarea name={"details"} cols={getColumns()} rows="10"
                                                     value={eventData.details}
-                                                    onChange={(e) => setEventData(eventData, {details: e.target.value})}/> :
+                                                    onChange={(e) => setEventData({...eventData, details: e.target.value})}/> :
                                 <p>{eventData.details}</p>}
                         </div>
                         <EditOrDelete eventData={eventData} deleteEvent={deleteEvent}

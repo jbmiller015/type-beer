@@ -55,8 +55,6 @@ class EventsHome extends React.Component {
                 error: [...state.error, err.message]
             }))
         })
-        console.log(eventResults.eventObj)
-        console.log(eventResults.eventsByDate)
         this.setState({
             eventTasks: eventResults.eventTasks,
             events: eventResults.eventObj,
@@ -77,11 +75,9 @@ class EventsHome extends React.Component {
         })
     }
 
-    handleEventChange = async (e, eventId) => {
-        let {name, value} = e.target;
-        let event = this.state.events[eventId]
-        event[name] = value;
-        return await this.putEvent(eventId, event).then(data => {
+    handleEventChange = async (data) => {
+
+        return await this.putEvent(data._id, data).then(data => {
             return data
         });
     }
@@ -96,7 +92,9 @@ class EventsHome extends React.Component {
             }))
         })
         let newState = {...this.state};
-        newState.event[eventId] = data;
+        newState = newState.events.map(e=> {
+            return e._id === eventId ? event : e;
+        } )
         this.setState(newState);
         return data;
     }
