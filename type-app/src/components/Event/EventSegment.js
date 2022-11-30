@@ -30,8 +30,6 @@ const EventSegment = (props) => {
     }
 
     const handleEventChange = () => {
-        //handleEventChange = async (e, eventId) => {
-        //         let {name, value} = e.target;
         props.handleEventChange(eventData)
     }
     const {startDateFormatted, endDateFormatted} = formatDates(eventData.startDate, eventData.endDate);
@@ -63,7 +61,11 @@ const EventSegment = (props) => {
                             <div className="ui input">
                                 <input type="Date" name={"endDate"} defaultValue={endDateFieldFormatted}
                                        onChange={(e) => {
-                                           setEventData({...eventData, endDate: e.target.value})
+                                           const newDate = e.target.value
+                                           if(e.target.value < eventData.startDate)
+                                               setEventData({...eventData, endDate: newDate, startDate: newDate})
+                                           else
+                                               setEventData({...eventData, endDate: e.target.value})
                                        }}/>
                             </div>
                         </div> :
