@@ -4,6 +4,7 @@ import moment from "moment";
 import EventYear from "./EventYear";
 import NavComponent from "../NavComponent";
 import {formatDate} from "../Process/ProcessFunctions";
+import GoToCreate from "../Buttons/GoToCreate";
 
 class EventsHome extends React.Component {
     constructor(props) {
@@ -100,7 +101,6 @@ class EventsHome extends React.Component {
     }
 
     years() {
-        if (this.state.events && this.state.eventsByDate)
             return Object.entries(this.state.eventsByDate).map((event, i) => {
                 const active = event[0] === new Date().getFullYear().toString();
                 return <EventYear data={event} activeYear={active} key={"eventYear" + i}
@@ -119,7 +119,7 @@ class EventsHome extends React.Component {
         return (<div>
                 <NavComponent tanks={false}/>
                 <div style={{display: "flex", alignContent: "center", justifyContent: "center", paddingTop: "5%"}}>
-                    <div className={'ui styled accordion'}>{this.years()}</div>
+                    {this.state.events && this.state.eventsByDate ?  <div className={'ui styled accordion'}>{this.years()}</div>: this.state.isLoaded ? <GoToCreate destination={"event"}/> : null}
                 </div>
             </div>
         )

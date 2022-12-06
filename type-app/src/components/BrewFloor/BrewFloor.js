@@ -5,6 +5,7 @@ import typeApi from "../../api/type-server";
 import Modal from "../modal/Modal";
 import modal from "../modal/Modal.css"
 import Message from "../Messages/Message";
+import GoToCreate from "../Buttons/GoToCreate";
 
 class BrewFloor extends React.Component {
 
@@ -185,9 +186,11 @@ class BrewFloor extends React.Component {
                                                tankModal={true}/> : null}
 
 
-                    <div className={"ui padded equal height centered stackable grid"}>
-                        {components}
-                    </div>
+                    {this.state.tanks ?
+                        <div className={"ui padded equal height centered stackable grid"}>
+                            {components}
+                        </div>:<div style={{marginTop:"5%"}}><GoToCreate destination={"tank"}/></div>
+                    }
                 </div>
             )
         }

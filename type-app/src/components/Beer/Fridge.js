@@ -7,6 +7,7 @@ import Modal from "../modal/Modal";
 import {filterSort} from "../Process/ProcessFunctions";
 import Shrugger from "../Messages/Shrugger";
 import SearchFilter from "../Fields/SearchFilter";
+import GoToCreate from "../Buttons/GoToCreate";
 
 class Fridge extends React.Component {
     constructor(props) {
@@ -155,24 +156,28 @@ class Fridge extends React.Component {
                                                        onClose={() => this.setState({infoMessage: null})}/> :
                         <div style={{marginTop: "3.55%"}} className="ui horizontal divider"/>}
                     <div className="ui horizontal divider"/>
-                    <SearchFilter page={"fridge"}
-                                  setMessage={(message) => this.setInfoMessage(message)}
-                                  handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
-                                  setSorted={sorted => this.setState({sorted: sorted.sorted})}
-                                  reset={() => {
-                                      this.setState({term: '', sorted: null, error: []})
-                                  }}/>
-                    {this.state.show ? <Modal onClose={this.showModal}
-                                              deleteBeer={this.deleteBeer}
-                                              editBeer={this.editBeer}
-                                              getBeerById={this.getBeerById}
-                                              show={this.state.show}
-                                              data={this.state.modalData}
-                                              tankModal={false}/> : null}
-                    <div className={"ui padded equal height equal width centered stackable grid"}>
-                        {this.state.error.length < 1 ? this.renderComponents() :
-                            <Shrugger message={"Something went wrong.\nCheck the error message before continuing."}/>}
-                    </div>
+                    {this.state.beers ? <div><SearchFilter page={"fridge"}
+                                                           setMessage={(message) => this.setInfoMessage(message)}
+                                                           handleChange={e => this.setState({term: e.target.value})}
+                                                           term={this.state.term}
+                                                           setSorted={sorted => this.setState({sorted: sorted.sorted})}
+                                                           reset={() => {
+                                                               this.setState({term: '', sorted: null, error: []})
+                                                           }}/>
+                        {this.state.show ? <Modal onClose={this.showModal}
+                                                  deleteBeer={this.deleteBeer}
+                                                  editBeer={this.editBeer}
+                                                  getBeerById={this.getBeerById}
+                                                  show={this.state.show}
+                                                  data={this.state.modalData}
+                                                  tankModal={false}/> : null}
+                        <div className={"ui padded equal height equal width centered stackable grid"}>
+                            {this.state.error.length < 1 ? this.renderComponents() :
+                                <Shrugger
+                                    message={"Something went wrong.\nCheck the error message before continuing."}/>}
+                        </div>
+                    </div> : <GoToCreate destination={"beer"}/>}
+
                 </div>
             );
         }

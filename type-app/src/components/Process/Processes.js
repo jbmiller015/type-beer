@@ -9,6 +9,7 @@ import Message from "../Messages/Message";
 import Process from "./Process";
 import Shrugger from "../Messages/Shrugger";
 import ProcessFilterButtons from "./ProcessFilterButtons";
+import GoToCreate from "../Buttons/GoToCreate";
 
 
 class Processes extends React.Component {
@@ -478,37 +479,39 @@ class Processes extends React.Component {
                     {this.state.infoMessage ? <Message messageType={'info'} message={this.state.infoMessage}
                                                        onClose={() => this.setState({infoMessage: null})}/> :
                         <div style={{marginTop: "3.55%"}} className="ui horizontal divider"/>}
-                    <SearchFilter page={"processes"}
-                                  setMessage={(message) => this.setInfoMessage(message)}
-                                  handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
-                                  setSorted={sorted => this.setState({sorted: sorted.sorted})}
-                                  reset={() => {
-                                      this.setState({term: '', sorted: null, error: []})
-                                  }}/>
-                    <div className={"ui horizontal divider"}/>
-                    <ProcessFilterButtons setView={(view, color) => {
-                        this.setVisible(view, color)
-                    }}/>
-                    <div style={{
-                        maxWidth: this.state.width > 415 ? "50%" : "90%",
-                        left: "0",
-                        right: "0",
-                        marginLeft: "auto",
-                        marginRight: "auto"
-                    }}>
+                    {this.state.allProcesses ? <div>
+                        <SearchFilter page={"processes"}
+                                      setMessage={(message) => this.setInfoMessage(message)}
+                                      handleChange={e => this.setState({term: e.target.value})} term={this.state.term}
+                                      setSorted={sorted => this.setState({sorted: sorted.sorted})}
+                                      reset={() => {
+                                          this.setState({term: '', sorted: null, error: []})
+                                      }}/>
                         <div className={"ui horizontal divider"}/>
-                        <div className="ui relaxed divided items" style={{
-                            borderStyle: "solid",
-                            borderRadius: "1%",
-                            borderWidth: "1px",
-                            borderColor: this.state.color,
-                            padding: "2%"
+                        <ProcessFilterButtons setView={(view, color) => {
+                            this.setVisible(view, color)
+                        }}/>
+                        <div style={{
+                            maxWidth: this.state.width > 415 ? "50%" : "90%",
+                            left: "0",
+                            right: "0",
+                            marginLeft: "auto",
+                            marginRight: "auto"
                         }}>
-                            {this.state.error.length < 1 ? this.renderComponents() :
-                                <Shrugger
-                                    message={"Something went wrong.\nCheck the error message before continuing."}/>}
+                            <div className={"ui horizontal divider"}/>
+                            <div className="ui relaxed divided items" style={{
+                                borderStyle: "solid",
+                                borderRadius: "1%",
+                                borderWidth: "1px",
+                                borderColor: this.state.color,
+                                padding: "2%"
+                            }}>
+                                {this.state.error.length < 1 ? this.renderComponents() :
+                                    <Shrugger
+                                        message={"Something went wrong.\nCheck the error message before continuing."}/>}
+                            </div>
                         </div>
-                    </div>
+                    </div> : <GoToCreate destination={"process"}/>}
                 </div>
             );
     }
