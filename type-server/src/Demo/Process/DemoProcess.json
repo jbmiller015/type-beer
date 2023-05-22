@@ -1,0 +1,249 @@
+{
+  "0": {
+    "_id": "62892442d128fa000a396bba",
+    "name": "Cold IPA",
+    "expectedYield": "6.5 BBL",
+    "actualYield": "",
+    "contents": "62892206af302d000bc31bb3",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1653004800000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1654473600000"
+      }
+    },
+    "phases": [
+      {
+        "_id": "62892442d128fa000a396bbb",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1653004800000"
+          }
+        },
+        "phaseName": "Fermentation",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1654214400000"
+          }
+        },
+        "startTank": "6273f514b660c1000bca13d7",
+        "endTank": "6273f514b660c1000bca13d7"
+      },
+      {
+        "_id": "62892442d128fa000a396bbc",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1654214400000"
+          }
+        },
+        "startTank": "6273f514b660c1000bca13d7",
+        "endTank": "6273f514b660c1000bca13d7",
+        "phaseName": "DH",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1654387200000"
+          }
+        }
+      },
+      {
+        "_id": "62892442d128fa000a396bbd",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1654387200000"
+          }
+        },
+        "startTank": "6273f514b660c1000bca13d7",
+        "endTank": "6273f514b660c1000bca13d7",
+        "phaseName": "Crash + Prep BT",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1654473600000"
+          }
+        }
+      },
+      {
+        "_id": "62892442d128fa000a396bbe",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1654473600000"
+          }
+        },
+        "startTank": "6273f514b660c1000bca13d7",
+        "endTank": "6273f6032dcc52000b464857",
+        "phaseName": "Transfer",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1654473600000"
+          }
+        }
+      },
+      {
+        "_id": "62892442d128fa000a396bbf",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1654473600000"
+          }
+        },
+        "startTank": "6273f6032dcc52000b464857",
+        "endTank": "6273f6032dcc52000b464857",
+        "phaseName": "Package",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1654473600000"
+          }
+        }
+      }
+    ]
+  },
+  "1": {
+    "_id": "62893029920bb5000a222596",
+    "name": "Saftig",
+    "expectedYield": "10 BBL",
+    "actualYield": "",
+    "contents": "62731a47bdabbb000b0caaf1",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1652400000000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1652400000000"
+      }
+    },
+    "phases": [
+      {
+        "_id": "62893029920bb5000a222597",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1652400000000"
+          }
+        },
+        "phaseName": "DH #1",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1652400000000"
+          }
+        },
+        "startTank": "6273f51e2dcc52000b4647d7",
+        "endTank": "6273f51e2dcc52000b4647d7",
+        "complete": true
+      },
+      {
+        "_id": "62893029920bb5000a222598",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1652400000000"
+          }
+        },
+        "startTank": "6273f51e2dcc52000b4647d7",
+        "endTank": "6273f51e2dcc52000b4647d7",
+        "phaseName": "DH #2",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1652400000000"
+          }
+        }
+      },
+      {
+        "_id": "62893029920bb5000a222599",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1652400000000"
+          }
+        },
+        "startTank": "6273f51e2dcc52000b4647d7",
+        "endTank": "6273f51e2dcc52000b4647d7",
+        "phaseName": "DH #3",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1652400000000"
+          }
+        }
+      },
+      {
+        "_id": "62893029920bb5000a22259a",
+        "startDate": {
+          "$date": {
+            "$numberLong": "1652400000000"
+          }
+        },
+        "startTank": "6273f51e2dcc52000b4647d7",
+        "endTank": "6273f5e82dcc52000b46483c",
+        "phaseName": "Transfer",
+        "endDate": {
+          "$date": {
+            "$numberLong": "1652400000000"
+          }
+        }
+      }
+    ]
+  },
+  "2": {
+    "_id": "6359e7ef77432302faf22818",
+    "name": "Festival Event",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1666742400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1667001600000"
+      }
+    },
+    "details": "This is a Festival Type Event",
+    "eventType": "Festival"
+  },
+  "3": {
+    "_id": "6327b14b63c01f012cf3cdcb",
+    "name": "Can Release Event 2",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "details": "This is a Can Release Type Event",
+    "eventType": "Can Release"
+  },
+  "4": {
+    "_id": "6327b14b63c01f012cf3cdcb",
+    "name": "Can Release Event 3",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "details": "This is a Can Release Type Event",
+    "eventType": "Can Release"
+  },
+  "5": {
+    "_id": "6327b14b63c01f012cf3cdcb",
+    "name": "Can Release Event 4",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "details": "This is a Can Release Type Event",
+    "eventType": "Can Release"
+  }
+}

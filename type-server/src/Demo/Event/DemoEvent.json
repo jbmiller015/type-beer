@@ -1,0 +1,102 @@
+{
+  "0": {
+    "_id": "6327b14b63c01f012cf3cdcb",
+    "name": "Can Release Event 1",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "details": "This is a Can Release Type Event",
+    "eventType": "Can Release"
+  },
+  "1": {
+    "_id": {
+      "$oid": "6308176979e6670198c04f86"
+    },
+    "name": "Party Event",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1663632000000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1663718400000"
+      }
+    },
+    "details": "This is a Party Type Event",
+    "eventType": "party"
+  },
+  "2": {
+    "_id": {
+      "$oid": "6359e7ef77432302faf22818"
+    },
+    "name": "Festival Event",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1666742400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1667001600000"
+      }
+    },
+    "details": "This is a Festival Type Event",
+    "eventType": "Festival"
+  },
+  "3": {
+    "_id": "6327b14b63c01f012cf3cdcb",
+    "name": "Can Release Event 2",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "details": "This is a Can Release Type Event",
+    "eventType": "Can Release"
+  },
+  "4": {
+    "_id": "6327b14b63c01f012cf3cdcb",
+    "name": "Can Release Event 3",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "details": "This is a Can Release Type Event",
+    "eventType": "Can Release"
+  },
+  "5": {
+    "_id": "6327b14b63c01f012cf3cdcb",
+    "name": "Can Release Event 4",
+    "startDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "endDate": {
+      "$date": {
+        "$numberLong": "1649894400000"
+      }
+    },
+    "details": "This is a Can Release Type Event",
+    "eventType": "Can Release"
+  }
+}

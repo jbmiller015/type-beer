@@ -23,6 +23,11 @@ router.route('/user').get(user_controller.user_get);
 router.route('/:base').get(generic_controller.generic_get)
     .post(generic_controller.generic_post);
 
+//Demo routes
+router.route('/demo/:base').get(demo_controller.demo_generic_get);
+router.route('/demo/:base/:sub').get(demo_controller.demo_generic_sub_get);
+router.route('/demo/:base/:sub/:ref').get(demo_controller.demo_generic_sub_ref_get)
+
 //Sub-base routes or specific base routes
 router.route('/user/email').put(user_controller.user_email_put);
 router.route('/user/password').put(user_controller.user_password_put);
@@ -41,11 +46,6 @@ router.route('/:base/:sub/:ref').put(generic_controller.generic_sub_ref_put)
     .delete(generic_controller.generic_sub_ref_delete);
 router.route('/user/admin/access').get(user_controller.user_admin_access_key_get);
 router.route('/user/admin/reset').put(user_controller.user_admin_reset_password_put);
-
-//Demo routes
-router.route('/demo/:base').get(demo_controller.demo_generic_get);
-router.route('/demo/:base/:sub').get(demo_controller.demo_generic_sub_get);
-router.route('/demo/:base/:sub/:ref').get(demo_controller.demo_generic_sub_ref_get)
 
 module.exports = router;
 
