@@ -1,56 +1,54 @@
-{
-  "0": {
-    "_id": "62731a47bdabbb000b0caaf1",
-    "name": "Saftig",
-    "style": "India Pale Ale",
-    "desc": "OG"
-  },
-  "1": {
+[{
+  "_id": "62731a47bdabbb000b0caaf1",
+  "name": "Saftig",
+  "style": "India Pale Ale",
+  "desc": "OG"
+},
+  {
     "_id": "61bd6cef4ec5fd014c5e50e9",
     "name": "Raisin & Resin",
     "style": "Hoppy Amber Ale",
     "desc": "Noice"
   },
-  "2": {
+  {
     "_id": "61bd6e674ec5fd014c5e50fe",
     "name": "Pour Over Porter",
     "style": "Coffee Porter",
     "desc": ""
   },
-  "3": {
+  {
     "_id": "61bd6ea64ec5fd014c5e5105",
     "name": "#Gallagher",
     "style": "Strong Ale",
     "desc": ""
   },
-  "4": {
+  {
     "_id": "6273f62c2dcc52000b464872",
     "name": "Kolsch (Honey)",
     "style": "Kolsch Style Ale",
     "desc": ""
   },
-  "5": {
+  {
     "_id": "61baa3060666ea00cdef9142",
     "name": "Skal Til Steinen",
     "style": "Kveik Ale",
     "desc": "notes!"
   },
-  "6": {
+  {
     "_id": "61be16a0eb4188007b42d954",
     "name": "Cafeteria Fruit Cup",
     "style": "Kettle Sour",
     "desc": ""
   },
-  "7": {
+  {
     "_id": "62584b3e23a65b0352d4b4fe",
     "name": "Neighbor Beer",
     "style": "Lager",
     "desc": "Crispy"
   },
-  "8": {
+  {
     "_id": "6273f6412dcc52000b464877",
     "name": "Upper Iowa Common",
     "style": "Kentucky Common",
     "desc": ""
-  }
-}
+  }]

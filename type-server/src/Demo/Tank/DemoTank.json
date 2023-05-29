@@ -1,114 +1,112 @@
-{
-  "0": {
-    "_id": "61bb5561f352f6031d22af8b",
-    "name": "FV-1",
-    "size": "20BBL",
-    "fill": true,
-    "tankType": "fermenter"
-  },
-  "1": {
+[{
+  "_id": "61bb5561f352f6031d22af8b",
+  "name": "FV-1",
+  "size": "20BBL",
+  "fill": true,
+  "tankType": "fermenter"
+},
+  {
     "_id": "61bb55aff352f6031d22af8c",
     "name": "FV-2",
     "size": "7BBL",
     "fill": true,
     "tankType": "fermenter"
   },
-  "2": {
+  {
     "_id": "61bd5aafc38174015c098f55",
     "name": "FV-3",
     "size": "7BBL",
     "fill": true,
     "tankType": "fermenter"
   },
-  "3": {
+  {
     "_id": "61bd73d64ec5fd014c5e5159",
     "name": "FV-4",
     "size": "7BBL",
     "fill": true,
     "tankType": "fermenter"
   },
-  "4": {
+  {
     "_id": "61bd741b4ec5fd014c5e5166",
     "name": "FV-5",
     "size": "15BBL",
     "fill": true,
     "tankType": "fermenter"
   },
-  "5": {
+  {
     "_id": "61be1637eb4188007b42d942",
     "name": "FV-6",
     "size": "15BBL",
     "fill": true,
     "tankType": "fermenter"
   },
-  "6": {
+  {
     "_id": "61be164ceb4188007b42d949",
     "name": "FV-7",
     "size": "20BBL",
     "fill": true,
     "tankType": "fermenter"
   },
-  "7": {
+  {
     "_id": "61be0c80eb4188007b42d8e9",
     "name": "BT-1",
     "size": "20BBL",
     "fill": true,
     "tankType": "brite"
   },
-  "8": {
+  {
     "_id": "6273f5d22dcc52000b46482a",
     "name": "BT-2",
     "size": "20 BBL",
     "fill": true,
     "tankType": "brite"
   },
-  "9": {
+  {
     "_id": "61bd74674ec5fd014c5e5171",
     "name": "BT-3",
     "size": "15BBL",
     "fill": true,
     "tankType": "brite"
   },
-  "10": {
+  {
     "_id": "6273f5f02dcc52000b464845",
     "name": "BT-4",
     "size": "15 BBL",
     "fill": true,
     "tankType": "brite"
   },
-  "11": {
+  {
     "_id": "6273f5f92dcc52000b46484e",
     "name": "BT-5",
     "size": "10 BBL",
     "fill": true,
     "tankType": "brite"
   },
-  "12": {
+  {
     "_id": "6273f6032dcc52000b464857",
     "name": "BT-6",
     "size": "10 BBL",
     "fill": true,
     "tankType": "brite"
   },
-  "13": {
+  {
     "_id": "62101aceb68f9201973774d9",
     "name": "B-1",
     "size": "1BBL",
     "fill": true,
     "tankType": "barrel"
   },
-  "14": {
+  {
     "_id": "62101aweb68f9201973774d9",
     "name": "B-2",
     "size": "1BBL",
     "fill": true,
     "tankType": "barrel"
   },
-  "15": {
+  {
     "_id": "62101arab68f9201973774d9",
     "name": "B-3",
     "size": "1BBL",
     "fill": true,
     "tankType": "barrel"
-  }
-}
+  }]
