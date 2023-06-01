@@ -13,13 +13,14 @@ const Tank = (props) => {
     const [color, setColor] = useState("");
 
     const [percent, setPercent] = useState("")
-    const { fill, name, tankType} = props.tankData;
+    const {fill, name, tankType} = props.tankData;
     const process = props.process;
     const {getContents} = props;
 
     useEffect(async () => {
         if (process) {
             const contents = await getContents(process.contents)
+            console.log(process.contents)
             setContents(contents);
             let startDate = formatDate(process.startDate)
             let endDate = formatDate(process.endDate)

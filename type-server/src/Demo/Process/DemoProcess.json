@@ -1,54 +1,63 @@
-[{
-  "_id": "62892442d128fa000a396bba",
-  "name": "Cold IPA",
-  "expectedYield": "6.5 BBL",
-  "actualYield": "",
-  "contents": "62892206af302d000bc31bb3",
-  "startDate": "1653004800000",
-  "endDate": "1654473600000",
-  "phases": [
-    {
+[
+  {
+    "_id": "62892442d128fa000a396bba",
+    "name": "Cold IPA",
+    "expectedYield": "6.5 BBL",
+    "actualYield": "",
+    "contents": "6273f6412dcc52000b464870",
+    "startDate": "1653004800000",
+    "endDate": "1654473600000",
+    "activePhase": {
       "_id": "62892442d128fa000a396bbb",
       "startDate": "1653004800000",
       "phaseName": "Fermentation",
       "endDate": "1654214400000",
-      "startTank": "6273f514b660c1000bca13d7",
-      "endTank": "6273f514b660c1000bca13d7"
+      "startTank": "61bb5561f352f6031d22af8b",
+      "endTank": "61bb5561f352f6031d22af8b"
     },
-    {
-      "_id": "62892442d128fa000a396bbc",
-      "startDate": "1654214400000",
-      "startTank": "6273f514b660c1000bca13d7",
-      "endTank": "6273f514b660c1000bca13d7",
-      "phaseName": "DH",
-      "endDate": "1654387200000"
-    },
-    {
-      "_id": "62892442d128fa000a396bbd",
-      "startDate": "1654387200000",
-      "startTank": "6273f514b660c1000bca13d7",
-      "endTank": "6273f514b660c1000bca13d7",
-      "phaseName": "Crash + Prep BT",
-      "endDate": "1654473600000"
-    },
-    {
-      "_id": "62892442d128fa000a396bbe",
-      "startDate": "1654473600000",
-      "startTank": "6273f514b660c1000bca13d7",
-      "endTank": "6273f6032dcc52000b464857",
-      "phaseName": "Transfer",
-      "endDate": "1654473600000"
-    },
-    {
-      "_id": "62892442d128fa000a396bbf",
-      "startDate": "1654473600000",
-      "startTank": "6273f6032dcc52000b464857",
-      "endTank": "6273f6032dcc52000b464857",
-      "phaseName": "Package",
-      "endDate": "1654473600000"
-    }
-  ]
-},
+    "phases": [
+      {
+        "_id": "62892442d128fa000a396bbb",
+        "startDate": "1653004800000",
+        "phaseName": "Fermentation",
+        "endDate": "1654214400000",
+        "startTank": "61bb5561f352f6031d22af8b",
+        "endTank": "61bb5561f352f6031d22af8b"
+      },
+      {
+        "_id": "62892442d128fa000a396bbc",
+        "startDate": "1654214400000",
+        "startTank": "61bb5561f352f6031d22af8b",
+        "endTank": "61bb5561f352f6031d22af8b",
+        "phaseName": "DH",
+        "endDate": "1654387200000"
+      },
+      {
+        "_id": "62892442d128fa000a396bbd",
+        "startDate": "1654387200000",
+        "startTank": "61bb5561f352f6031d22af8b",
+        "endTank": "61bb5561f352f6031d22af8b",
+        "phaseName": "Crash + Prep BT",
+        "endDate": "1654473600000"
+      },
+      {
+        "_id": "62892442d128fa000a396bbe",
+        "startDate": "1654473600000",
+        "startTank": "61bb5561f352f6031d22af8b",
+        "endTank": "61bb55aff352f6031d22af8c",
+        "phaseName": "Transfer",
+        "endDate": "1654473600000"
+      },
+      {
+        "_id": "62892442d128fa000a396bbf",
+        "startDate": "1654473600000",
+        "startTank": "61bb55aff352f6031d22af8c",
+        "endTank": "61bb55aff352f6031d22af8c",
+        "phaseName": "Package",
+        "endDate": "1654473600000"
+      }
+    ]
+  },
   {
     "_id": "62893029920bb5000a222596",
     "name": "Saftig",
@@ -57,72 +66,56 @@
     "contents": "62731a47bdabbb000b0caaf1",
     "startDate": "1652400000000",
     "endDate": "1652400000000",
+    "activePhase": {
+      "_id": "62893029920bb5000a222597",
+      "startDate": "1652400000000",
+      "phaseName": "DH #1",
+      "endDate": "1652400000000",
+      "startTank": "61bd5aafc38174015c098f55",
+      "endTank": "61bd5aafc38174015c098f55"
+    },
     "phases": [
       {
         "_id": "62893029920bb5000a222597",
         "startDate": "1652400000000",
         "phaseName": "DH #1",
         "endDate": "1652400000000",
-        "startTank": "6273f51e2dcc52000b4647d7",
-        "endTank": "6273f51e2dcc52000b4647d7",
+        "startTank": "61bd5aafc38174015c098f55",
+        "endTank": "61bd5aafc38174015c098f55",
         "complete": true
       },
       {
         "_id": "62893029920bb5000a222598",
         "startDate": "1652400000000",
-        "startTank": "6273f51e2dcc52000b4647d7",
-        "endTank": "6273f51e2dcc52000b4647d7",
+        "startTank": "61bd5aafc38174015c098f55",
+        "endTank": "61bd5aafc38174015c098f55",
         "phaseName": "DH #2",
         "endDate": "1652400000000"
       },
       {
         "_id": "62893029920bb5000a222599",
         "startDate": "1652400000000",
-        "startTank": "6273f51e2dcc52000b4647d7",
-        "endTank": "6273f51e2dcc52000b4647d7",
+        "startTank": "61bd5aafc38174015c098f55",
+        "endTank": "61bd5aafc38174015c098f55",
         "phaseName": "DH #3",
         "endDate": "1652400000000"
       },
       {
         "_id": "62893029920bb5000a22259a",
         "startDate": "1652400000000",
-        "startTank": "6273f51e2dcc52000b4647d7",
-        "endTank": "6273f5e82dcc52000b46483c",
+        "startTank": "61bd5aafc38174015c098f55",
+        "endTank": "61bd73d64ec5fd014c5e5159",
         "phaseName": "Transfer",
+        "endDate": "1652400000000"
+      },
+      {
+        "_id": "62892442d128fa000a396bbf",
+        "startDate": "1652400000000",
+        "startTank": "61bd73d64ec5fd014c5e5159",
+        "endTank": "61bd73d64ec5fd014c5e5159",
+        "phaseName": "Package",
         "endDate": "1652400000000"
       }
     ]
-  },
-  {
-    "_id": "6359e7ef77432302faf22818",
-    "name": "Festival Event",
-    "startDate": "1666742400000",
-    "endDate": "1667001600000",
-    "details": "This is a Festival Type Event",
-    "eventType": "Festival"
-  },
-  {
-    "_id": "6327b14b63c01f012cf30000",
-    "name": "Can Release Event 2",
-    "startDate": "1649894400000",
-    "endDate": "1649894400000",
-    "details": "This is a Can Release Type Event",
-    "eventType": "Can Release"
-  },
-  {
-    "_id": "6327b14b63c01f012cf30001",
-    "name": "Can Release Event 3",
-    "startDate": "1649894400000",
-    "endDate": "1649894400000",
-    "details": "This is a Can Release Type Event",
-    "eventType": "Can Release"
-  },
-  {
-    "_id": "6327b14b63c01f012cf30002",
-    "name": "Can Release Event 4",
-    "startDate": "1649894400000",
-    "endDate": "1649894400000",
-    "details": "This is a Can Release Type Event",
-    "eventType": "Can Release"
   }
 ]

@@ -7,6 +7,7 @@ exports.generic_get = async (req, res) => {
     const Object = mongoose.model(base);
     const {id, name} = req.query;
     let getRes;
+    //tes
 
     if (id)
         getRes = await Object.find({_id: id, userId: req.user._id});

@@ -4,6 +4,7 @@ const User = mongoose.model('User');
 const {v4: uuidv4} = require('uuid');
 
 exports.user_get = async (req, res) => {
+    console.log('get')
     const getRes = await User.find({_id: req.user._id});
     res.send(getRes);
 }

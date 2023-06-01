@@ -3,13 +3,11 @@ const beer = require('../Demo/Beer/DemoBeer.json');
 const user = require('../Demo/User/DemoUser.json');
 const process = require('../Demo/Process/DemoProcess.json');
 const event = require('../Demo/Event/DemoEvent.json');
+const moment = require("moment");
 
 exports.demo_generic_get = async (req, res) => {
     const base = req.params.base;
     try {
-        console.log("get");
-        let data = getJsonData(base);
-        console.log(data)
         res.send(getJsonData(base));
     } catch (e) {
         res.status(422).send(e.message);
@@ -46,9 +44,9 @@ const getJsonData = (base) => {
         case "user":
             return user;
         case "process":
-            return process
+            return setDates(process);
         case "event":
-            return event;
+            return setDates(event);
 
     }
 }
@@ -83,4 +81,18 @@ const getJsonRefData = (base, id, ref) => {
             return event[id][ref];
 
     }
+}
+
+const setDates = (data) => {
+    return data.map((obj, index) => {
+        let start = moment(new Date(parseInt(obj.startDate, 10)));
+        let end = moment(new Date(parseInt(obj.endDate, 10)));
+        const dateDiff = end.diff(start, 'days');
+        obj.startDate = moment(0, "HH").utcOffset(0).startOf('date').add(index, 'days').toISOString();
+        obj.endDate = moment(0, "HH").utcOffset(0).startOf('date').add((dateDiff + index), 'days').toISOString();
+        if (obj.phases) {
+            obj.phases = setDates(obj.phases);
+        }
+        return obj;
+    })
 }

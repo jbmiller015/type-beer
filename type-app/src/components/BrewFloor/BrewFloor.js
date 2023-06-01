@@ -26,7 +26,19 @@ class BrewFloor extends React.Component {
     }
 
     async componentDidMount() {
-        await typeApi.get('/tank').then(response => {
+        console.log(localStorage.getItem('token'))
+        let tank;
+        let process;
+        if (localStorage.getItem('token').includes("demoToken")) {
+            console.log("demotoken")
+            tank = "/demo/tank";
+            process = "/demo/process"
+        } else {
+            tank = "/tank";
+            process = "/process/active"
+        }
+        console.log(tank)
+        await typeApi.get(tank).then(response => {
             response.data.map(el => {
                 this.setState(prevState => ({
                     tanks: {
@@ -41,7 +53,7 @@ class BrewFloor extends React.Component {
                 error: [...state.error, err.message]
             }))
         });
-        await typeApi.get('/process/active').then(response => {
+        await typeApi.get(process).then(response => {
             response.data.map(el => {
                 this.setState(prevState => ({
                     processes: {
@@ -60,7 +72,8 @@ class BrewFloor extends React.Component {
     }
 
     getBeerById = async (beerId) => {
-        const beer = this.state.beers[beerId] || await typeApi.get(`/beer/${beerId}`).then((res) => {
+        const beerUrl = localStorage.getItem('token').includes("demoToken") ? "demo/beer/" : "beer/";
+        const beer = this.state.beers[beerId] || await typeApi.get(`${beerUrl}${beerId}`).then((res) => {
             return res.data[0];
         }).catch(err => {
             this.setState(state => ({
@@ -189,7 +202,7 @@ class BrewFloor extends React.Component {
                     {this.state.tanks ?
                         <div className={"ui padded equal height centered stackable grid"}>
                             {components}
-                        </div>:<div style={{marginTop:"5%"}}><GoToCreate destination={"tank"}/></div>
+                        </div> : <div style={{marginTop: "5%"}}><GoToCreate destination={"tank"}/></div>
                     }
                 </div>
             )
