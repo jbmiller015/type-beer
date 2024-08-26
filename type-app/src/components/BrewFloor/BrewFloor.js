@@ -19,12 +19,11 @@ class BrewFloor extends React.Component {
             processes: {},
             show: false,
             modalData: null,
-
+            tanksActive: this.props.tanks,
             beers: {}
         };
-        // tanksActive: this.props.tanks,
         console.log("render")
-        //this.showModal = this.showModal.bind(this);
+        this.showModal = this.showModal.bind(this);
     }
 
     async componentDidMount() {
