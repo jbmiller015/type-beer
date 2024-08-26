@@ -157,7 +157,7 @@ class CreateProcess extends React.Component {
 
         await typeApi.post('/process', formData)
             .then(res =>
-                this.props.history.push('/processes'))
+                this.props.navigate('/processes'))
             .catch(err => {
                 console.error(err)
             });

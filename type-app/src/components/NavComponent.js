@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 import useToken from "./Hooks/useToken";
 import useWindowDimensions from "./Hooks/useWindowDimensions";
@@ -8,7 +8,7 @@ const NavComponent = (props) => {
 
 
     const {token, setToken} = useToken();
-    const history = useHistory();
+    const navigate = useNavigate();
     const dem = useWindowDimensions();
     const [mobileView, setMobileView] = useState();
     useEffect(() => {
@@ -30,26 +30,26 @@ const NavComponent = (props) => {
                 <div className={"item"}>
                     {!mobileView ?
                         <div className={"fluid ui basic animated fade button"} tabIndex="0"
-                             onClick={() => history.push('/')}>
+                             onClick={() => navigate('/')}>
                             <div className={"visible content"}>Brew Floor</div>
                             <div className={"hidden content"}>
                                 <i className={"warehouse icon"}/>
                             </div>
                         </div> :
-                        <button className="ui fluid basic icon button" onClick={() => history.push('/')}><i
+                        <button className="ui fluid basic icon button" onClick={() => navigate('/')}><i
                             className="warehouse icon"/></button>
                     }
                 </div>
                 <div className={"item"}>
                     {!mobileView ?
                         <div className={"fluid ui basic animated fade button"} tabIndex="0"
-                             onClick={() => history.push('/calendar')}>
+                             onClick={() => navigate('/calendar')}>
                             <div className={"visible content"}>Calendar</div>
                             <div className={"hidden content"}>
                                 <i className={"calendar icon"}/>
                             </div>
                         </div> :
-                        <button className="ui fluid basic icon button" onClick={() => history.push('/calendar')}><i
+                        <button className="ui fluid basic icon button" onClick={() => navigate('/calendar')}><i
                             className="calendar icon"/></button>}
                 </div>
                 <div className={"item"}>
@@ -60,7 +60,7 @@ const NavComponent = (props) => {
                         <div className={"menu"}>
                             <div className={"item"}>
                                 <div className={"fluid ui basic animated fade button"} tabIndex="0"
-                                     onClick={() => history.push('/fridge')}>
+                                     onClick={() => navigate('/fridge')}>
                                     <div className={"visible content"}>Beers</div>
                                     <div className={"hidden content"}>
                                         <i className={"beer icon"}/>
@@ -69,7 +69,7 @@ const NavComponent = (props) => {
                             </div>
                             <div className={"item"}>
                                 <div className={"fluid ui basic animated fade button"} tabIndex="0"
-                                     onClick={() => history.push('/processes')}>
+                                     onClick={() => navigate('/processes')}>
                                     <div className={"visible content"}>Processes</div>
                                     <div className={"hidden content"}>
                                         <i className={"clipboard icon"}/>
@@ -78,7 +78,7 @@ const NavComponent = (props) => {
                             </div>
                             <div className={"item"}>
                                 <div className={"fluid ui basic animated fade button"} tabIndex="0"
-                                     onClick={() => history.push('/events')}>
+                                     onClick={() => navigate('/events')}>
                                     <div className={"visible content"}>Events</div>
                                     <div className={"hidden content"}>
                                         <i className={"calendar icon"}/>
@@ -92,7 +92,7 @@ const NavComponent = (props) => {
                                     <div className={"left menu"}>
                                         <div className={"item"}>
                                             <div className={"fluid ui basic animated fade button"} tabIndex="0"
-                                                 onClick={() => history.push('/create/tank')}>
+                                                 onClick={() => navigate('/create/tank')}>
                                                 <div className={"visible content"}>Create Tank</div>
                                                 <div className={"hidden content"}>
                                                     <i className={"plus icon"}/>
@@ -101,7 +101,7 @@ const NavComponent = (props) => {
                                         </div>
                                         <div className={"item"}>
                                             <div className={"fluid ui basic animated fade button"} tabIndex="1"
-                                                 onClick={() => history.push('/create/beer')}>
+                                                 onClick={() => navigate('/create/beer')}>
                                                 <div className={"visible content"}>Create Beer</div>
                                                 <div className={"hidden content"}>
                                                     <i className={"plus icon"}/>
@@ -110,7 +110,7 @@ const NavComponent = (props) => {
                                         </div>
                                         <div className={"item"}>
                                             <div className={"fluid ui basic animated fade button"} tabIndex="2"
-                                                 onClick={() => history.push('/create/process')}>
+                                                 onClick={() => navigate('/create/process')}>
                                                 <div className={"visible content"}>Create Process</div>
                                                 <div className={"hidden content"}>
                                                     <i className={"plus icon"}/>
@@ -119,7 +119,7 @@ const NavComponent = (props) => {
                                         </div>
                                         <div className={"item"}>
                                             <div className={"fluid ui basic animated fade button"} tabIndex="2"
-                                                 onClick={() => history.push('/create/event')}>
+                                                 onClick={() => navigate('/create/event')}>
                                                 <div className={"visible content"}>Create Event</div>
                                                 <div className={"hidden content"}>
                                                     <i className={"plus icon"}/>
@@ -142,7 +142,7 @@ const NavComponent = (props) => {
                             <div className={"item"}>
                                 <div className={"item"}>
                                     <div className={"fluid ui basic animated fade button"} tabIndex="2"
-                                         onClick={() => history.push('/account')}>
+                                         onClick={() => navigate('/account')}>
                                         <div className={"visible content"}>Account Info</div>
                                         <div className={"hidden content"}>
                                             <i className={"user icon"}/>

@@ -27,7 +27,7 @@ class CreateBeer extends React.Component {
 
         await typeApi.post('/beer', formData)
             .then(res =>
-                this.props.history.push('/fridge'))
+                this.props.navigate('/fridge'))
             .catch(err => {
                 console.error(err)
             });

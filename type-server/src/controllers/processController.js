@@ -3,24 +3,37 @@ const moment = require("moment");
 
 
 exports.process_active_get = async (req, res) => {
+    console.log("url:" + req.url)
     let getRes;
     const {startDate, endDate, name} = req.query;
+    console.log("query:" + startDate, endDate, name)
     const today = moment(0, "HH").utcOffset(0).startOf('date').toISOString(true);
     const Object = mongoose.model('Process');
     if (startDate && endDate) {
-        getRes = await Object.find({
-            userId: req.user._id,
-            startDate: {$lte: new Date(startDate)},
-            endDate: {$lte: new Date(endDate), $gte: new Date(startDate)}
-        });
+        try {
+            getRes = await Object.find({
+                userId: req.user._id,
+                startDate: {$lte: new Date(startDate)},
+                endDate: {$lte: new Date(endDate), $gte: new Date(startDate)}
+            }).exec();
+        } catch (err) {
+            console.log(err);
+        } finally {
+        }
+        try {
+            const right = await Object.find({
+                userId: req.user._id,
+                startDate: {$gte: new Date(startDate), $lte: new Date(endDate)},
+                endDate: {$gte: new Date(endDate)}
+            }).exec();
 
-        const right = await Object.find({
-            userId: req.user._id,
-            startDate: {$gte: new Date(startDate), $lte: new Date(endDate)},
-            endDate: {$gte: new Date(endDate)}
-        })
+            getRes.push(...right);
+        } catch (err) {
+            console.log(err);
+        } finally {
 
-        getRes.push(...right);
+        }
+
 
         let tankList = [];
         for (let el of getRes) {
@@ -36,16 +49,30 @@ exports.process_active_get = async (req, res) => {
                 }
             }
         }
-        let tanks = await mongoose.model('Tank').find({userId: req.user._id, name: {$regex: name, $options: 'i'}})
-        getRes = tanks.filter(tank => {
-            return tankList.indexOf(tank._id.toString()) === -1
-        });
+        try {
+            let tanks = await mongoose.model('Tank').find({userId: req.user._id, name: {$regex: name, $options: 'i'}})
+            getRes = tanks.filter(tank => {
+                return tankList.indexOf(tank._id.toString()) === -1
+            });
+        } catch (err) {
+            console.log(err);
+        } finally {
+
+        }
+
+
     } else {
-        getRes = await Object.find({
-            userId: req.user._id,
-            startDate: {$lte: today},
-            endDate: {$gte: today}
-        });
+        try {
+            getRes = await Object.find({
+                userId: req.user._id,
+                startDate: {$lte: today},
+                endDate: {$gte: today}
+            }).exec();
+        } catch (err) {
+            console.log(err);
+        } finally {
+
+        }
         if (getRes.length > 0) {
             for (let i = 0; i < getRes.length; i++) {
                 for (let le of getRes[i].phases) {
@@ -57,5 +84,6 @@ exports.process_active_get = async (req, res) => {
         }
     }
 
-    res.send(getRes)
+    console.log("res: ", getRes)
+    return res.status(200).json(getRes);
 }

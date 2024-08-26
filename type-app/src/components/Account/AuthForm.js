@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import typeApi from "../../api/type-server";
 import logo from "../../media/typeBfull.png"
 import useWindowDimensions from "../Hooks/useWindowDimensions";
 
 
 const AuthForm = ({setToken}) => {
-    const history = useHistory();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');

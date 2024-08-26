@@ -93,7 +93,7 @@ class CreateEvent extends React.Component {
         await typeApi.post('/event', formData)
             .then(res => {
                 this.setState(null);
-                this.props.history.push('/events');
+                this.props.navigate('/events');
             })
             .catch(err => {
                 console.error(err);

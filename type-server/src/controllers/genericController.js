@@ -7,17 +7,21 @@ exports.generic_get = async (req, res) => {
     const Object = mongoose.model(base);
     const {id, name} = req.query;
     let getRes;
-    //tes
+    console.log("url: " + req.url)
+    console.log("req.query: " + id, name)
+    console.log("req.user._id: " + req.user._id)
 
-    if (id)
-        getRes = await Object.find({_id: id, userId: req.user._id});
-    else if (name)
+    if (id) {
+        getRes = await Object.find({_id: id, userId: req.user._id}).exec();
+    } else if (name)
         getRes = await Object.find({name: {$regex: name, $options: 'i'}, userId: req.user._id});
-    else
-        getRes = await Object.find({userId: req.user._id});
+    else {
+        getRes = await Object.find({userId: req.user._id}).exec();
+    }
 
-    res.send(getRes);
+    return res.status(200).json(getRes);
 }
+
 
 exports.generic_post = async (req, res) => {
     const base = toUpper(req.params.base);
@@ -32,17 +36,19 @@ exports.generic_post = async (req, res) => {
 }
 
 exports.generic_sub_get = async (req, res) => {
-    let Object;
-    let getRes;
-    const base = toUpper(req.params.base);
-    if (req.params.sub.length === 24) {
-        Object = mongoose.model(base);
-        getRes = await Object.find({userId: req.user._id, _id: req.params.sub});
-    } else {
-        Object = mongoose.model(req.params.sub);
-        getRes = await Object.find({userId: req.user._id});
+    if (req.url !== '/process/active') {
+        let Object;
+        let getRes;
+        const base = toUpper(req.params.base);
+        if (req.params.sub.length === 24) {
+            Object = mongoose.model(base);
+            getRes = await Object.find({userId: req.user._id, _id: req.params.sub});
+        } else {
+            Object = mongoose.model(req.params.sub);
+            getRes = await Object.find({userId: req.user._id});
+        }
+        res.send(getRes);
     }
-    res.send(getRes);
 }
 
 exports.generic_sub_post = async (req, res) => {

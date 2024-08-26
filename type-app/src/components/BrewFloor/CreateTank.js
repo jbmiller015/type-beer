@@ -39,7 +39,7 @@ class CreateTank extends React.Component {
 
         await typeApi.post('/tank', formData)
             .then(res =>
-                this.props.history.push('/'))
+                this.props.navigate('/'))
             .catch(err => {
                 console.error(err)
             });

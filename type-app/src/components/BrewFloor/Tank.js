@@ -17,35 +17,38 @@ const Tank = (props) => {
     const process = props.process;
     const {getContents} = props;
 
-    useEffect(async () => {
-        if (process) {
-            const contents = await getContents(process.contents)
-            console.log(process.contents)
-            setContents(contents);
-            let startDate = formatDate(process.startDate)
-            let endDate = formatDate(process.endDate)
-            if (process.complete) {
-                setColor("green");
-                setPercent(100);
-            } else {
-                if (moment(startDate).startOf('date').isAfter(moment().startOf('date'))) {
-                    setColor("");
-                    setPercent(0);
-                } else if (moment().isBetween(moment(startDate).startOf('date'), moment(endDate).endOf('date'))) {
-                    let total = (moment(endDate).diff(startDate, "days"));
-                    let remaining = moment(endDate).endOf('date').diff(moment(), "days");
-                    let perc = (100 - ((remaining / total) * 100));
-                    setColor("yellow");
-                    if (isNaN(perc))
-                        setPercent(95)
-                    else
-                        setPercent(perc);
-                } else {
-                    setColor("red");
+    useEffect(() => {
+        const getData = async () => {
+            if (process) {
+                const contents = await getContents(process.contents)
+                console.log(process.contents)
+                setContents(contents);
+                let startDate = formatDate(process.startDate)
+                let endDate = formatDate(process.endDate)
+                if (process.complete) {
+                    setColor("green");
                     setPercent(100);
+                } else {
+                    if (moment(startDate).startOf('date').isAfter(moment().startOf('date'))) {
+                        setColor("");
+                        setPercent(0);
+                    } else if (moment().isBetween(moment(startDate).startOf('date'), moment(endDate).endOf('date'))) {
+                        let total = (moment(endDate).diff(startDate, "days"));
+                        let remaining = moment(endDate).endOf('date').diff(moment(), "days");
+                        let perc = (100 - ((remaining / total) * 100));
+                        setColor("yellow");
+                        if (isNaN(perc))
+                            setPercent(95)
+                        else
+                            setPercent(perc);
+                    } else {
+                        setColor("red");
+                        setPercent(100);
+                    }
                 }
             }
         }
+        getData()
     }, [process])
 
 

@@ -32,11 +32,11 @@ app.use(authRoutes);
 app.use(routeHandler);
 
 
-mongoose.connect(db_string, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true
-});
+async function connectDb() {
+    await mongoose.connect(db_string, {dbName: 'myFirstDatabase'});
+}
+
+connectDb().catch(err => console.log(err));
 
 mongoose.connection.on('connected', () => {
     console.log('Connected to mongo instance')
@@ -48,13 +48,14 @@ mongoose.connection.on('error', (err) => {
 
 //Auth is required
 app.get('/', requireAuth, (req, res) => {
+    console.log("here")
     res.send('base');
 });
 
 /**
  app.get('/', (req, res) => {
-    res.send('base');
-});
+ res.send('base');
+ });
  */
 
 const port = process.env.PORT || '8080';
