@@ -7,9 +7,11 @@ const moment = require("moment");
 
 exports.demo_generic_get = async (req, res) => {
     const base = req.params.base;
+    console.log("base:",base)
     try {
         res.send(getJsonData(base));
     } catch (e) {
+        console.log(e)
         res.status(422).send(e.message);
     }
 }
@@ -17,6 +19,7 @@ exports.demo_generic_get = async (req, res) => {
 exports.demo_generic_sub_get = async (req, res) => {
     const base = req.params.base;
     const sub = req.params.sub;
+    console.log(base,sub)
     try {
         res.send(getJsonSubData(base, sub));
     } catch (e) {
@@ -25,6 +28,7 @@ exports.demo_generic_sub_get = async (req, res) => {
 }
 
 exports.demo_generic_sub_ref_get = async (req, res) => {
+    console.log(req)
     const base = req.params.base;
     const ref = req.params.ref;
     const sub = req.params.sub;
@@ -54,19 +58,20 @@ const getJsonData = (base) => {
 const getJsonSubData = (base, id) => {
     switch (base) {
         case "tank":
-            return tank[id];
+            return getById(tank,id);
         case "beer":
-            return beer[id];
+            return getById(beer,id);
         case "user":
-            return user[id];
+            return getById(user,id);
         case "process":
-            return process[id];
+            return getById(process,id);
         case "event":
-            return event[id];
+            return getById(event,id);
 
     }
 }
 
+//TODO: Does this ever get used?
 const getJsonRefData = (base, id, ref) => {
     switch (base) {
         case "tank":
@@ -83,6 +88,12 @@ const getJsonRefData = (base, id, ref) => {
     }
 }
 
+const getById = (obj,id) => {
+    return obj.filter(el => {
+        return el._id === id;
+    })
+}
+
 const setDates = (data) => {
     return data.map((obj, index) => {
         let start = moment(new Date(parseInt(obj.startDate, 10)));
@@ -92,6 +103,9 @@ const setDates = (data) => {
         obj.endDate = moment(0, "HH").utcOffset(0).startOf('date').add((dateDiff + index), 'days').toISOString();
         if (obj.phases) {
             obj.phases = setDates(obj.phases);
+        }
+        if (obj.activePhase) {
+            obj.activePhase = setDates([obj.activePhase])[0];
         }
         return obj;
     })

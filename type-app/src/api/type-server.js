@@ -16,6 +16,15 @@ instance.interceptors.request.use(
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+        if (token && token.includes("demoToken")) {
+            console.log(config.url)
+            if(config.url.includes('active')){
+                config.url = 'demo/process/'
+            }else {
+                config.url = 'demo/' + config.url;
+                console.log(config.url)
+            }
+        }
         return config;
     },
     (err) => {

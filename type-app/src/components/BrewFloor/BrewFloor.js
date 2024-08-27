@@ -27,17 +27,9 @@ class BrewFloor extends React.Component {
     }
 
     async componentDidMount() {
-        console.log(localStorage.getItem('token'))
-        let tank;
-        let process;
-        if (localStorage.getItem('token').includes("demoToken")) {
-            console.log("demotoken")
-            tank = "/demo/tank";
-            process = "/demo/process"
-        } else {
-            tank = "/tank";
-            process = "/process/active"
-        }
+        let tank = "tank";
+        let process = "/process/active";
+
         console.log(tank)
 
         await typeApi.get(tank).then(response => {
@@ -58,6 +50,7 @@ class BrewFloor extends React.Component {
         });
 
         await typeApi.get(process).then(response => {
+            console.log(response.data)
             response.data.map(el => {
                 this.setState(prevState => ({
                     processes: {
@@ -76,8 +69,8 @@ class BrewFloor extends React.Component {
     }
 
     getBeerById = async (beerId) => {
-        const beerUrl = localStorage.getItem('token').includes("demoToken") ? "demo/beer/" : "beer/";
-        const beer = this.state.beers[beerId] || await typeApi.get(`${beerUrl}${beerId}`).then((res) => {
+
+        const beer = this.state.beers[beerId] || await typeApi.get(`beer/${beerId}`).then((res) => {
             return res.data[0];
         }).catch(err => {
             this.setState(state => ({
