@@ -155,7 +155,7 @@ const NavComponent = (props) => {
                                      onClick={() => {
                                          localStorage.clear()
                                          setToken()
-                                         window.location.reload()
+                                         navigate('/');
                                      }}>
                                     <div className={"content"}>Log out</div>
                                 </div>

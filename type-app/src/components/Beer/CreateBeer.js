@@ -1,6 +1,7 @@
 import React from 'react';
 import typeApi from '../../api/type-server'
 import NavComponent from "../NavComponent";
+import {useNavigate} from "react-router-dom";
 import Beer from "./Beer";
 
 
@@ -13,6 +14,7 @@ class CreateBeer extends React.Component {
             style: "",
             desc: ""
         }
+
     }
 
     onFormSubmit = async (e) => {
@@ -26,8 +28,10 @@ class CreateBeer extends React.Component {
 
 
         await typeApi.post('/beer', formData)
-            .then(res =>
-                this.props.navigate('/fridge'))
+            .then(res => {
+                this.props.navigate('/fridge');
+                return res;
+            })
             .catch(err => {
                 console.error(err)
             });

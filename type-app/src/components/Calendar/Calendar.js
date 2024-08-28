@@ -5,6 +5,7 @@ import moment from 'moment'
 import Date from "./Date";
 import typeApi from "../../api/type-server";
 import {formatDate} from "../Process/ProcessFunctions";
+import getBeerById from "../Hooks/getBeerById";
 
 class Calendar extends React.Component {
 
@@ -188,9 +189,7 @@ class Calendar extends React.Component {
     }
 
     getBeerById = async (beerId) => {
-        const beer = this.state.beers[beerId] || await typeApi.get(`/beer/${beerId}`).then((res) => {
-            return res.data[0];
-        }).catch(err => {
+        const beer = await getBeerById(beerId, this.state.beers).catch(err => {
             this.setState(state => ({
                 error: [...state.error, err.message]
             }))

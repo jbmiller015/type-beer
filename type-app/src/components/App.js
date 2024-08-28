@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Route, Routes, useNavigate} from 'react-router-dom';
 import BrewFloor from "./BrewFloor/BrewFloor";
 import CreateTank from "./BrewFloor/CreateTank";
 import CreateBeer from "./Beer/CreateBeer";
@@ -20,27 +20,27 @@ const App = () => {
 
     const {token, setToken} = useToken();
     useWindowDimensions();
+    const navigate = useNavigate()
 
     if (!localStorage.getItem('token')) {
         return <AuthForm setToken={setToken}/>
     }
     return (
         <div id="switch">
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<BrewFloor/>}/>
-                    <Route path="/create/tank" element={<CreateTank/>}/>
-                    <Route path="/create/beer" element={<CreateBeer/>}/>
-                    <Route path="/create/process" element={<CreateProcess/>}/>
-                    <Route path="/create/event" element={<CreateEvent/>}/>
-                    <Route path="/fridge" element={<Fridge/>}/>
-                    <Route path="/calendar" element={<Calendar/>}/>
-                    <Route path="/processes" element={<Process/>}/>
-                    <Route path="/events" element={<EventsHome/>}/>
-                    <Route path="/account" element={<AccountInfo/>}/>
-                    <Route path="/404" element={<fourOfour/>}/>
-                </Routes>
-            </BrowserRouter>
+            <Routes>
+                <Route path="/" element={<BrewFloor/>}/>
+                <Route path="/demo" element={<BrewFloor/>}/>
+                <Route path="/create/tank" element={<CreateTank navigate={navigate}/>}/>
+                <Route path="/create/beer" element={<CreateBeer navigate={navigate}/>}/>
+                <Route path="/create/process" element={<CreateProcess navigate={navigate}/>}/>
+                <Route path="/create/event" element={<CreateEvent navigate={navigate}/>}/>
+                <Route path="/fridge" element={<Fridge/>}/>
+                <Route path="/calendar" element={<Calendar/>}/>
+                <Route path="/processes" element={<Process/>}/>
+                <Route path="/events" element={<EventsHome/>}/>
+                <Route path="/account" element={<AccountInfo/>}/>
+                <Route path="/404" element={<fourOfour/>}/>
+            </Routes>
         </div>
     );
 };

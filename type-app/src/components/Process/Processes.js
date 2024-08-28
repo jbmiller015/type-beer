@@ -10,6 +10,7 @@ import Process from "./Process";
 import Shrugger from "../Messages/Shrugger";
 import ProcessFilterButtons from "./ProcessFilterButtons";
 import GoToCreate from "../Buttons/GoToCreate";
+import getBeerById from "../Hooks/getBeerById";
 
 
 class Processes extends React.Component {
@@ -57,23 +58,8 @@ class Processes extends React.Component {
 
 
     async componentDidMount() {
-        let tank;
-        let process;
-        let activeProcess;
-        let beer;
-        if (localStorage.getItem('token').includes("demoToken")) {
-            console.log("demotoken")
-            tank = "/demo/tank";
-            process = "/demo/process";
-            activeProcess = "/demo/process";
-            beer = "/demo/beer"
-        } else {
-            tank = "/tank";
-            process = "/process"
-            activeProcess = "/process/active"
-            beer = "/beer"
-        }
-        const procResults = await typeApi.get(process).then(response => {
+
+        const procResults = await typeApi.get('/process').then(response => {
             const procObj = response.data.reduce((a, v, i) => ({
                 ...a,
                 [v._id]: v
@@ -96,7 +82,7 @@ class Processes extends React.Component {
                 error: [...state.error, err.message]
             }))
         });
-        const tanksResults = await typeApi.get(tank).then(response => {
+        const tanksResults = await typeApi.get('/tank').then(response => {
             return response.data.reduce((a, v, i) => ({
                 ...a,
                 [v._id]: v
@@ -107,7 +93,7 @@ class Processes extends React.Component {
                 error: [...state.error, err.message]
             }))
         })
-        const active = await typeApi.get(activeProcess).then(response => {
+        const active = await typeApi.get('/process/active').then(response => {
             return response.data
         }, err => {
             console.log(err)
@@ -160,11 +146,7 @@ class Processes extends React.Component {
     }
 
     getBeerById = async (beerId) => {
-        const beerUrl = localStorage.getItem('token').includes("demoToken") ? "/demo/beer":"/beer";
-
-        const beer = this.state.beers[beerId] || await typeApi.get(`${beerUrl}/${beerId}`).then((res) => {
-            return res.data[0];
-        }).catch(err => {
+        const beer = await getBeerById(beerId, this.state.beers).catch(err => {
             this.setState(state => ({
                 error: [...state.error, err.message]
             }))

@@ -52,6 +52,7 @@ const Dropdown = ({onSelectedChange, label, url, target, defaultTerm, startDate,
         }
 
         const search = async () => {
+            console.log(url)
             const {data} = await typeApi.get(`/${url}`, config);
             setResults(data);
         };

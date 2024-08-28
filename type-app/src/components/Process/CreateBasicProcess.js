@@ -45,7 +45,7 @@ const CreateBasicProcess = (props) => {
                                   onSelectedChange={(tank) => {
                                       setPhase({...phase, startTank: tank._id, endTank: tank._id});
                                   }}
-                                  url="tank"
+                                  url="/tank"
                                   index={0}
                                   startDate={startDate}
                                   endDate={phase.endDate}

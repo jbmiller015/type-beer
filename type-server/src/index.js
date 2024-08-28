@@ -24,7 +24,7 @@ const requireAuth = require('./middlewares/requireAuth');
 
 //Switch for dev vs prod
 //app.use(cors({origin: ['https://typebeer.com'], credentials: true}));
-app.use(cors({origin: ['http://localhost:3006'], credentials: true}));
+app.use(cors({origin: ['http://localhost:3006', 'http://10.0.0.187:3006'], credentials: true}));
 
 app.use(bodyParser.json({limit: '60mb'}));
 app.use(express.urlencoded({extended: true, limit: '60mb'}));

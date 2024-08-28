@@ -6,6 +6,7 @@ import Modal from "../modal/Modal";
 import modal from "../modal/Modal.css"
 import Message from "../Messages/Message";
 import GoToCreate from "../Buttons/GoToCreate";
+import getBeerById from "../Hooks/getBeerById";
 
 class BrewFloor extends React.Component {
 
@@ -32,7 +33,7 @@ class BrewFloor extends React.Component {
 
         console.log(tank)
 
-        await typeApi.get(tank).then(response => {
+        await typeApi.get('/tank').then(response => {
             console.log(response)
             response.data.map(el => {
                 this.setState(prevState => ({
@@ -49,7 +50,7 @@ class BrewFloor extends React.Component {
             }))
         });
 
-        await typeApi.get(process).then(response => {
+        await typeApi.get('/process/active').then(response => {
             console.log(response.data)
             response.data.map(el => {
                 this.setState(prevState => ({
@@ -69,10 +70,7 @@ class BrewFloor extends React.Component {
     }
 
     getBeerById = async (beerId) => {
-
-        const beer = this.state.beers[beerId] || await typeApi.get(`beer/${beerId}`).then((res) => {
-            return res.data[0];
-        }).catch(err => {
+        const beer = await getBeerById(beerId, this.state.beers).catch(err => {
             this.setState(state => ({
                 error: [...state.error, err.message]
             }))

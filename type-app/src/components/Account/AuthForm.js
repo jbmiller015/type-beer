@@ -167,16 +167,15 @@ const AuthForm = ({setToken}) => {
                             {path === 'login' ? "Sign Up" : "Log In"}
                         </a>
                     </div>
-                    {path === 'signup' ? <div className="ui message">
+                    <div className="ui message">
                         {"Wanna take a look around? Check out the "}
                         <a href="/demo" onClick={() => {
                             setToken('demoToken');
-                            //history.push('/demo')
                         }}>
                             {"demo"}
                         </a>
                         {"."}
-                    </div> : null}
+                    </div>
                 </div>}
             </div>
         </div>

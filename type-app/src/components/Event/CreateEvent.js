@@ -158,9 +158,10 @@ class CreateEvent extends React.Component {
                             {this.startDateField()}
                             {this.endDateField()}
                             {this.textField("Event Type", "eventType", false)}
-                            <ProcessNotes data={null} name={"details"} editable={true} handleProcessChange={this.handleChange} label={"Details"}/>
+                            <ProcessNotes data={""} name={"details"} editable={true}
+                                          handleProcessChange={this.handleChange} label={"Details"}/>
                             {this.submitButton()}
-                            </form>
+                        </form>
                     </div>
                 </div>
             </div>

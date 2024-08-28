@@ -27,7 +27,7 @@ const CreateDuplicateProcess = (props) => {
                               setTanksInPhases(tank._id, 0)
                               setStartTankSet(true)
                           }}
-                          url="tank"
+                          url="/tank"
                           index={0}
                           startDate={startDate}
                           endDate={endDate}

@@ -17,15 +17,19 @@ const AccountInfo = () => {
     const [reset, setReset] = useState(false);
     const {width} = useWindowDimensions();
 
-    useEffect(async () => {
-        const data = await typeApi.get('user').then((res) => {
-            return res.data[0]
-        }).catch(err => {
-            console.log(err.response)
-            setError(err.response);
-            console.error(err);
-        });
-        setData(data)
+    useEffect(() => {
+        const setAccountData = async () => {
+            const data = await typeApi.get('/user').then((res) => {
+                return res.data[0]
+            }).catch(err => {
+                console.log(err.response)
+                setError(err.response);
+                console.error(err);
+            });
+            setData(data)
+        }
+        setAccountData()
+
     }, [])
 
     const validatePass = () => {

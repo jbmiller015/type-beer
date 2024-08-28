@@ -47,12 +47,15 @@ const Process = (props) => {
     useEffect(() => {
     }, [data])
 
-    useEffect(async () => {
-        if (choice !== null) {
-            const data = await handleProcessChange(newData.e, newData.processId, newData.phaseIndex, choice);
-            setData(data)
-            setChoice(null)
+    useEffect(() => {
+        const handleChoice = async () => {
+            if (choice !== null) {
+                const data = await handleProcessChange(newData.e, newData.processId, newData.phaseIndex, choice);
+                setData(data)
+                setChoice(null)
+            }
         }
+        handleChoice();
     }, [choice])
 
     const handleProcessDateChange = (e, processId, phaseIndex, show) => {
