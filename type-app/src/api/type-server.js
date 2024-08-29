@@ -11,11 +11,23 @@ const instance = axios.create({
 
 const appendSessionResponse = (responseData, url) => {
     const sessionObj = JSON.parse(sessionStorage.getItem(url));
+    const editObj = JSON.parse(sessionStorage.getItem(`edit${url}`));
     console.log(sessionObj)
+    if (editObj) {
+        responseData = responseData.map((el) => {
+            for (let le in editObj) {
+                if (editObj[le]._id === el._id) {
+                    return editObj[le];
+                }
+            }
+            return el;
+        });
+    }
     if (sessionObj) {
         responseData.push(...sessionObj)
         return responseData;
     }
+
 }
 
 instance.interceptors.response.use((response) => {
@@ -115,6 +127,19 @@ instance.interceptors.request.use(
                     });
                     console.log(result)
                     sessionStorage.setItem(`/${modder[1]}/${modder[2]}`, JSON.stringify(result))
+                } else {
+                    const editObj = JSON.parse(sessionStorage.getItem(`edit/${modder[1]}/${modder[2]}`));
+                    if (editObj) {
+                        result = editObj.map((el) => {
+                            if (el._id === modder[3])
+                                return adder;
+                            return el;
+                        });
+                        console.log(result)
+                        sessionStorage.setItem(`edit/${modder[1]}/${modder[2]}`, JSON.stringify(result))
+                    } else {
+                        sessionStorage.setItem(`edit/${modder[1]}/${modder[2]}`, JSON.stringify([adder]));
+                    }
                 }
 
                 config.adapter = (config) => {
