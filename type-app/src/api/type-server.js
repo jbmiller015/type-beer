@@ -98,64 +98,34 @@ instance.interceptors.request.use(
                 }
             }
             if (config.method === 'put') {
-                //TODO: 'replace' default objs with editted ones by setting session data and replacing json data in get requests.
-                //[blank,demo,objName,Id]
-                const modder = config.url.split('/');
-                console.log(modder)
-                const sessionObj = JSON.parse(sessionStorage.getItem(`/${modder[1]}/${modder[2]}`));
-                console.log(sessionObj)
-                const adder = config.data;
-                console.log(adder)
-                let result;
-                if (sessionObj) {
-                    result = sessionObj.map((el) => {
-                        if (el._id === modder[3])
-                            return adder;
-                        return el;
-                    });
-                    console.log(result)
-                    sessionStorage.setItem(`/${modder[1]}/${modder[2]}`, JSON.stringify(result))
-                }
-
-                config.adapter = (config) => {
-                    return new Promise((resolve, reject) => {
-                        const res = {
-                            data: adder,
-                            status: 200,
-                            statusText: "OK",
-                            headers: {"content-type": "text/plain; charset=utf-8"},
-                            config,
-                            request: {}
-                        }
-                        return resolve(res);
-                    })
-                }
-
+                /**
+                 let obj = JSON.parse(sessionStorage.getItem(config.url));
+                 let modder = config.url.slice(6).split('/');
+                 if()
+                 const adder = config.data;
+                 adder['_id'] = crypto.randomUUID();
+                 if (obj) {
+                 obj = [...obj, adder];
+                 sessionStorage.setItem(config.url, JSON.stringify(obj));
+                 } else {
+                 sessionStorage.setItem(config.url, JSON.stringify([adder]));
+                 }
+                 config.adapter = (config) => {
+                 return new Promise((resolve, reject) => {
+                 const res = {
+                 data: "",
+                 status: 200,
+                 statusText: "OK",
+                 headers: {"content-type": "text/plain; charset=utf-8"},
+                 config,
+                 request: {}
+                 }
+                 return resolve(res);
+                 })
+                 }
+                 */
             }
             if (config.method === 'delete') {
-                //[blank,demo,objName,Id]
-                const modder = config.url.split('/');
-                const sessionObj = JSON.parse(sessionStorage.getItem(`/${modder[1]}/${modder[2]}`));
-                const adder = config.data;
-                let result;
-                if (sessionObj) {
-                    result = sessionObj.filter((el) => el._id !== modder[3]);
-                    sessionStorage.setItem(`/${modder[1]}/${modder[2]}`, JSON.stringify(result))
-                }
-
-                config.adapter = (config) => {
-                    return new Promise((resolve, reject) => {
-                        const res = {
-                            data: "",
-                            status: 200,
-                            statusText: "OK",
-                            headers: {"content-type": "text/plain; charset=utf-8"},
-                            config,
-                            request: {}
-                        }
-                        return resolve(res);
-                    })
-                }
             }
         }
         return config;
