@@ -7,7 +7,7 @@ const moment = require("moment");
 
 exports.demo_generic_get = async (req, res) => {
     const base = req.params.base;
-    console.log("base:",base)
+    console.log("base:", base)
     try {
         res.send(getJsonData(base));
     } catch (e) {
@@ -19,7 +19,7 @@ exports.demo_generic_get = async (req, res) => {
 exports.demo_generic_sub_get = async (req, res) => {
     const base = req.params.base;
     const sub = req.params.sub;
-    console.log(base,sub)
+    console.log(base, sub)
     try {
         res.send(getJsonSubData(base, sub));
     } catch (e) {
@@ -58,15 +58,15 @@ const getJsonData = (base) => {
 const getJsonSubData = (base, id) => {
     switch (base) {
         case "tank":
-            return getById(tank,id);
+            return getById(tank, id);
         case "beer":
-            return getById(beer,id);
+            return getById(beer, id);
         case "user":
-            return getById(user,id);
+            return getById(user, id);
         case "process":
-            return getById(process,id);
+            return getById(process, id);
         case "event":
-            return getById(event,id);
+            return getById(event, id);
 
     }
 }
@@ -88,24 +88,29 @@ const getJsonRefData = (base, id, ref) => {
     }
 }
 
-const getById = (obj,id) => {
+const getById = (obj, id) => {
     return obj.filter(el => {
         return el._id === id;
     })
 }
 
-const setDates = (data) => {
-    return data.map((obj, index) => {
+const setDates = (data, startDate) => {
+    let temp = data;
+    return temp.map((obj, index) => {
+
         let start = moment(new Date(parseInt(obj.startDate, 10)));
         let end = moment(new Date(parseInt(obj.endDate, 10)));
         const dateDiff = end.diff(start, 'days');
-        obj.startDate = moment(0, "HH").utcOffset(0).startOf('date').add(index, 'days').toISOString();
-        obj.endDate = moment(0, "HH").utcOffset(0).startOf('date').add((dateDiff + index), 'days').toISOString();
+        console.log(`dateDiff ${obj.name}:`, dateDiff)
+        obj.startDate = moment(0, "HH").utcOffset(0).startOf('date').toISOString();
+        obj.endDate = moment(0, "HH").utcOffset(0).endOf('date').add((dateDiff > 0 ? dateDiff : 1), 'days').toISOString();
         if (obj.phases) {
-            obj.phases = setDates(obj.phases);
+
+            obj.phases = setDates(obj.phases, obj.startDate);
         }
         if (obj.activePhase) {
-            obj.activePhase = setDates([obj.activePhase])[0];
+
+            obj.activePhase = setDates([obj.activePhase], obj.startDate)[0];
         }
         return obj;
     })

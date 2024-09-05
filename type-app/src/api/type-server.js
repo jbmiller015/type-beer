@@ -50,6 +50,7 @@ instance.interceptors.response.use((response) => {
     if (token && token.includes("demoToken")) {
         if (response.config.method === 'get') {
             let responseData = response.data;
+            console.log(response.config.url)
             const objType = response.config.url.slice(6).split('/');
             if (objType[0] === 'beer') {
                 if (!objType[1]) {
@@ -67,9 +68,10 @@ instance.interceptors.response.use((response) => {
             }
             if (objType[0] === 'process') {
                 if (!objType[1]) {
+                    console.log("objType", objType)
                     responseData = appendSessionResponse(responseData, response.config.url);
                 } else {
-
+                    console.log(objType[1])
                 }
             }
             if (objType[0] === 'event') {
@@ -96,7 +98,7 @@ instance.interceptors.request.use(
         }
         if (token && token.includes("demoToken")) {
             if (config.url.includes('active')) {
-                config.url = '/demo/process/'
+                config.url = '/demo/process/active'
             } else {
                 config.url = '/demo' + config.url;
             }
@@ -194,8 +196,9 @@ instance.interceptors.request.use(
                             sessionStorage.removeItem(`/${modder[1]}/${modder[2]}`);
                         }
                     } else if (deleteObj?.length) {
-
-                        deleteObj = deleteObj.push(modder[3]);
+                        console.log(deleteObj)
+                        console.log(modder[3])
+                        deleteObj.push(modder[3]);
                         console.log("deleteObj:", deleteObj)
                         sessionStorage.setItem(`/delete/${modder[1]}/${modder[2]}`, JSON.stringify(deleteObj))
 
