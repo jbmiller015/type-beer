@@ -49,7 +49,6 @@ mongoose.connection.on('error', (err) => {
 
 //Auth is required
 app.get('/', requireAuth, (req, res) => {
-    console.log("here")
     res.send('base');
 });
 

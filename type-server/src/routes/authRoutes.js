@@ -32,17 +32,13 @@ router.route('/signup').post(async (req, res) => {
 
 router.post('/login', async (req, res) => {
     const {email, password} = req.body;
-    console.log(email)
-    console.log(password)
 
     if (!email || !password)
         return res.status(422).send('Must provide email and password');
 
     let user;
-    console.log({email})
     try {
         user = await User.findOne({email}).exec();
-        console.log(user)
     } catch (err) {
         console.log(err)
     }

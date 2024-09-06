@@ -3,10 +3,8 @@ const moment = require("moment");
 
 
 exports.process_active_get = async (req, res) => {
-    console.log("url:" + req.url)
     let getRes;
     const {startDate, endDate, name} = req.query;
-    console.log("query:" + startDate, endDate, name)
     const today = moment(0, "HH").utcOffset(0).startOf('date').toISOString(true);
     const Object = mongoose.model('Process');
     if (startDate && endDate) {
@@ -83,7 +81,5 @@ exports.process_active_get = async (req, res) => {
             }
         }
     }
-
-    console.log("res: ", getRes)
     return res.status(200).json(getRes);
 }

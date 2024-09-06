@@ -35,7 +35,6 @@ class CreateEvent extends React.Component {
 
 
     handleChange = e => {
-        console.log(this.state)
         let {name, value, checked} = e.target;
         if (name === "fill") {
             value = checked

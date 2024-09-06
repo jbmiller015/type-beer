@@ -24,7 +24,6 @@ const AccountInfo = () => {
             }).catch(err => {
                 console.log(err.response)
                 setError(err.response);
-                console.error(err);
             });
             setData(data)
         }
